@@ -16,7 +16,7 @@
 /* ===== RESET & BASE ===== */
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
 html{scroll-behavior:smooth;}
-body{font-family:'Inter',sans-serif;background:var(--blue-pale);color:#1a1a1a;overflow-x:hidden;font-size:16px;overflow-wrap:break-word;word-break:normal;hyphens:none;}
+body{font-family:'Inter',sans-serif;background:transparent;color:#1a1a1a;overflow-x:hidden;font-size:16px;overflow-wrap:break-word;word-break:normal;hyphens:none;}
 img{max-width:100%;display:block;}
 a{text-decoration:none;color:inherit;}
 
@@ -424,11 +424,11 @@ button{outline:none;border:none;}
    BACKGROUNDS
 =========================== */
 .bg-white{background:#fff;}
-.bg-warm{background:var(--warm-white);}
-.bg-blue-pale{background:var(--blue-pale);}
+.bg-warm{background:transparent;}
+.bg-blue-pale{background:transparent;}
 .bg-sky{background:var(--blue-sky);}
-.bg-yellow-pale{background:var(--yellow-pale);}
-.bg-green-pale{background:var(--green-pale);}
+.bg-yellow-pale{background:transparent;}
+.bg-green-pale{background:transparent;}
 .bg-navy{background:var(--navy);}
 
 /* ===========================
@@ -841,9 +841,19 @@ button{outline:none;border:none;}
 /* scroll fade-in */
 .fade-in{opacity:0;transform:translateY(24px);transition:opacity .6s ease,transform .6s ease;}
 .fade-in.visible{opacity:1;transform:translateY(0);}
+
+/* === NEAT GRADIENT BACKGROUND === */
+#gradient{position:fixed;top:0;left:0;width:100%;height:100%;z-index:-1;pointer-events:none;}
+.section .section-center h2{color:var(--navy);text-shadow:none;}
+.section .section-center .label{color:var(--blue);}
+.section .section-center .desc{color:rgba(0,0,0,.65);}
+#cennik .section-center h2{color:var(--navy)!important;}
+#cennik .section-center .label{color:var(--blue)!important;}
+#cennik .section-center .desc{color:rgba(0,0,0,.65)!important;}
 </style>
 </head>
 <body>
+<canvas id="gradient" style="width:100%;height:100%;"></canvas>
 
   <div class="blob blob-2"></div>
   <div class="blob blob-3"></div>
@@ -1150,7 +1160,7 @@ button{outline:none;border:none;}
 <!-- ===========================
      PRICING
 =========================== -->
-<section class="section" style="background:#1A5FA8;padding-top:110px;padding-bottom:90px;position:relative;" id="cennik">
+<section class="section" style="padding-top:110px;padding-bottom:90px;position:relative;" id="cennik">
   <!-- wave top -->
   <div style="position:absolute;top:-1px;left:0;width:100%;line-height:0;pointer-events:none;z-index:2;">
     <svg viewBox="0 0 1440 70" preserveAspectRatio="none" style="width:100%;display:block;" xmlns="http://www.w3.org/2000/svg">
@@ -2104,6 +2114,82 @@ document.addEventListener('DOMContentLoaded', function(){
 <div id="mouseFollowBee" style="position:fixed;pointer-events:none;z-index:8000;opacity:0;transition:opacity .4s;transform:translate(-50%,-50%);top:0;left:0;">
   <img src="vcielka_logo2.png" alt="" style="width:44px;height:auto;filter:drop-shadow(0 3px 10px rgba(0,0,0,.18));"/>
 </div>
+
+<!-- NEAT GRADIENT -->
+<script type="module">
+import { NeatGradient } from "https://cdn.jsdelivr.net/npm/@firecms/neat/+esm";
+
+const gradient = new NeatGradient({
+  ref: document.getElementById("gradient"),
+  colors: [
+    { color: '#FFF0C6', enabled: true },
+    { color: '#89C3F5', enabled: true },
+    { color: '#F3E0B0', enabled: true },
+    { color: '#D6EFE4', enabled: true },
+    { color: '#FFE7A4', enabled: true },
+  ],
+  speed: 1,
+  horizontalPressure: 3,
+  verticalPressure: 10,
+  waveFrequencyX: 1,
+  waveFrequencyY: 4,
+  waveAmplitude: 8,
+  shadows: 1,
+  highlights: 5,
+  colorBrightness: 1,
+  colorSaturation: 7,
+  wireframe: false,
+  colorBlending: 8,
+  backgroundColor: '#003FFF',
+  backgroundAlpha: 1,
+  grainScale: 3,
+  grainSparsity: 0,
+  grainIntensity: 0.3,
+  grainSpeed: 5,
+  resolution: 0.2,
+  yOffset: -85744,
+  yOffsetWaveMultiplier: 0.6,
+  yOffsetColorMultiplier: 0.3,
+  yOffsetFlowMultiplier: 2.4,
+  flowDistortionA: 3.7,
+  flowDistortionB: 5.4,
+  flowScale: 1.9,
+  flowEase: 0.27,
+  flowEnabled: true,
+  enableProceduralTexture: false,
+  textureVoidLikelihood: 0.27,
+  textureVoidWidthMin: 60,
+  textureVoidWidthMax: 420,
+  textureBandDensity: 1.2,
+  textureColorBlending: 0.06,
+  textureSeed: 333,
+  textureEase: 0.55,
+  proceduralBackgroundColor: '#EFEFB4',
+  textureShapeTriangles: 20,
+  textureShapeCircles: 15,
+  textureShapeBars: 15,
+  textureShapeSquiggles: 10,
+  domainWarpEnabled: false,
+  domainWarpIntensity: 0,
+  domainWarpScale: 3,
+  vignetteIntensity: 0,
+  vignetteRadius: 0.8,
+  fresnelEnabled: false,
+  fresnelPower: 2,
+  fresnelIntensity: 0.5,
+  fresnelColor: '#FFFFFF',
+  iridescenceEnabled: false,
+  iridescenceIntensity: 0.5,
+  iridescenceSpeed: 1,
+  bloomIntensity: 0,
+  bloomThreshold: 0.7,
+  chromaticAberration: 0,
+});
+
+window.addEventListener("scroll", () => {
+  gradient.yOffset = window.scrollY;
+});
+</script>
 
 </body>
 </html>
