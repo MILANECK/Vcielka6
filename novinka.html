@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="sk">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Novinka – Včielka</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<link rel="icon" type="image/png" href="vcielka_logo2.png"/>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@700;800&family=Quicksand:wght@500;600;700&family=Inter:wght@400;500&display=swap" rel="stylesheet"/>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Inter',sans-serif;background:#D9EFFF;color:#1a1a1a;overflow-wrap:break-word;word-break:normal;hyphens:none;}
+:root{--blue:#1A5FA8;--yellow:#F9C832;--navy:#0D3D6E;}
+
+/* NAV */
+.nav{background:#F9C832;padding:0 32px;height:64px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;box-shadow:0 2px 20px rgba(26,95,168,.1);}
+.nav-logo{display:flex;align-items:center;gap:10px;text-decoration:none;}
+.nav-logo img{height:46px;width:auto;object-fit:contain;}
+.nav-back{font-family:'Quicksand',sans-serif;font-size:13px;font-weight:700;color:#1A5FA8;background:#C8E6FA;padding:8px 18px;border-radius:50px;text-decoration:none;}
+
+/* HERO IMAGE */
+.article-hero{width:100%;height:400px;background:#C8E6FA;overflow:hidden;position:relative;}
+.article-hero img{width:100%;height:100%;object-fit:cover;}
+.article-hero-placeholder{width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:80px;background:linear-gradient(135deg,#C8E6FA,#D9EFFF);}
+
+/* CONTENT */
+.article-wrap{max-width:760px;margin:0 auto;padding:0 32px 64px;}
+.article-card{background:#fff;border-radius:0 0 28px 28px;padding:40px 44px 44px;box-shadow:0 4px 32px rgba(26,95,168,.08);}
+.article-date{font-family:'Inter',sans-serif;font-size:13px;color:#999;margin-bottom:10px;}
+.article-title{font-family:'Nunito',sans-serif;font-size:clamp(22px,4vw,34px);font-weight:800;color:#1a1a1a;line-height:1.2;margin-bottom:14px;}
+.article-excerpt{font-family:'Quicksand',sans-serif;font-size:16px;font-weight:600;color:#555;line-height:1.6;margin-bottom:24px;padding-bottom:24px;border-bottom:1.5px solid #EEF4FF;}
+.article-content{font-family:'Inter',sans-serif;font-size:15px;color:#333;line-height:1.8;margin-bottom:32px;}
+.article-content p{margin-bottom:14px;}
+
+/* PHOTO GALLERY */
+.article-photos{display:grid;gap:12px;margin-top:28px;}
+.article-photos.two{grid-template-columns:1fr 1fr;}
+.article-photos.three{grid-template-columns:1fr 1fr;}
+.article-photo{border-radius:16px;overflow:hidden;cursor:zoom-in;transition:transform .2s;aspect-ratio:16/10;}
+.article-photo:hover{transform:scale(1.02);}
+.article-photo img{width:100%;height:100%;object-fit:cover;}
+.article-photos.three .article-photo:first-child{grid-column:1/-1;aspect-ratio:16/7;}
+
+/* BACK BUTTON */
+.back-row{margin-top:32px;display:flex;gap:12px;flex-wrap:wrap;}
+.btn-back{font-family:'Quicksand',sans-serif;font-size:14px;font-weight:700;color:var(--blue);background:#D9EFFF;padding:12px 24px;border-radius:50px;text-decoration:none;transition:.2s;}
+.btn-back:hover{background:#C8E6FA;}
+.btn-all{font-family:'Quicksand',sans-serif;font-size:14px;font-weight:700;color:#1a1a1a;background:var(--yellow);padding:12px 24px;border-radius:50px;text-decoration:none;transition:.2s;}
+.btn-all:hover{opacity:.88;}
+
+/* LIGHTBOX */
+.lightbox{display:none;position:fixed;inset:0;background:rgba(0,0,0,.92);z-index:9999;align-items:center;justify-content:center;cursor:zoom-out;}
+.lightbox.open{display:flex;}
+.lightbox img{max-width:92vw;max-height:88vh;object-fit:contain;border-radius:12px;}
+.lb-close{position:absolute;top:20px;right:28px;color:#fff;font-size:34px;cursor:pointer;background:none;border:none;opacity:.7;}
+.lb-close:hover{opacity:1;}
+.lb-prev,.lb-next{position:absolute;top:50%;transform:translateY(-50%);color:#fff;font-size:40px;cursor:pointer;background:rgba(255,255,255,.12);border:none;border-radius:50%;width:52px;height:52px;display:flex;align-items:center;justify-content:center;}
+.lb-prev{left:20px;}
+.lb-next{right:20px;}
+
+.loading{text-align:center;padding:80px;color:#888;}
+.footer{background:var(--navy);padding:24px 32px;text-align:center;}
+.footer-copy{font-family:'Inter',sans-serif;font-size:12px;color:rgba(255,255,255,.35);}
+
+@media(max-width:600px){
+  .article-card{padding:28px 22px 32px;}
+  .article-wrap{padding:0 0 48px;}
+  .article-photos.two,.article-photos.three{grid-template-columns:1fr;}
+  .article-photos.three .article-photo:first-child{grid-column:auto;}
+}
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <a href="index.html" class="nav-logo">
+    <img src="VCIELKA_LOGO.png" alt="Materská škola Včielka"/>
+  </a>
+  <a href="novinky.html" class="nav-back">← Všetky novinky</a>
+</nav>
+
+<div id="articleWrap">
+  <div class="loading">Načítavam článok...</div>
+</div>
+
+<!-- LIGHTBOX -->
+<div class="lightbox" id="lightbox">
+  <button class="lb-close" onclick="closeLb()">✕</button>
+  <button class="lb-prev" onclick="lbGo(-1)">❮</button>
+  <img id="lbImg" src="" alt=""/>
+  <button class="lb-next" onclick="lbGo(1)">❯</button>
+</div>
+
+<div class="footer">
+  <span class="footer-copy">© 2025 Materská škola Včielka · Bratislava Ružinov</span>
+</div>
+
+<script>
+const SUPA_URL = 'https://fmjtzuligqsugsauqkgz.supabase.co';
+const SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZtanR6dWxpZ3FzdWdzYXVxa2d6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU0MTQyMTUsImV4cCI6MjA5MDk5MDIxNX0.gRF-roExLgnVDG4bSNt7EzX6c1v-JtM5v6ZcX8dY934';
+const bgColors = {blue:'#C8E6FA',yellow:'#FFE87A',green:'#B2E8C8'};
+
+let lbPhotos = [];
+let lbIdx = 0;
+
+function openLb(idx) {
+  lbIdx = idx;
+  document.getElementById('lbImg').src = lbPhotos[idx];
+  document.getElementById('lightbox').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+function closeLb() {
+  document.getElementById('lightbox').classList.remove('open');
+  document.body.style.overflow = '';
+}
+function lbGo(dir) {
+  lbIdx = (lbIdx + dir + lbPhotos.length) % lbPhotos.length;
+  document.getElementById('lbImg').src = lbPhotos[lbIdx];
+}
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') closeLb();
+  if (e.key === 'ArrowLeft') lbGo(-1);
+  if (e.key === 'ArrowRight') lbGo(1);
+});
+document.getElementById('lightbox').addEventListener('click', e => {
+  if (e.target === document.getElementById('lightbox')) closeLb();
+});
+
+async function loadArticle() {
+  const params = new URLSearchParams(window.location.search);
+  const id = params.get('id');
+  if (!id) { window.location.href = 'novinky.html'; return; }
+
+  try {
+    const { createClient } = supabase;
+    const db = createClient(SUPA_URL, SUPA_KEY);
+    const { data, error } = await db.from('news').select('*').eq('id', id).single();
+
+    if (error || !data) {
+      document.getElementById('articleWrap').innerHTML = '<div class="loading">Článok nebol nájdený. <a href="novinky.html">Späť na novinky →</a></div>';
+      return;
+    }
+
+    // Set page title
+    document.title = data.title + ' – Včielka';
+
+    // Collect photos for lightbox
+    lbPhotos = [data.photo_url, data.photo2_url, data.photo3_url].filter(Boolean);
+
+    // Build photo grid
+    let photosHtml = '';
+    const validPhotos = [data.photo_url, data.photo2_url, data.photo3_url].filter(Boolean);
+    if (validPhotos.length > 0) {
+      const gridClass = validPhotos.length === 1 ? '' : validPhotos.length === 2 ? 'two' : 'three';
+      photosHtml = `<div class="article-photos ${gridClass}">
+        ${validPhotos.map((url, i) => `
+          <div class="article-photo" onclick="openLb(${i})">
+            <img src="${url}" alt="foto ${i+1}" loading="lazy"/>
+          </div>
+        `).join('')}
+      </div>`;
+    }
+
+    // Format content
+    const content = (data.content || data.excerpt || '').replace(/\n/g, '<br>');
+    const dateStr = new Date(data.published_at || data.created_at).toLocaleDateString('sk-SK', {day:'numeric', month:'long', year:'numeric'});
+
+    document.getElementById('articleWrap').innerHTML = `
+      <div class="article-hero" style="background:${bgColors[data.color]||'#C8E6FA'};">
+        ${data.photo_url
+          ? `<img src="${data.photo_url}" alt="${data.title}"/>`
+          : `<div class="article-hero-placeholder">📰</div>`
+        }
+      </div>
+      <div class="article-wrap">
+        <div class="article-card">
+          <div class="article-date">${dateStr}</div>
+          <h1 class="article-title">${data.title}</h1>
+          ${data.excerpt ? `<p class="article-excerpt">${data.excerpt}</p>` : ''}
+          <div class="article-content">${content}</div>
+          ${photosHtml}
+          <div class="back-row">
+            <a href="novinky.html" class="btn-back">← Všetky novinky</a>
+            <a href="index.html" class="btn-all">🏠 Hlavná stránka</a>
+          </div>
+        </div>
+      </div>
+    `;
+  } catch(e) {
+    document.getElementById('articleWrap').innerHTML = '<div class="loading">Chyba načítania. <a href="novinky.html">Späť →</a></div>';
+  }
+}
+
+loadArticle();
+</script>
+
+<!-- cookie notice -->
+<div id="cookie-banner" style="display:none;position:fixed;bottom:0;left:0;right:0;background:#F9C832;color:#0D3D6E;padding:14px 20px;z-index:9999;align-items:center;justify-content:center;gap:14px;font-family:'Quicksand',sans-serif;font-size:14px;font-weight:600;box-shadow:0 -2px 20px rgba(0,0,0,.15);flex-wrap:wrap;text-align:center;">
+  <span>Táto stránka používa nevyhnutné cookies pre prihlásenie a bezpečnosť. Prehliadaním súhlasíte. <a href="privacy.html" style="color:#1A5FA8;text-decoration:underline;">Zásady ochrany súkromia</a></span>
+  <button onclick="document.getElementById('cookie-banner').style.display='none';localStorage.setItem('cookie_ok','1');" style="background:#1A5FA8;color:#fff;border:none;border-radius:50px;padding:8px 22px;font-family:'Quicksand',sans-serif;font-weight:700;font-size:13px;cursor:pointer;white-space:nowrap;flex-shrink:0;">Rozumiem</button>
+</div>
+<script>if(!localStorage.getItem('cookie_ok')){var b=document.getElementById('cookie-banner');b.style.display='flex';}</script>
+</body>
+</html>

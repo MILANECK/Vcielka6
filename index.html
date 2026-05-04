@@ -1,0 +1,2108 @@
+<!DOCTYPE html>
+<html lang="sk">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Včielka | Súkromná materská škola Bratislava Ružinov</title>
+<meta name="description" content="Súkromná materská škola Včielka v Bratislave Ružinov. Program Zvedavá Včielka pre deti od 2,5 do 6 rokov. Angličtina, logopédia, šport a oveľa viac."/>
+<meta property="og:title" content="Včielka | Bratislava Ružinov"/>
+<meta property="og:description" content="Láskyplná súkromná materská škola pre deti od 2,5 do 6 rokov. Program Zvedavá Včielka."/>
+<meta property="og:type" content="website"/>
+<link rel="icon" type="image/png" href="vcielka_logo2.png"/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,200..1000;1,200..1000&family=Quicksand:wght@500;600;700&family=Inter:wght@400;500&display=swap" rel="stylesheet"/>
+<style>
+/* ===== RESET & BASE ===== */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{font-family:'Inter',sans-serif;background:var(--blue-pale);color:#1a1a1a;overflow-x:hidden;font-size:16px;overflow-wrap:break-word;word-break:normal;hyphens:none;}
+img{max-width:100%;display:block;}
+a{text-decoration:none;color:inherit;}
+
+/* ===== CSS VARIABLES ===== */
+:root{
+  --blue:#1A5FA8;
+  --blue-light:#4A9FD4;
+  --blue-pale:#B4DEFF;
+  --blue-sky:#9DD5FC;
+  --blue-card:#EEF7FF;
+  --yellow:#F9C832;
+  --yellow-pale:#FDF0B9;
+  --yellow-card:#FFF8DC;
+  --yellow-bright:#FFE87A;
+  --green-pale:#BEEED7;
+  --green-card:#BEEED7;
+  --green-bright:#B2E8C8;
+  --red-card:#FFF0EE;
+  --red-bright:#FFD5D0;
+  --warm-white:#FFF1D1;
+  --navy:#0D3D6E;
+  --text:#1a1a1a;
+  --text-mid:#444;
+  --text-muted:#888;
+  --radius-card:24px;
+  --radius-sm:16px;
+}
+
+/* ===== TYPOGRAPHY ===== */
+h1,.h1{font-family:'Nunito',sans-serif;font-weight:900;}
+h2,.h2{font-family:'Nunito',sans-serif;font-weight:900;}
+h3,.h3{font-family:'Quicksand',sans-serif;font-weight:700;}
+.label{font-family:'Quicksand',sans-serif;font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;}
+.btn{font-family:'Quicksand',sans-serif;font-weight:700;border:none;outline:none;cursor:pointer;border-radius:50px;display:inline-block;}
+button{outline:none;border:none;}
+*:focus{outline:none;}
+
+/* ===== WAVES ===== */
+.wave{line-height:0;display:block;overflow:hidden;margin-bottom:-1px;}
+.wave svg{width:100%;display:block;}
+
+/* ===== SECTION BASE ===== */
+.section{padding:56px 32px;position:relative;overflow:hidden;}
+@media(max-width:600px){.section{overflow:visible;}}
+.section-center{text-align:center;margin-bottom:32px;}
+.section-inner{max-width:1100px;margin:0 auto;width:100%;position:relative;z-index:2;}
+.section-center .label{color:#1a1a1a;display:block;margin-bottom:6px;}
+.section-center h2{font-size:clamp(24px,5vw,49px);font-weight:900;color:#fff;margin-bottom:10px;text-shadow:0 1px 8px rgba(0,20,60,.10),0 4px 20px rgba(0,20,60,.06);}
+.section-center .desc{font-family:'Inter',sans-serif;font-size:16px;color:rgba(0,0,0,.65);line-height:1.72;max-width:500px;margin:0 auto;}
+
+/* ===== LEAF DECORATIONS ===== */
+.leaf{position:absolute;pointer-events:none;opacity:.14;}
+
+/* ===== CLOUD ===== */
+.cloud-group{position:absolute;pointer-events:none;}
+
+/* ===========================
+   NAV
+=========================== */
+.nav{
+  background:#F9C832;
+  padding:0 32px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  position:sticky;
+  top:0;
+  z-index:100;
+  box-shadow:0 2px 20px rgba(26,95,168,.08);
+  height:64px;
+}
+.nav-logo{display:flex;align-items:center;gap:0;transition:transform .2s;}
+.nav-logo:hover{transform:scale(1.08);}
+.nav-logo img{height:50px;width:auto;object-fit:contain;}
+.nav-logo-text{display:none;}
+.nav-logo-sub{display:none;}
+.nav-links{display:flex;align-items:center;gap:2px;}
+.nav-links a{font-family:'Quicksand',sans-serif;font-size:13.5px;font-weight:600;color:#1a1a1a;padding:6px 10px;border-radius:20px;transition:background .2s;}
+.nav-links a:hover{background:rgba(0,0,0,.1);color:#1a1a1a;}
+.nav-vs{background:rgba(255,255,255,.55);color:#1A5FA8;font-family:'Quicksand',sans-serif;font-size:12px;font-weight:700;padding:7px 14px;border-radius:50px;margin-left:6px;transition:background .2s;}
+.nav-vs:hover{background:rgba(255,255,255,.75);}
+.nav-cta{background:#C8E6FA;color:#1A5FA8;font-family:'Quicksand',sans-serif;font-size:12.5px;font-weight:700;padding:8px 20px;border-radius:50px;margin-left:6px;transition:opacity .2s;}
+.nav-cta:hover{opacity:.88;}
+/* hamburger */
+.nav-burger{display:none;flex-direction:column;gap:5px;cursor:pointer;padding:4px;}
+.nav-burger span{width:24px;height:2.5px;background:var(--blue);border-radius:2px;transition:.3s;}
+
+/* ── mobile menu ── */
+.nav-mobile{
+  display:none;
+  position:fixed;
+  inset:0;
+  background:#fff;
+  z-index:99;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:24px;
+  padding:40px;
+}
+.nav-mobile.open{display:flex;animation:nmOpen .7s cubic-bezier(.4,0,.2,1) both;}
+.nav-mobile.closing{display:flex;animation:nmClose .45s cubic-bezier(.4,0,.2,1) both;}
+@keyframes nmOpen{
+  from{clip-path:circle(0px at calc(100% - 44px) 32px);}
+  to  {clip-path:circle(150vmax at calc(100% - 44px) 32px);}
+}
+@keyframes nmClose{
+  from{clip-path:circle(150vmax at calc(100% - 44px) 32px);}
+  to  {clip-path:circle(0px at calc(100% - 44px) 32px);}
+}
+.nav-mobile .menu-link{
+  font-family:'Quicksand',sans-serif;font-size:22px;font-weight:700;
+  color:var(--blue);opacity:0;transform:translateY(10px);transition:color .2s;
+}
+.nav-mobile.open .menu-link{
+  animation:nmItem .35s ease forwards;
+  animation-delay:calc(var(--i,0)*60ms + 280ms);
+}
+.nav-mobile.closing .menu-link,.nav-mobile.closing .nav-close{opacity:1;transform:none;}
+.nav-mobile .menu-link.nav-cta{font-size:17px;padding:11px 30px;margin-top:4px;opacity:0;}
+@keyframes nmItem{to{opacity:1;transform:translateY(0);}}
+.nav-close{
+  position:fixed;top:10px;right:22px;
+  width:44px;height:44px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:18px;cursor:pointer;
+  color:var(--blue);background:#F9C832;
+  border:none;border-radius:50%;opacity:0;transition:background .2s;
+  z-index:101;
+  box-shadow:0 2px 14px rgba(249,200,50,.45);
+}
+.nav-close:hover{background:#f0bc0e;}
+.nav-mobile.open .nav-close{animation:nmItem .18s ease 0s forwards;}
+
+/* ===========================
+   HERO
+=========================== */
+.hero{
+  position:relative;
+  min-height:92vh;
+  display:flex;
+  align-items:center;
+  overflow:hidden;
+  padding:0;
+}
+/* fullscreen background image */
+.hero-bg-img{
+  position:absolute;
+  left:0;
+  top:-18%;
+  width:100%;
+  height:136%;
+  object-fit:cover;
+  object-position:center top;
+  display:block;
+  z-index:0;
+  will-change:transform;
+}
+/* dark gradient overlay for text readability */
+.hero-overlay{
+  position:absolute;
+  inset:0;
+  background:linear-gradient(105deg,rgba(8,32,72,.72) 0%,rgba(12,45,100,.50) 50%,rgba(8,32,72,.18) 100%);
+  z-index:1;
+}
+/* white wave at the bottom of the hero, ON TOP of the image */
+.hero-wave{
+  position:absolute;
+  bottom:-2px;
+  left:0;
+  width:100%;
+  z-index:3;
+  line-height:0;
+  pointer-events:none;
+}
+.hero-wave svg{width:100%;display:block;}
+.hero-content{
+  position:relative;
+  z-index:2;
+  max-width:520px;
+  padding:60px 0 180px 0;
+  text-align:left;
+  margin-left:0;
+}
+.hero-badge{display:inline-block;background:var(--yellow);color:#1a1a1a;font-family:'Quicksand',sans-serif;font-size:11px;font-weight:700;padding:5px 16px;border-radius:50px;margin-bottom:18px;letter-spacing:.6px;text-transform:uppercase;}
+.hero h1{font-size:clamp(36px,6vw,58px);color:#fff;line-height:1.08;margin-bottom:18px;text-shadow:0 2px 16px rgba(0,0,0,.22);}
+.hero h1 em{color:#F9C832;font-style:normal;}
+.hero-desc{font-family:'Inter',sans-serif;font-size:18px;color:rgba(255,255,255,.92);line-height:1.75;margin-bottom:30px;text-shadow:0 1px 8px rgba(0,0,0,.2);}
+.hero-btns{display:flex;gap:12px;flex-wrap:wrap;justify-content:flex-start;}
+.btn-primary{background:var(--yellow);color:#1a1a1a;padding:13px 28px;font-size:14px;box-shadow:none;transition:box-shadow .3s,transform .2s;}
+.btn-primary:hover{box-shadow:0 6px 28px rgba(249,200,50,.8);transform:translateY(-2px);}
+.btn-outline:hover{box-shadow:0 6px 28px rgba(255,255,255,.3);transform:translateY(-2px);}
+.btn-outline{background:rgba(255,255,255,.18);color:#fff;padding:13px 28px;font-size:14px;border:1.5px solid rgba(255,255,255,.45);backdrop-filter:blur(6px);box-shadow:none;transition:box-shadow .3s,transform .2s;}
+.hero-bee-deco{position:absolute;right:6%;bottom:80px;width:90px;opacity:.22;animation:float 4s ease-in-out infinite alternate;z-index:2;display:none;}
+.hero-bee-deco2{position:absolute;left:1%;top:40px;width:65px;opacity:.18;animation:float 5s ease-in-out infinite alternate-reverse;z-index:2;display:none;}
+@keyframes float{0%{transform:translateY(0);}100%{transform:translateY(-12px);}}
+
+/* ===========================
+   STATS
+=========================== */
+.stats{background:#FFFDF8;display:flex;flex-wrap:wrap;justify-content:center;}
+.stat{flex:1;min-width:100px;padding:14px 16px;text-align:center;border-right:1px solid rgba(0,0,0,.06);}
+.stat:last-child{border-right:none;}
+.stat-num{font-family:'Nunito',sans-serif;font-size:26px;font-weight:700;color:var(--blue);}
+.stat-label{font-family:'Inter',sans-serif;font-size:11px;color:var(--text-muted);margin-top:2px;}
+
+/* ===========================
+   SERVICES
+=========================== */
+.services-grid{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:14px;
+}
+.service-card{
+  border-radius:var(--radius-card);
+  overflow:hidden;
+  display:flex;
+  flex-direction:column;
+  min-height:190px;
+  transition:transform .25s;
+}
+.service-card:hover{transform:translateY(-4px);}
+.service-card.blue{background:var(--blue-card);}
+.service-card.yellow{background:var(--yellow-card);}
+.service-card.green{background:var(--green-card);}
+.service-card.red{background:var(--red-card);}
+.service-img{
+  flex:0 0 60%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:36px;
+  position:relative;
+  overflow:hidden;
+}
+.service-card.blue .service-img{background:var(--blue-sky);}
+.service-card.yellow .service-img{background:var(--yellow-bright);}
+.service-card.green .service-img{background:var(--green-bright);}
+.service-card.red .service-img{background:var(--red-bright);}
+.service-body{flex:1;padding:11px 14px 14px;}
+.service-body h3{font-size:15px;color:#1a1a1a;margin-bottom:3px;}
+.service-body p{font-family:'Inter',sans-serif;font-size:14px;color:var(--text-muted);line-height:1.45;}
+.service-card.clickable{cursor:pointer;}
+.act-popup-overlay{display:flex;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:5000!important;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(4px);opacity:0;visibility:hidden;pointer-events:none;transition:opacity .32s ease,visibility .32s;}
+.act-popup-overlay.open{opacity:1;visibility:visible;pointer-events:auto;}
+.act-popup{background:#fff;border-radius:28px;max-width:680px;width:100%;max-height:85vh;position:relative;display:flex;flex-direction:column;transform:scale(.94) translateY(18px);opacity:0;transition:transform .32s cubic-bezier(.4,0,.2,1),opacity .32s ease;}
+.act-popup-overlay.open .act-popup{transform:scale(1) translateY(0);opacity:1;}
+.act-popup-header{padding:28px 28px 0;display:flex;align-items:flex-start;justify-content:space-between;gap:12px;flex-shrink:0;position:relative;}
+.act-popup-header::after{content:'';position:absolute;bottom:-28px;left:0;right:0;height:28px;background:linear-gradient(to bottom,#fff,transparent);pointer-events:none;z-index:1;}
+.act-popup-close{background:#F0F0F0;border:none;border-radius:50%;width:36px;height:36px;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;line-height:1;}
+.act-popup-body{padding:16px 28px 32px;font-family:'Inter',sans-serif;font-size:15px;color:#444;line-height:1.75;overflow-y:auto;flex:1;}
+.act-popup-body::-webkit-scrollbar{width:5px;}
+.act-popup-body::-webkit-scrollbar-track{background:transparent;margin:28px 0;}
+.act-popup-body::-webkit-scrollbar-thumb{background:#ddd;border-radius:10px;}
+.act-popup-body::-webkit-scrollbar-thumb:hover{background:#bbb;}
+.act-popup-body a{color:var(--blue);text-decoration:underline;}
+.act-popup-body a:hover{opacity:.8;}
+
+/* ===========================
+   WHY US
+=========================== */
+.why-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:13px;}
+.why-item{display:flex;gap:13px;align-items:flex-start;background:rgba(255,255,255,.6);border-radius:20px;padding:16px;transition:transform .2s;}
+.why-item:hover{transform:translateY(-3px);}
+.why-icon{width:44px;height:44px;border-radius:14px;background:var(--yellow-card);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;}
+.why-item h3{font-size:15px;color:#1a1a1a;margin-bottom:3px;}
+.why-item p{font-family:'Inter',sans-serif;font-size:14px;color:#666;line-height:1.5;}
+
+/* ===========================
+   SCHEDULE + ZVEDAVA
+=========================== */
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:36px;align-items:start;}
+.timeline{display:flex;flex-direction:column;}
+.tl-item{display:flex;gap:14px;align-items:flex-start;padding-bottom:18px;position:relative;}
+.tl-item::before{content:'';position:absolute;left:17px;top:36px;width:2px;height:calc(100% - 18px);background:rgba(74,159,212,.2);}
+.tl-item:last-child::before{display:none;}
+.tl-dot{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;}
+.tl-dot.blue{background:var(--blue-light);}
+.tl-dot.yellow{background:var(--yellow);}
+.tl-time{font-family:'Quicksand',sans-serif;font-size:12px;font-weight:700;color:#5590C4;margin-bottom:1px;}
+.tl-name{font-family:'Quicksand',sans-serif;font-size:15px;font-weight:700;color:#1a1a1a;}
+.tl-desc{font-family:'Inter',sans-serif;font-size:14px;color:var(--text-muted);}
+.z-item{background:rgba(255,255,255,.6);border-radius:18px;padding:14px 16px;display:flex;gap:12px;align-items:center;margin-bottom:0;}
+.z-icon{font-size:24px;width:40px;height:40px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.z-icon img{width:40px;height:40px;object-fit:contain;filter:drop-shadow(0 3px 8px rgba(0,0,0,.13));}
+.z-item:last-child{margin-bottom:0;}
+.z-item-title{font-family:'Quicksand',sans-serif;font-size:14px;font-weight:700;color:#1a1a1a;margin-bottom:2px;}
+.z-item-desc{font-family:'Inter',sans-serif;font-size:13px;color:#666;}
+
+/* ===========================
+   GALLERY
+=========================== */
+.gallery-section{padding:52px 0;position:relative;overflow:hidden;}
+.gallery-inner{overflow:hidden;}
+.gallery-header{padding:0 32px;display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:24px;flex-wrap:wrap;gap:12px;}
+.gallery-header .label{color:#5590C4;display:block;margin-bottom:5px;}
+.gallery-header h2{font-size:clamp(24px,5vw,49px);font-weight:900;color:#fff;text-shadow:0 1px 8px rgba(0,20,60,.10),0 4px 20px rgba(0,20,60,.06);}
+.gallery-track{display:flex;flex-wrap:nowrap;align-items:flex-start;gap:13px;padding:4px 32px 14px;overflow-x:auto;overflow-y:hidden;-webkit-overflow-scrolling:touch;scrollbar-width:none;cursor:grab;max-width:100%;}
+.gallery-track:active{cursor:grabbing;}
+.gallery-track::-webkit-scrollbar{display:none;}
+.gallery-item{flex:0 0 260px;width:260px;height:195px;border-radius:22px;overflow:hidden;background:var(--blue-sky);transition:transform .25s;position:relative;}
+.gallery-item:hover{transform:scale(1.03);}
+.gallery-item img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block;background:var(--blue-sky);}
+.gallery-item img[src]{background:transparent;}
+.gallery-dots{display:flex;justify-content:center;gap:7px;margin-top:14px;}
+.gallery-dot{width:8px;height:8px;border-radius:50%;background:#B5D4F4;border:none;cursor:pointer;transition:.3s;}
+.gallery-dot.active{background:var(--blue-light);width:22px;border-radius:4px;}
+
+/* ===========================
+   TESTIMONIALS
+=========================== */
+.testi-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:13px;}
+.testi-card{background:rgba(255,255,255,.72);border-radius:22px;padding:20px;transition:transform .2s;}
+.testi-card:hover{transform:translateY(-3px);}
+.testi-stars{color:var(--yellow);font-size:14px;margin-bottom:8px;}
+.testi-text{font-family:'Inter',sans-serif;font-size:15px;color:#444;line-height:1.68;margin-bottom:12px;font-style:italic;}
+.testi-name{font-family:'Quicksand',sans-serif;font-size:14px;font-weight:700;color:#1a1a1a;}
+
+/* ===========================
+   NEWS
+=========================== */
+.news-header{display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:26px;flex-wrap:wrap;gap:12px;}
+.news-header .label{display:block;margin-bottom:5px;}
+.news-header h2{font-size:clamp(24px,5vw,49px);font-weight:900;color:#fff;text-shadow:0 1px 8px rgba(0,20,60,.10),0 4px 20px rgba(0,20,60,.06);}
+.news-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;}
+.news-card{border-radius:var(--radius-card);overflow:hidden;transition:transform .25s;}
+.news-card:hover{transform:translateY(-4px);}
+.news-card.blue{background:var(--blue-card);}
+.news-card.yellow{background:var(--yellow-card);}
+.news-card.green{background:var(--green-card);}
+.news-card.red{background:var(--red-card);}
+.news-img{height:130px;display:flex;align-items:center;justify-content:center;font-size:11px;color:var(--text-muted);font-family:'Inter',sans-serif;overflow:hidden;}
+.news-card.blue .news-img{background:var(--blue-sky);}
+.news-card.yellow .news-img{background:var(--yellow-bright);}
+.news-card.green .news-img{background:var(--green-bright);}
+.news-card.red .news-img{background:var(--red-bright);}
+.news-img img{width:100%;height:100%;object-fit:cover;}
+.news-body{padding:15px 17px 18px;}
+.news-date{font-family:'Inter',sans-serif;font-size:12px;color:var(--text-muted);margin-bottom:5px;font-weight:500;}
+.news-title{font-family:'Quicksand',sans-serif;font-size:17px;font-weight:700;color:#1a1a1a;margin-bottom:6px;line-height:1.3;}
+.news-excerpt{font-family:'Inter',sans-serif;font-size:15px;color:#666;line-height:1.55;}
+.news-more{display:inline-block;margin-top:9px;font-family:'Quicksand',sans-serif;font-size:12px;font-weight:700;color:var(--blue-light);}
+.news-card.yellow .news-more{color:#C49000;}
+.news-card.green .news-more{color:#1A6640;}
+.news-card.red .news-more{color:#C0392B;}
+
+/* ===========================
+   PRICING
+=========================== */
+.pricing-grid{display:grid;grid-template-columns:repeat(2,minmax(0,360px));gap:16px;justify-content:center;align-items:stretch;}
+.price-card{border-radius:var(--radius-card);overflow:hidden;will-change:transform;cursor:default;}
+.price-header{padding:18px 20px;}
+.price-header.dark{background:rgba(255,255,255,.15);}
+.price-header.yellow{background:var(--yellow);}
+.price-header h3{font-family:'Quicksand',sans-serif;font-size:15px;font-weight:700;color:#fff;}
+.price-header.yellow h3{color:#1a1a1a;}
+.price-body{padding:20px;background:rgba(255,255,255,.88);}
+.price-amount{font-family:'Nunito',sans-serif;font-size:40px;font-weight:700;color:var(--blue);}
+.price-period{font-family:'Inter',sans-serif;font-size:13px;color:var(--text-muted);}
+.price-detail{font-family:'Inter',sans-serif;font-size:13px;color:#888;margin-top:9px;line-height:1.65;}
+
+/* ===========================
+   CONTACT
+=========================== */
+.contact-cards{display:grid;grid-template-columns:1fr 1fr;gap:11px;margin-bottom:14px;}
+.contact-card{border-radius:20px;display:flex;align-items:center;gap:0;min-height:72px;overflow:hidden;transition:transform .2s;text-decoration:none;color:inherit;}
+.contact-card a{text-decoration:none;color:inherit;}
+.contact-card:hover{transform:translateY(-2px);}
+.contact-card.blue{background:var(--blue-card);}
+.contact-card.yellow{background:var(--yellow-card);}
+.contact-card.green{background:var(--green-card);}
+.contact-card.sky{background:var(--blue-sky);}
+.contact-card.red{background:#FFEAEA;}
+.contact-icon{width:52px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:16px;align-self:stretch;line-height:1;}
+.contact-icon img{width:60%!important;height:60%!important;object-fit:contain;}
+.contact-card.blue .contact-icon{background:var(--blue-sky);}
+.contact-card.yellow .contact-icon{background:var(--yellow-bright);}
+.contact-card.green .contact-icon{background:var(--green-bright);}
+.contact-card.sky .contact-icon{background:#A8D4F5;}
+.contact-card.red .contact-icon{background:#FFCECE;}
+.contact-body{padding:10px 14px;}
+.contact-label{font-family:'Quicksand',sans-serif;font-size:9px;font-weight:700;color:#aaa;text-transform:uppercase;letter-spacing:.5px;margin-bottom:2px;}
+.contact-value{font-family:'Inter',sans-serif;font-size:15px;color:#1a1a1a;font-weight:500;line-height:1.4;}
+.contact-sub{font-family:'Inter',sans-serif;font-size:10px;color:#aaa;margin-top:1px;}
+.map-wrap{border-radius:22px;overflow:hidden;width:100%;height:260px;background:var(--blue-sky);}
+.map-wrap iframe{width:100%;height:100%;border:0;display:block;}
+
+/* ===========================
+   FOOTER
+=========================== */
+.footer{background:var(--navy);padding:44px 32px 24px;}
+.footer-inner{max-width:1100px;margin:0 auto;}
+.footer-grid{display:grid;grid-template-columns:1.6fr 1fr 1fr;gap:32px;margin-bottom:32px;}
+.footer h4{font-family:'Quicksand',sans-serif;font-size:13px;font-weight:700;color:var(--yellow);margin-bottom:11px;}
+.footer-desc{font-family:'Inter',sans-serif;font-size:14px;color:rgba(255,255,255,.45);line-height:1.7;margin-bottom:11px;}
+.footer-link{display:block;font-family:'Inter',sans-serif;font-size:14px;color:rgba(255,255,255,.5);margin-bottom:6px;transition:color .2s;}
+.footer-link:hover{color:rgba(255,255,255,.85);}
+.footer-vs{display:inline-block;background:rgba(249,200,50,.14);color:var(--yellow);font-family:'Quicksand',sans-serif;font-size:12px;font-weight:700;padding:7px 16px;border-radius:50px;margin-top:4px;transition:background .2s;}
+.footer-vs:hover{background:rgba(249,200,50,.24);}
+.footer-bottom{border-top:1px solid rgba(255,255,255,.08);padding-top:16px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:6px;}
+.footer-copy{font-family:'Inter',sans-serif;font-size:11px;color:rgba(255,255,255,.28);}
+
+/* ===========================
+   BACKGROUNDS
+=========================== */
+.bg-white{background:#fff;}
+.bg-warm{background:var(--warm-white);}
+.bg-blue-pale{background:var(--blue-pale);}
+.bg-sky{background:var(--blue-sky);}
+.bg-yellow-pale{background:var(--yellow-pale);}
+.bg-green-pale{background:var(--green-pale);}
+.bg-navy{background:var(--navy);}
+
+/* ===========================
+   RESPONSIVE
+=========================== */
+@media(min-width:901px){
+  .gallery-item{flex:0 0 320px;width:320px;height:240px;}
+  /* ── Desktop: fixed nav that auto-hides on scroll ── */
+  body{padding-top:64px;}
+  .nav{
+    position:fixed;width:100%;
+    transition:transform .42s cubic-bezier(.4,0,.2,1);
+  }
+  .nav.nav-hidden{transform:translateY(-100%);}
+  /* Pinned logo – always visible even when nav is gone */
+  #nav-pin-logo{
+    position:fixed;top:7px;left:32px;z-index:101;
+    display:flex;align-items:center;text-decoration:none;
+    opacity:0;pointer-events:none;
+    transition:opacity .3s ease;
+  }
+  #nav-pin-logo img{height:50px;width:auto;object-fit:contain;}
+  #nav-pin-logo.visible{opacity:1;pointer-events:auto;}
+}
+@media(max-width:900px){
+  .nav-links{display:none;}
+  .nav-burger{display:flex;}
+  .hero{flex-direction:column;padding:40px 20px 32px;text-align:left;}
+  .hero-wrapper{padding:0 20px!important;}
+  .hero-content{padding:32px 0 220px 0!important;margin-left:0!important;max-width:100%!important;}
+  .hero-badge,.hero h1,.hero-desc{text-align:left;}
+  .hero-btns{justify-content:flex-start;}
+  .hero-img{display:none;}
+  .hero-btns{justify-content:flex-start;}
+  .two-col{grid-template-columns:1fr;}
+  .footer-grid{grid-template-columns:1fr 1fr;}
+  .services-grid{grid-template-columns:repeat(2,1fr);}
+  .why-grid{grid-template-columns:repeat(2,1fr);}
+  .testi-grid{grid-template-columns:repeat(2,1fr);}
+  .news-grid{grid-template-columns:repeat(2,1fr);}
+}
+@media(max-width:600px){
+  .section{padding:40px 18px;}
+  .gallery-track{padding:4px 18px 14px;}
+  .gallery-header{padding:0 18px;}
+  .contact-cards{grid-template-columns:1fr;}
+  .footer-grid{grid-template-columns:1fr;}
+  .stats{flex-direction:column;}
+  .stat{border-right:none;border-bottom:1px solid rgba(0,0,0,.06);padding:10px 16px;}
+  .stat:last-child{border-bottom:none;}
+  .pricing-grid{grid-template-columns:1fr;}
+  .services-grid{grid-template-columns:repeat(2,1fr);}
+  .why-grid{grid-template-columns:1fr;}
+  .testi-grid{grid-template-columns:1fr;}
+  .news-grid{grid-template-columns:1fr;}
+  .section-center h2,.gallery-header h2,.news-header h2{font-size:30px;}
+}
+
+
+
+/* ===== CENTERED CONTAINER ===== */
+.container{max-width:1100px;margin:0 auto;width:100%;}
+
+.section > *:not([style*="position:absolute"]):not(.section-bg){max-width:1100px;margin-left:auto;margin-right:auto;}
+
+
+/* ===== LIGHTBOX ===== */
+.lightbox{display:none;position:fixed;inset:0;background:rgba(0,0,0,.88);z-index:5001!important;align-items:center;justify-content:center;cursor:zoom-out;}
+.lightbox.open{display:flex!important;}
+.lightbox img{max-width:92vw;max-height:88vh;object-fit:contain;border-radius:16px;box-shadow:0 8px 48px rgba(0,0,0,.5);}
+.lightbox-close{position:absolute;top:20px;right:28px;color:#fff;font-size:34px;cursor:pointer;line-height:1;background:none;border:none;opacity:.7;}
+.lightbox-close:hover{opacity:1;}
+.lightbox-prev,.lightbox-next{position:absolute;top:50%;transform:translateY(-50%);color:#fff;font-size:40px;cursor:pointer;background:rgba(255,255,255,.12);border:none;border-radius:50%;width:52px;height:52px;display:flex;align-items:center;justify-content:center;transition:.2s;}
+.lightbox-prev{left:20px;}
+.lightbox-next{right:20px;}
+.lightbox-prev:hover,.lightbox-next:hover{background:rgba(255,255,255,.25);}
+.gallery-item{cursor:zoom-in;}
+
+
+
+/* Make sure all sections sit above blobs */
+.hero,.stats,.section,.gallery-section,.footer,.wave{position:relative;z-index:1;} .gallery-popup-overlay,.news-popup-overlay,.lightbox{z-index:9999!important;}
+@media(max-width:900px){.nav{position:sticky;top:0;z-index:100;}}
+
+
+/* ===== NEWS POPUP ===== */
+.news-popup-overlay{display:flex;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:5000!important;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(4px);opacity:0;visibility:hidden;pointer-events:none;transition:opacity .32s ease,visibility .32s;}
+.news-popup-overlay.open{opacity:1;visibility:visible;pointer-events:auto;}
+.news-popup{background:#fff;border-radius:28px;max-width:760px;width:100%;max-height:88vh;position:relative;display:flex;flex-direction:column;transform:scale(.94) translateY(18px);opacity:0;transition:transform .32s cubic-bezier(.4,0,.2,1),opacity .32s ease;}
+.news-popup-overlay.open .news-popup{transform:scale(1) translateY(0);opacity:1;}
+.news-popup-header{height:200px;display:flex;align-items:center;justify-content:center;font-size:13px;color:#fff;border-radius:28px 28px 0 0;overflow:hidden;position:relative;flex-shrink:0;}
+.news-popup-header img{width:100%;height:100%;object-fit:cover;}
+.news-popup-header-placeholder{width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:40px;}
+.news-popup-close{position:absolute;top:14px;right:16px;background:rgba(0,0,0,.35);color:#fff;border:none;border-radius:50%;width:34px;height:34px;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;z-index:2;}
+.news-popup-body{padding:28px 32px 36px;overflow-y:auto;flex:1;}
+.news-popup-body::-webkit-scrollbar{width:5px;}
+.news-popup-body::-webkit-scrollbar-track{background:transparent;margin:28px 0;}
+.news-popup-body::-webkit-scrollbar-thumb{background:#ddd;border-radius:10px;}
+.news-popup-body::-webkit-scrollbar-thumb:hover{background:#bbb;}
+.news-popup-date{font-family:'Inter',sans-serif;font-size:12px;color:#aaa;margin-bottom:8px;}
+.news-popup-title{font-family:'Quicksand',sans-serif;font-size:22px;font-weight:700;color:#1a1a1a;margin-bottom:16px;line-height:1.3;}
+.news-popup-excerpt{font-family:'Quicksand',sans-serif;font-size:15px;font-weight:600;color:#666;line-height:1.6;margin-bottom:16px;padding-bottom:16px;border-bottom:1.5px solid #EEF4FF;}
+.news-popup-content{font-family:'Inter',sans-serif;font-size:16px;color:#444;line-height:1.8;}
+
+/* ===== HERO NEWS BLOB ===== */
+.hero-news-blob{
+  position:absolute;
+  bottom:90px;
+  right:120px;
+  z-index:4;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  cursor:pointer;
+  animation:heroBlobFloat 4.5s ease-in-out infinite alternate;
+  transition:transform .25s ease;
+}
+.hero-news-blob:hover{transform:scale(1.12);}
+@keyframes heroBlobFloat{
+  0%{bottom:90px;}
+  100%{bottom:108px;}
+}
+.hero-blob-circle{
+  width:220px;
+  height:220px;
+  border-radius:50%;
+  overflow:hidden;
+  background:rgba(255,255,255,.2);
+  backdrop-filter:blur(16px);
+  border:3px solid rgba(255,255,255,.45);
+  box-shadow:0 8px 32px rgba(0,0,0,.25);
+  flex-shrink:0;
+}
+.hero-blob-photo{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  display:none;
+}
+.hero-blob-text{
+  margin-top:14px;
+  text-align:center;
+  max-width:240px;
+}
+.hero-news-tag{font-family:'Quicksand',sans-serif;font-size:9px;font-weight:700;color:#F9C832;text-transform:uppercase;letter-spacing:.8px;margin-bottom:4px;display:block;}
+.hero-news-title{font-family:'Quicksand',sans-serif;font-size:17px;font-weight:700;color:#fff;line-height:1.4;text-shadow:0 1px 8px rgba(0,0,0,.6);display:block;}
+@media(max-width:900px){
+  .hero-news-blob{bottom:20px;right:12px;}
+  .hero-blob-circle{width:130px;height:130px;}
+  .hero-blob-text{max-width:140px;}
+  .hero-news-title{font-size:12px;}
+}
+@media(max-width:600px){
+  .hero-news-blob{bottom:15px;right:10px;}
+  .hero-blob-circle{width:110px;height:110px;}
+  .hero-blob-text{max-width:120px;}
+  .hero-news-title{font-size:11px;}
+}
+
+
+/* ===== FULL GALLERY POPUP ===== */
+.gallery-popup-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.96);z-index:9999!important;flex-direction:column;padding:20px;}
+.gallery-popup-overlay.open{display:flex!important;z-index:9999!important;}
+.gallery-popup-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;flex-shrink:0;}
+.gallery-popup-header h2{font-family:'Quicksand',sans-serif;font-size:18px;font-weight:700;color:#fff;}
+.gallery-popup-close{background:rgba(255,255,255,.25);color:#fff;border:2px solid rgba(255,255,255,.4);border-radius:50%;width:44px;height:44px;font-size:22px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.gallery-popup-grid{display:grid;grid-template-columns:repeat(4,1fr);grid-auto-rows:min-content;gap:12px;overflow-y:auto;flex:1;padding-bottom:20px;align-items:start;}
+.gallery-popup-grid::-webkit-scrollbar{width:6px;}
+.gallery-popup-grid::-webkit-scrollbar-thumb{background:rgba(255,255,255,.2);border-radius:3px;}
+.gallery-popup-item{position:relative;border-radius:16px;overflow:hidden;cursor:zoom-in;transition:transform .2s;aspect-ratio:4/3;width:100%;}
+.gallery-popup-item:hover{transform:scale(1.03);}
+.gallery-popup-item img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block;}
+@media(max-width:900px){.gallery-popup-grid{grid-template-columns:repeat(3,1fr);gap:8px;}}
+@media(max-width:600px){.gallery-popup-grid{grid-template-columns:repeat(2,1fr);gap:8px;}}
+
+/* ===== UČEBNÉ OSNOVY INLINE ===== */
+.ucebne-arrow{display:inline-block;transition:transform .35s;margin-left:6px;font-size:15px;line-height:1;}
+.ucebne-btn.open .ucebne-arrow{transform:rotate(180deg);}
+.ucebne-inline-wrap{padding:20px 20px 24px;position:relative;border-radius:24px;}
+.ucebne-inline-wrap::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 900px 700px at 50% 40%,rgba(0,0,0,.07) 0%,transparent 68%);pointer-events:none;}
+#ucebneInlineText.open{max-height:5000px;opacity:1;}
+.ucebne-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;}
+.ucebne-card{background:#fff;border-radius:18px;overflow:hidden;box-shadow:0 2px 10px rgba(26,95,168,.09);display:flex;flex-direction:column;}
+.ucebne-bubble{border-radius:14px 14px 0 0;padding:14px 12px 12px;text-align:center;}
+.ucebne-bubble .umonth{font-family:'Nunito',sans-serif;font-size:15px;font-weight:900;line-height:1.1;}
+.ucebne-unit{padding:10px 12px 8px;font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.04em;border-bottom:1.5px solid #f5f2ee;line-height:1.4;font-family:'Nunito',sans-serif;}
+.ucebne-topics{padding:8px 12px 12px;flex:1;list-style:none;display:flex;flex-direction:column;gap:4px;}
+.ucebne-topics li{font-size:11px;font-weight:600;color:#555;line-height:1.4;padding-left:12px;position:relative;font-family:'Nunito',sans-serif;}
+.ucebne-topics li::before{content:"›";position:absolute;left:0;color:#ccc;font-weight:700;}
+.ucebne-row-sep{grid-column:1/-1;height:1.5px;background:linear-gradient(to right,transparent,#ece8e2,transparent);margin:2px 0;}
+.ucm-sep .ucebne-bubble{background:#fff9c4;} .ucm-sep .umonth{color:#7a6800;} .ucm-sep .ucebne-unit{color:#9a8400;}
+.ucm-okt .ucebne-bubble{background:#d4edda;} .ucm-okt .umonth{color:#2d6a4f;} .ucm-okt .ucebne-unit{color:#2d6a4f;}
+.ucm-nov .ucebne-bubble{background:#ffd5d5;} .ucm-nov .umonth{color:#a03030;} .ucm-nov .ucebne-unit{color:#c03838;}
+.ucm-dec .ucebne-bubble{background:#fce4ec;} .ucm-dec .umonth{color:#b5294e;} .ucm-dec .ucebne-unit{color:#c03060;}
+.ucm-jan .ucebne-bubble{background:#d0eaff;} .ucm-jan .umonth{color:#1a5a8a;} .ucm-jan .ucebne-unit{color:#1a5a8a;}
+.ucm-feb .ucebne-bubble{background:#e8d5f5;} .ucm-feb .umonth{color:#6a3a9a;} .ucm-feb .ucebne-unit{color:#7a44aa;}
+.ucm-mar .ucebne-bubble{background:#fce4f3;} .ucm-mar .umonth{color:#a0307a;} .ucm-mar .ucebne-unit{color:#b03888;}
+.ucm-apr .ucebne-bubble{background:#c8f5e0;} .ucm-apr .umonth{color:#1a6b4a;} .ucm-apr .ucebne-unit{color:#1a6b4a;}
+.ucm-maj .ucebne-bubble{background:#ffe0cc;} .ucm-maj .umonth{color:#a04a10;} .ucm-maj .ucebne-unit{color:#b85818;}
+.ucm-jun .ucebne-bubble{background:#fffacc;} .ucm-jun .umonth{color:#6e6000;} .ucm-jun .ucebne-unit{color:#857200;}
+#ucebneInlineText{
+  transition:max-height .5s cubic-bezier(.4,0,.2,1),opacity .4s,padding .5s cubic-bezier(.4,0,.2,1);
+}
+#ucebneInlineText.open{
+  padding:18px 0;
+}
+.ucebne-btn{display:inline-flex;align-items:center;gap:8px;font-family:'Quicksand',sans-serif;font-size:15px;font-weight:700;color:#1A6640;background:rgba(255,255,255,.7);border:none;cursor:pointer;padding:10px 24px;border-radius:50px;transition:.25s;backdrop-filter:blur(6px);box-shadow:0 2px 12px rgba(26,95,168,.1);}
+.ucebne-btn:hover{background:#fff;box-shadow:0 4px 20px rgba(26,95,168,.15);}
+@media(max-width:720px){.ucebne-grid{grid-template-columns:repeat(2,1fr);} .ucebne-row-sep{display:none;}}
+@media(max-width:420px){.ucebne-grid{gap:8px;}}
+
+
+
+
+
+
+
+
+/* pricing section blob */
+
+
+
+/* ===== DOWNLOAD BUTTONS ===== */
+.download-section{margin-top:24px;}
+.download-btn{
+  display:inline-flex;
+  align-items:center;
+  gap:10px;
+  background:#1A5FA8;
+  color:#fff;
+  font-family:'Quicksand',sans-serif;
+  font-size:14px;
+  font-weight:700;
+  padding:13px 22px;
+  border-radius:50px;
+  text-decoration:none;
+  margin:0 8px 10px 0;
+  transition:.2s;
+}
+.download-btn:hover{background:#2B6EA8;transform:translateY(-2px);}
+.download-btn .dl-icon{font-size:18px;}
+
+
+
+/* ===== ABOUT EXPANDABLE ===== */
+.about-teaser{
+  text-align:center;
+  margin:32px auto 0;
+  max-width:700px;
+}
+.about-expand-btn{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  font-family:'Quicksand',sans-serif;
+  font-size:15px;
+  font-weight:700;
+  color:var(--blue);
+  background:rgba(255,255,255,.7);
+  border:none;
+  cursor:pointer;
+  padding:10px 24px;
+  border-radius:50px;
+  transition:.25s;
+  backdrop-filter:blur(6px);
+  box-shadow:0 2px 12px rgba(26,95,168,.1);
+}
+.about-expand-btn:hover{background:#fff;box-shadow:0 4px 20px rgba(26,95,168,.15);}
+.about-expand-btn .arrow{
+  display:inline-block;
+  font-size:18px;
+  transition:transform .35s;
+  line-height:1;
+}
+.about-expand-btn.open .arrow{transform:rotate(180deg);}
+.about-text{
+  max-height:0;
+  overflow:hidden;
+  transition:max-height .5s cubic-bezier(.4,0,.2,1), opacity .4s;
+  opacity:0;
+  text-align:left;
+}
+.about-text.open{
+  max-height:2000px;
+  opacity:1;
+}
+.about-text-inner{
+  font-family:'Inter',sans-serif;
+  font-size:15px;
+  color:#444;
+  line-height:1.8;
+  background:rgba(255,255,255,.75);
+  border-radius:20px;
+  padding:28px 32px;
+  margin-top:16px;
+  box-shadow:0 2px 16px rgba(26,95,168,.07);
+  backdrop-filter:blur(6px);
+}
+.about-text-inner p{margin-bottom:12px;}
+.about-text-inner p:last-child{margin-bottom:0;}
+
+/* ===== O NÁS SECTION ===== */
+.onas-body{max-width:760px;margin:0 auto;text-align:center;}
+.onas-card{background:#fff;border-radius:24px;padding:36px 44px 28px;box-shadow:0 4px 24px rgba(26,95,168,.08);margin-bottom:28px;text-align:center;}
+@media(max-width:600px){.onas-card{padding:24px 20px 20px;}}
+/* subtle card shadow — all rounded carriers */
+.service-card,.news-card,.contact-card,.price-card,.why-item,.z-item,.gallery-item,.testi-card,.map-wrap,.about-text-inner{box-shadow:0 4px 24px rgba(26,95,168,.08);}
+@keyframes cloudDriftA{0%,100%{transform:translateX(0) translateY(0);}30%{transform:translateX(28px) translateY(-10px);}65%{transform:translateX(-12px) translateY(8px);}}
+@keyframes cloudDriftB{0%,100%{transform:translateX(0) translateY(0);}40%{transform:translateX(-24px) translateY(12px);}75%{transform:translateX(18px) translateY(-6px);}}
+@keyframes cloudDriftC{0%,100%{transform:translateX(0) translateY(0) scale(1);}50%{transform:translateX(16px) translateY(-14px) scale(1.06);}}
+.onas-body p{font-family:'Inter',sans-serif;font-size:16px;color:#444;line-height:1.78;margin-bottom:16px;}
+.onas-expand{max-height:0;overflow:hidden;transition:max-height .45s ease-out;}
+.onas-expand.open{max-height:3000px;}
+.onas-expand p{font-family:'Inter',sans-serif;font-size:16px;color:#444;line-height:1.78;margin-bottom:16px;text-align:center;}
+.onas-expand ul{list-style:none;padding:0;margin:4px 0 16px;display:inline-block;text-align:left;}
+.onas-expand ul li{font-family:'Inter',sans-serif;font-size:15px;color:#444;line-height:1.7;padding-left:22px;position:relative;margin-bottom:6px;}
+.onas-expand ul li::before{content:'—';position:absolute;left:0;color:#5590C4;font-weight:700;}
+.onas-toggle{display:flex;flex-direction:column;align-items:center;gap:5px;background:none;border:none;cursor:pointer;margin:24px auto 0;padding:6px 12px;color:#1a1a1a;transition:color .2s;}
+.onas-toggle:hover{color:#5590C4;}
+.onas-chevrons{display:flex;flex-direction:column;align-items:center;gap:2px;transition:transform .4s ease;}
+.onas-toggle.open .onas-chevrons{transform:rotate(180deg);}
+.onas-toggle-label{font-family:'Quicksand',sans-serif;font-size:13px;font-weight:700;letter-spacing:.3px;}
+/* ===== PPV SUBSECTION ===== */
+.ppv-section{max-width:720px;margin:48px auto 0;text-align:center;padding-top:40px;border-top:1.5px solid rgba(0,0,0,.07);}
+.ppv-section h3{font-family:'Quicksand',sans-serif;font-size:clamp(18px,3vw,24px);font-weight:700;color:#1A5FA8;margin-bottom:20px;}
+.ppv-section>p{font-family:'Inter',sans-serif;font-size:16px;color:#444;line-height:1.78;margin-bottom:0;}
+.ppv-btn{display:inline-flex;align-items:center;gap:9px;background:var(--blue-light);color:#fff;font-family:'Quicksand',sans-serif;font-size:14px;font-weight:700;padding:12px 26px;border-radius:50px;border:none;cursor:pointer;margin-top:20px;text-decoration:none;transition:background .2s,transform .15s;}
+.ppv-btn:hover{background:#1A5FA8;transform:translateY(-1px);}
+
+/* ===== CLOUDS ===== */
+.cloud-deco{position:absolute;pointer-events:none;opacity:0.4;z-index:0;}
+@keyframes cloudDrift1{0%{transform:translateX(0) translateY(0);}33%{transform:translateX(20px) translateY(-8px);}66%{transform:translateX(8px) translateY(5px);}100%{transform:translateX(0) translateY(0);}}
+@keyframes cloudDrift6{0%{transform:translateX(0) translateY(0);}40%{transform:translateX(-15px) translateY(10px);}70%{transform:translateX(25px) translateY(-5px);}100%{transform:translateX(0) translateY(0);}}
+@keyframes cloudDrift7{0%{transform:translateX(0) translateY(0) scale(1);}50%{transform:translateX(12px) translateY(-12px) scale(1.04);}100%{transform:translateX(0) translateY(0) scale(1);}}
+@keyframes cloudDrift8{0%{transform:translateX(0);}30%{transform:translateX(-20px);}70%{transform:translateX(10px);}100%{transform:translateX(0);}}
+@keyframes cloudDrift2{0%{transform:translateX(0);}50%{transform:translateX(-22px);}100%{transform:translateX(0);}}
+@keyframes cloudDrift3{0%{transform:translateX(0);}50%{transform:translateX(14px);}100%{transform:translateX(0);}}
+.cloud-1{animation:cloudDrift1 12s ease-in-out infinite;}
+.cloud-2{animation:cloudDrift2 16s ease-in-out infinite;}
+.cloud-3{animation:cloudDrift3 10s ease-in-out infinite;}
+.cloud-4{animation:cloudDrift1 18s ease-in-out infinite;}
+.cloud-5{animation:cloudDrift2 14s ease-in-out infinite;}
+.cloud-6{animation:cloudDrift6 19s ease-in-out infinite;}
+.cloud-7{animation:cloudDrift7 11s ease-in-out infinite;}
+.cloud-8{animation:cloudDrift8 22s ease-in-out infinite;}
+.cloud-9{animation:cloudDrift1 15s ease-in-out infinite 3s;}
+.cloud-10{animation:cloudDrift2 20s ease-in-out infinite 5s;}
+.cloud-11{animation:cloudDrift3 13s ease-in-out infinite 2s;}
+.cloud-12{animation:cloudDrift6 17s ease-in-out infinite 7s;}
+
+
+/* ===== ABOUT EXPANDABLE ===== */
+.about-teaser{
+  text-align:center;
+  margin:32px auto 0;
+  max-width:700px;
+}
+.about-expand-btn{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  font-family:'Quicksand',sans-serif;
+  font-size:15px;
+  font-weight:700;
+  color:var(--blue);
+  background:rgba(255,255,255,.7);
+  border:none;
+  cursor:pointer;
+  padding:10px 24px;
+  border-radius:50px;
+  transition:.25s;
+  backdrop-filter:blur(6px);
+  box-shadow:0 2px 12px rgba(26,95,168,.1);
+}
+.about-expand-btn:hover{background:#fff;box-shadow:0 4px 20px rgba(26,95,168,.15);}
+.about-expand-btn .arrow{
+  display:inline-block;
+  font-size:18px;
+  transition:transform .35s;
+  line-height:1;
+}
+.about-expand-btn.open .arrow{transform:rotate(180deg);}
+.about-text{
+  max-height:0;
+  overflow:hidden;
+  transition:max-height .5s cubic-bezier(.4,0,.2,1), opacity .4s;
+  opacity:0;
+  text-align:left;
+}
+.about-text.open{
+  max-height:2000px;
+  opacity:1;
+}
+.about-text-inner{
+  font-family:'Inter',sans-serif;
+  font-size:15px;
+  color:#444;
+  line-height:1.8;
+  background:rgba(255,255,255,.75);
+  border-radius:20px;
+  padding:28px 32px;
+  margin-top:16px;
+  box-shadow:0 2px 16px rgba(26,95,168,.07);
+  backdrop-filter:blur(6px);
+}
+.about-text-inner p{margin-bottom:12px;}
+.about-text-inner p:last-child{margin-bottom:0;}
+
+/* scroll fade-in */
+.fade-in{opacity:0;transform:translateY(24px);transition:opacity .6s ease,transform .6s ease;}
+.fade-in.visible{opacity:1;transform:translateY(0);}
+</style>
+</head>
+<body>
+
+  <div class="blob blob-2"></div>
+  <div class="blob blob-3"></div>
+  <div class="blob blob-4"></div>
+  <div class="blob blob-5"></div>
+</div>
+
+<!-- ===========================
+     NAV
+=========================== -->
+<!-- Pinned logo – only visible on desktop when nav is hidden -->
+<a href="#home" id="nav-pin-logo" aria-label="Včielka – domov">
+  <img src="VCIELKA_LOGO.png" alt="Materská škola Včielka" class="cms-logo"/>
+</a>
+
+<nav class="nav">
+  <a href="#home" class="nav-logo">
+    <img src="VCIELKA_LOGO.png" alt="Materská škola Včielka" class="cms-logo" style="height:50px;width:auto;object-fit:contain;"/>
+  </a>
+  <nav class="nav-links">
+    <a href="#o-nas">O nás</a>
+    <a href="#sluzby">Služby</a>
+    <a href="#program">Program</a>
+    <a href="#galeria">Galéria</a>
+    <a href="#aktuality">Aktuality</a>
+    <a href="#cennik">Cenník</a>
+    <a href="skolka.html" class="nav-vs">🔐 Virtuálna škôlka</a>
+    <a href="#kontakt">Na stiahnutie</a>
+    <a href="#kontakt" class="nav-cta">Kontakt</a>
+  </nav>
+  <div class="nav-burger" id="burger" aria-label="Menu">
+    <span></span><span></span><span></span>
+  </div>
+</nav>
+
+<!-- Mobile menu -->
+<div class="nav-mobile" id="mobileMenu">
+  <button class="nav-close" id="menuClose">✕</button>
+  <a href="#o-nas"     class="menu-link" style="--i:0">O nás</a>
+  <a href="#sluzby"    class="menu-link" style="--i:1">Naše služby</a>
+  <a href="#program"   class="menu-link" style="--i:2">Program</a>
+  <a href="#galeria"   class="menu-link" style="--i:3">Galéria</a>
+  <a href="#aktuality" class="menu-link" style="--i:4">Aktuality</a>
+  <a href="#cennik"    class="menu-link" style="--i:5">Cenník</a>
+  <a href="skolka.html" class="menu-link" style="--i:6">🔐 Virtuálna škôlka</a>
+  <a href="#kontakt"   class="menu-link" style="--i:7">Na stiahnutie</a>
+  <a href="#kontakt"   class="nav-cta menu-link" style="--i:8">Kontakt</a>
+</div>
+
+<!-- ===========================
+     HERO
+=========================== -->
+<section class="hero" id="home">
+
+  <!-- fullscreen background photo -->
+  <img id="cms-hero-bg" class="hero-bg-img" src="" alt="Hero" style="display:none;"/>
+  <!-- dark overlay for readability -->
+  <div class="hero-overlay"></div>
+  <!-- floating bee decorations -->
+  <img class="hero-bee-deco" src="https://www.skolka-vcielka.sk/images/header_imgs/vcela2.png" alt=""/>
+  <img class="hero-bee-deco2" src="https://www.skolka-vcielka.sk/images/header_imgs/vcela3.png" alt=""/>
+  <!-- content -->
+  <div style="width:100%;max-width:1100px;margin:0 auto;padding:0 0 0 48px;" class="hero-wrapper">
+  <div class="hero-content fade-in">
+    <div class="hero-badge">🐝 Ružinov, Bratislava</div>
+    <h1 id="cms-hero-title" style="opacity:0;transition:opacity .35s;"></h1>
+    <p class="hero-desc" id="cms-hero-subtitle" style="opacity:0;transition:opacity .35s .08s;"></p>
+    <div class="hero-btns">
+      <a href="#sluzby" class="btn btn-primary">Zistiť viac o škôlke</a>
+      <a href="#kontakt" class="btn btn-outline">Kontaktujte nás</a>
+    </div>
+  </div>
+  </div>
+  <!-- hero news blob -->
+  <div class="hero-news-blob" id="heroNewsBlob" onclick="openNewsFromHero()" style="display:none;">
+    <div class="hero-blob-circle">
+      <img class="hero-blob-photo" id="heroBlobPhoto" src="" alt="" style="display:none;"/>
+    </div>
+    <div class="hero-blob-text">
+      <span class="hero-news-title" id="heroNewsTitle"></span>
+    </div>
+  </div>
+  <!-- white wave ON TOP of photo at bottom -->
+  <div class="hero-wave">
+    <svg viewBox="0 0 1440 80" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M0,80 L0,40 Q360,0 720,40 Q1080,80 1440,40 L1440,80 Z" fill="#fff"/>
+    </svg>
+  </div>
+</section>
+
+
+
+<!-- ===========================
+     STATS
+=========================== -->
+
+<div style="position:relative;overflow:hidden;">
+<div class="cloud-deco cloud-3" style="position:absolute;pointer-events:none;opacity:0.4;z-index:0;top:10%;left:3%;"><svg viewBox="0 0 74.6 41.8" xmlns="http://www.w3.org/2000/svg" style="width:80px;display:block;"><path d="M50.3,5.3c-3.3,0-6.2,1.1-8.6,3C38.2,3.3,32.5,0,26,0,15.7,0,7.2,8.4,7.2,18.8v1.5c-4.1.8-7.2,4.3-7.2,8.6,0,3.8,2.5,7,5.9,8.5,2.2,1,4.8,1.4,7.5,1.2,2.2,2,5.1,3.2,8.2,3.2h41.1c6.6,0,11.9-5.3,11.9-11.9,0-16.2-8.4-24.6-24.3-24.6Z" fill="#fff"/></svg></div><div class="cloud-deco cloud-7" style="position:absolute;pointer-events:none;opacity:0.4;z-index:0;top:5%;right:-1%;"><svg viewBox="0 0 198.9 90.1" xmlns="http://www.w3.org/2000/svg" style="width:160px;display:block;"><path d="M142.2,47.3c0-18.8-15.3-34.1-34.1-34.1-8.2,0-15.7,2.9-21.6,7.6C77.8,8.2,63.5,0,47.2,0,21.1,0,0,21.1,0,47.2v13c0,16.5,13.4,29.9,29.9,29.9h139.1c16.5,0,29.9-13.4,29.9-29.9,0,0,0-11.9-56.7-12.9Z" fill="#fff"/></svg></div><div class="cloud-deco cloud-11" style="position:absolute;pointer-events:none;opacity:0.4;z-index:0;bottom:5%;left:45%;"><svg viewBox="0 0 74.6 41.8" xmlns="http://www.w3.org/2000/svg" style="width:60px;display:block;"><path d="M50.3,5.3c-3.3,0-6.2,1.1-8.6,3C38.2,3.3,32.5,0,26,0,15.7,0,7.2,8.4,7.2,18.8v1.5c-4.1.8-7.2,4.3-7.2,8.6,0,3.8,2.5,7,5.9,8.5,2.2,1,4.8,1.4,7.5,1.2,2.2,2,5.1,3.2,8.2,3.2h41.1c6.6,0,11.9-5.3,11.9-11.9,0-16.2-8.4-24.6-24.3-24.6Z" fill="#fff"/></svg></div>
+<div class="stats bg-white fade-in" style="position:relative;z-index:1;">
+  <div class="stat"><div class="stat-num">3</div><div class="stat-label">triedy</div></div>
+  <div class="stat"><div class="stat-num">2,5–6</div><div class="stat-label">vek detí (roky)</div></div>
+  <div class="stat"><div class="stat-num">15+</div><div class="stat-label">aktivít & krúžkov</div></div>
+  <div class="stat"><div class="stat-num">MŠ SR</div><div class="stat-label">akreditovaná MŠVVaŠ</div></div>
+</div>
+</div>
+
+<!-- wave stats→o-nas -->
+<svg class="wave" viewBox="0 0 1440 55" preserveAspectRatio="none" style="display:block;margin-bottom:-2px;background:#fff;" xmlns="http://www.w3.org/2000/svg">
+  <path d="M0,35 C360,5 720,55 1080,20 C1260,5 1380,42 1440,30 L1440,55 L0,55Z" fill="#FDF0B9"/>
+</svg>
+
+<!-- ===========================
+     O NÁS
+=========================== -->
+<section class="section bg-yellow-pale" id="o-nas" style="position:relative;padding-bottom:48px;">
+  <!-- clouds -->
+  <div style="position:absolute;top:6%;right:2%;width:190px;opacity:0.45;pointer-events:none;z-index:0;animation:cloudDriftA 9s ease-in-out infinite;"><svg viewBox="0 0 198.9 90.1" xmlns="http://www.w3.org/2000/svg"><path d="M142.2,47.3c0-18.8-15.3-34.1-34.1-34.1-8.2,0-15.7,2.9-21.6,7.6C77.8,8.2,63.5,0,47.2,0,21.1,0,0,21.1,0,47.2v13c0,16.5,13.4,29.9,29.9,29.9h139.1c16.5,0,29.9-13.4,29.9-29.9,0,0,0-11.9-56.7-12.9Z" fill="#fff"/></svg></div>
+  <div style="position:absolute;top:42%;left:-1%;width:150px;opacity:0.4;pointer-events:none;z-index:0;animation:cloudDriftB 12s ease-in-out infinite 1.5s;"><svg viewBox="0 0 218.2 104.9" xmlns="http://www.w3.org/2000/svg"><path d="M126.1,13.2c-8.2,0-15.7,2.9-21.6,7.6C95.8,8.2,81.5,0,65.2,0,39.1,0,18,21.1,18,47.2c0,1.3,0,2.5.1,3.8C7.8,53,0,61.8,0,72.5c0,9.6,6.2,17.5,14.8,21.3,5.6,2.5,12.1,3.5,18.9,3,5.4,5,12.6,8.1,20.5,8.1h134.1c16.5,0,29.9-13.4,29.9-29.9v-15.9c0-23-5.7-45.1-92.1-45.9Z" fill="#fff"/></svg></div>
+  <div style="position:absolute;bottom:10%;right:4%;width:105px;opacity:0.45;pointer-events:none;z-index:0;animation:cloudDriftC 10s ease-in-out infinite 3s;"><svg viewBox="0 0 74.6 41.8" xmlns="http://www.w3.org/2000/svg"><path d="M50.3,5.3c-3.3,0-6.2,1.1-8.6,3C38.2,3.3,32.5,0,26,0,15.7,0,7.2,8.4,7.2,18.8v1.5c-4.1.8-7.2,4.3-7.2,8.6,0,3.8,2.5,7,5.9,8.5,2.2,1,4.8,1.4,7.5,1.2,2.2,2,5.1,3.2,8.2,3.2h41.1c6.6,0,11.9-5.3,11.9-11.9,0-16.2-8.4-24.6-24.3-24.6Z" fill="#fff"/></svg></div>
+  <div style="position:absolute;bottom:18%;left:28%;width:72px;opacity:0.35;pointer-events:none;z-index:0;animation:cloudDriftA 14s ease-in-out infinite 5s;"><svg viewBox="0 0 74.6 41.8" xmlns="http://www.w3.org/2000/svg"><path d="M50.3,5.3c-3.3,0-6.2,1.1-8.6,3C38.2,3.3,32.5,0,26,0,15.7,0,7.2,8.4,7.2,18.8v1.5c-4.1.8-7.2,4.3-7.2,8.6,0,3.8,2.5,7,5.9,8.5,2.2,1,4.8,1.4,7.5,1.2,2.2,2,5.1,3.2,8.2,3.2h41.1c6.6,0,11.9-5.3,11.9-11.9,0-16.2-8.4-24.6-24.3-24.6Z" fill="#fff"/></svg></div>
+  <div class="section-center fade-in" style="position:relative;z-index:1;">
+    <span class="label">O nás</span>
+    <h2>Kto sme</h2>
+  </div>
+  <div class="onas-body fade-in" style="position:relative;z-index:1;">
+    <div class="onas-card">
+      <p id="cms-onas-p1"></p>
+      <p id="cms-onas-p2"></p>
+      <div class="onas-expand" id="onasExpand">
+        <p id="cms-onas-extra-p1"></p>
+        <p id="cms-onas-extra-p2"></p>
+        <ul id="cms-onas-list"></ul>
+      </div>
+      <button class="onas-toggle" id="onasBtn" onclick="toggleOnas()">
+        <div class="onas-chevrons">
+          <svg viewBox="0 0 24 13" width="28" height="15" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2 2 L12 11 L22 2" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+        <span class="onas-toggle-label" id="onasBtnLabel">Čítať viac</span>
+      </button>
+    </div>
+
+    <!-- Povinné predprimárne vzdelávanie -->
+    <div class="ppv-section fade-in">
+      <h3>Povinné predprimárne vzdelávanie</h3>
+      <p id="cms-ppv-intro">Predprimárne vzdelávanie je povinné pre všetky deti, ktoré dovŕšia vek 5 rokov do 31. 8. v roku, ktorý predchádza začiatku školského roka, od ktorého bude dieťa plniť povinnú školskú dochádzku v základnej škole. Rodič má zákonnú povinnosť prihlásiť dieťa na povinné predprimárne vzdelávanie. Povinné predprimárne vzdelávanie v materskej škole trvá jeden školský rok.</p>
+      <a href="ppv.html" class="ppv-btn">Čítať viac →</a>
+    </div>
+  </div>
+</section>
+
+<!-- wave o-nas→services -->
+<svg class="wave" viewBox="0 0 1440 55" preserveAspectRatio="none" style="display:block;margin-bottom:-2px;background:#FDF0B9;" xmlns="http://www.w3.org/2000/svg">
+  <path d="M0,40 C280,5 600,55 900,22 C1100,5 1300,46 1440,28 L1440,55 L0,55Z" fill="#B4DEFF"/>
+</svg>
+
+<!-- ===========================
+     SERVICES
+=========================== -->
+<section class="section bg-blue-pale" id="sluzby" style="position:relative;overflow:visible;">
+    
+    <!-- CLOUD DECORATIONS SERVICES -->
+    <div class="cloud-deco cloud-4" style="position:absolute;top:5%;right:-1%;width:180px;opacity:0.4;pointer-events:none;z-index:0;"><svg viewBox="0 0 198.9 90.1" xmlns="http://www.w3.org/2000/svg"><path d="M142.2,47.3c0-18.8-15.3-34.1-34.1-34.1-8.2,0-15.7,2.9-21.6,7.6C77.8,8.2,63.5,0,47.2,0,21.1,0,0,21.1,0,47.2v13c0,16.5,13.4,29.9,29.9,29.9h139.1c16.5,0,29.9-13.4,29.9-29.9,0,0,0-11.9-56.7-12.9Z" fill="#fff"/></svg></div>
+    <div class="cloud-deco cloud-6" style="position:absolute;top:40%;left:-2%;width:140px;opacity:0.4;pointer-events:none;z-index:0;"><svg viewBox="0 0 218.2 104.9" xmlns="http://www.w3.org/2000/svg"><path d="M126.1,13.2c-8.2,0-15.7,2.9-21.6,7.6C95.8,8.2,81.5,0,65.2,0,39.1,0,18,21.1,18,47.2c0,1.3,0,2.5.1,3.8C7.8,53,0,61.8,0,72.5c0,9.6,6.2,17.5,14.8,21.3,5.6,2.5,12.1,3.5,18.9,3,5.4,5,12.6,8.1,20.5,8.1h134.1c16.5,0,29.9-13.4,29.9-29.9v-15.9c0-23-5.7-45.1-92.1-45.9Z" fill="#fff"/></svg></div>
+    <div class="cloud-deco cloud-7" style="position:absolute;bottom:8%;right:5%;width:100px;opacity:0.4;pointer-events:none;z-index:0;"><svg viewBox="0 0 74.6 41.8" xmlns="http://www.w3.org/2000/svg"><path d="M50.3,5.3c-3.3,0-6.2,1.1-8.6,3C38.2,3.3,32.5,0,26,0,15.7,0,7.2,8.4,7.2,18.8v1.5c-4.1.8-7.2,4.3-7.2,8.6,0,3.8,2.5,7,5.9,8.5,2.2,1,4.8,1.4,7.5,1.2,2.2,2,5.1,3.2,8.2,3.2h41.1c6.6,0,11.9-5.3,11.9-11.9,0-16.2-8.4-24.6-24.3-24.6Z" fill="#fff"/></svg></div>
+    <div class="cloud-deco cloud-5" style="position:absolute;bottom:2%;left:30%;width:80px;opacity:0.4;pointer-events:none;z-index:0;"><svg viewBox="0 0 74.6 41.8" xmlns="http://www.w3.org/2000/svg"><path d="M50.3,5.3c-3.3,0-6.2,1.1-8.6,3C38.2,3.3,32.5,0,26,0,15.7,0,7.2,8.4,7.2,18.8v1.5c-4.1.8-7.2,4.3-7.2,8.6,0,3.8,2.5,7,5.9,8.5,2.2,1,4.8,1.4,7.5,1.2,2.2,2,5.1,3.2,8.2,3.2h41.1c6.6,0,11.9-5.3,11.9-11.9,0-16.2-8.4-24.6-24.3-24.6Z" fill="#fff"/></svg></div>
+    <div class="section-inner" style="position:relative;z-index:1;">
+  <div class="section-center fade-in">
+    <span class="label">Čo vám ponúkame</span>
+    <h2>Naše služby a aktivity</h2>
+    <p class="desc">Bohatý program pre všestranný rozvoj — od jazykov až po šport a umenie.</p>
+  </div>
+  <div class="services-grid fade-in" id="cms-activities"></div>
+  </div>
+</section>
+
+<!-- wave services→schedule -->
+<svg class="wave" viewBox="0 0 1440 55" preserveAspectRatio="none" style="display:block;margin-bottom:-2px;background:#B4DEFF;" xmlns="http://www.w3.org/2000/svg">
+  <path d="M0,20 C300,55 650,0 950,36 C1150,58 1350,8 1440,26 L1440,55 L0,55Z" fill="#BEEED7"/>
+</svg>
+
+<!-- ===========================
+     SCHEDULE + ZVEDAVA
+=========================== -->
+<section class="section bg-green-pale" id="program" style="position:relative;overflow:visible;">
+    <div class="cloud-deco cloud-4" style="position:absolute;pointer-events:none;opacity:0.4;z-index:0;top:5%;right:-1%;"><svg viewBox="0 0 198.9 90.1" xmlns="http://www.w3.org/2000/svg" style="width:180px;display:block;"><path d="M142.2,47.3c0-18.8-15.3-34.1-34.1-34.1-8.2,0-15.7,2.9-21.6,7.6C77.8,8.2,63.5,0,47.2,0,21.1,0,0,21.1,0,47.2v13c0,16.5,13.4,29.9,29.9,29.9h139.1c16.5,0,29.9-13.4,29.9-29.9,0,0,0-11.9-56.7-12.9Z" fill="#fff"/></svg></div><div class="cloud-deco cloud-8" style="position:absolute;pointer-events:none;opacity:0.4;z-index:0;top:40%;left:1%;"><svg viewBox="0 0 74.6 41.8" xmlns="http://www.w3.org/2000/svg" style="width:80px;display:block;"><path d="M50.3,5.3c-3.3,0-6.2,1.1-8.6,3C38.2,3.3,32.5,0,26,0,15.7,0,7.2,8.4,7.2,18.8v1.5c-4.1.8-7.2,4.3-7.2,8.6,0,3.8,2.5,7,5.9,8.5,2.2,1,4.8,1.4,7.5,1.2,2.2,2,5.1,3.2,8.2,3.2h41.1c6.6,0,11.9-5.3,11.9-11.9,0-16.2-8.4-24.6-24.3-24.6Z" fill="#fff"/></svg></div><div class="cloud-deco cloud-2" style="position:absolute;pointer-events:none;opacity:0.4;z-index:0;bottom:6%;right:2%;"><svg viewBox="0 0 218.2 104.9" xmlns="http://www.w3.org/2000/svg" style="width:150px;display:block;"><path d="M126.1,13.2c-8.2,0-15.7,2.9-21.6,7.6C95.8,8.2,81.5,0,65.2,0,39.1,0,18,21.1,18,47.2c0,1.3,0,2.5.1,3.8C7.8,53,0,61.8,0,72.5c0,9.6,6.2,17.5,14.8,21.3,5.6,2.5,12.1,3.5,18.9,3,5.4,5,12.6,8.1,20.5,8.1h134.1c16.5,0,29.9-13.4,29.9-29.9v-15.9c0-23-5.7-45.1-92.1-45.9Z" fill="#fff"/></svg></div><div class="cloud-deco cloud-12" style="position:absolute;pointer-events:none;opacity:0.4;z-index:0;bottom:12%;left:40%;"><svg viewBox="0 0 74.6 41.8" xmlns="http://www.w3.org/2000/svg" style="width:65px;display:block;"><path d="M50.3,5.3c-3.3,0-6.2,1.1-8.6,3C38.2,3.3,32.5,0,26,0,15.7,0,7.2,8.4,7.2,18.8v1.5c-4.1.8-7.2,4.3-7.2,8.6,0,3.8,2.5,7,5.9,8.5,2.2,1,4.8,1.4,7.5,1.2,2.2,2,5.1,3.2,8.2,3.2h41.1c6.6,0,11.9-5.3,11.9-11.9,0-16.2-8.4-24.6-24.3-24.6Z" fill="#fff"/></svg></div>
+    <div class="section-inner" style="position:relative;z-index:1;">
+      <div class="section-center fade-in">
+        <span class="label" style="color:#2E7A4E;">Náš program</span>
+        <h2>Zvedavá Včielka</h2>
+        <p class="desc">Vzdelávací program špeciálne navrhnutý pre všestranný rozvoj predškolského dieťaťa.</p>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;grid-auto-rows:1fr;gap:12px;max-width:700px;margin:0 auto;" class="fade-in">
+        <div class="z-item"><span id="cms-icon-social" class="z-icon">🐝</span><div><div class="z-item-title">Sociálno-emocionálny rozvoj</div><div class="z-item-desc">Empatia, komunikácia, spolupráca</div></div></div>
+        <div class="z-item"><span id="cms-icon-kreativ" class="z-icon">🎨</span><div><div class="z-item-title">Kreatívne myslenie</div><div class="z-item-desc">Umenie, hudba, tvorivé hry</div></div></div>
+        <div class="z-item"><span id="cms-icon-sport" class="z-icon">🏃</span><div><div class="z-item-title">Telesný rozvoj</div><div class="z-item-desc">Šport, pohyb, zdravý životný štýl</div></div></div>
+        <div class="z-item"><span id="cms-icon-intellect" class="z-icon">🔬</span><div><div class="z-item-title">Intelektuálny rozvoj</div><div class="z-item-desc">Zvedavosť, pokusy, objavovanie</div></div></div>
+      </div>
+      <!-- ZVEDAVA EXPAND -->
+      <div style="margin-top:36px;text-align:center;">
+        <div style="display:inline-flex;gap:12px;flex-wrap:wrap;justify-content:center;">
+          <button class="about-expand-btn" id="zvedavaBtn" onclick="toggleZvedava()" style="font-size:14px;">
+            Viac o programe <span class="arrow">↓</span>
+          </button>
+          <button class="ucebne-btn" id="ucebneBtn" onclick="toggleUcebneInline()">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+            Učebné osnovy<span class="ucebne-arrow">↓</span>
+          </button>
+        </div>
+        <div class="about-text" id="zvedavaText" style="margin-top:32px;">
+          <div id="cms-program-text" class="about-text-inner" style="background:rgba(255,255,255,.65);max-width:700px;margin:0 auto;text-align:left;"></div>
+        </div>
+        <div class="about-text" id="ucebneInlineText" style="margin-top:32px;">
+          <div class="ucebne-inline-wrap">
+            <div class="ucebne-grid">
+              <div class="ucebne-card ucm-sep"><div class="ucebne-bubble"><div class="umonth">September</div></div><div class="ucebne-unit">Vitaj v škôlke</div><ul class="ucebne-topics"><li>Naša škôlka Včielka</li><li>Naša trieda</li><li>Moji kamaráti</li><li>Moja rodina</li></ul></div>
+              <div class="ucebne-card ucm-okt"><div class="ucebne-bubble"><div class="umonth">Október</div></div><div class="ucebne-unit">Farebná jeseň</div><ul class="ucebne-topics"><li>Jeseň a počasie</li><li>Stromy okolo nás</li><li>Vitamínový košík ovocia</li><li>Veľký kôš zeleniny</li></ul></div>
+              <div class="ucebne-card ucm-nov"><div class="ucebne-bubble"><div class="umonth">November</div></div><div class="ucebne-unit">Zdravie a bezpečnosť</div><ul class="ucebne-topics"><li>Zdravá výživa</li><li>Ľudské telo</li><li>Profesie</li><li>Bezpečnosť na ceste</li><li>Dopravné prostriedky</li></ul></div>
+              <div class="ucebne-card ucm-dec"><div class="ucebne-bubble"><div class="umonth">December</div></div><div class="ucebne-unit">Vianočná zima</div><ul class="ucebne-topics"><li>Privítanie Mikuláša</li><li>Zima a jej čaro</li><li>Pri vianočnom stromčeku</li><li>Živá a neživá príroda</li><li>Predmety a ich vlastnosti</li></ul></div>
+              <div class="ucebne-card ucm-jan"><div class="ucebne-bubble"><div class="umonth">Január</div></div><div class="ucebne-unit">Zasnežená krajina</div><ul class="ucebne-topics"><li>Živá a neživá príroda</li><li>Predmety a ich vlastnosti</li><li>Zvieratká v zime</li><li>Vtáčiky v zime</li></ul></div>
+              <div class="ucebne-row-sep"></div>
+              <div class="ucebne-card ucm-feb"><div class="ucebne-bubble"><div class="umonth">Február</div></div><div class="ucebne-unit">Radovánky rok čo rok</div><ul class="ucebne-topics"><li>Veselý karneval</li><li>Deň a noc, Dnes/včera/zajtra</li><li>Dni v týždni a mesiace v roku</li><li>Naša Zem vo vesmíre</li></ul></div>
+              <div class="ucebne-card ucm-mar"><div class="ucebne-bubble"><div class="umonth">Marec</div></div><div class="ucebne-unit">Rozprávková jar</div><ul class="ucebne-topics"><li>Krajina rozprávok</li><li>Pozdrav jari</li><li>Jarná záhradka</li><li>Na gazdovskom dvore</li></ul></div>
+              <div class="ucebne-card ucm-apr"><div class="ucebne-bubble"><div class="umonth">Apríl</div></div><div class="ucebne-unit">Cestou necestou</div><ul class="ucebne-topics"><li>Príroda okolo nás</li><li>Putovanie vody</li><li>Pri rybníku a vo vode</li><li>Chrobáčiky v tráve</li></ul></div>
+              <div class="ucebne-card ucm-maj"><div class="ucebne-bubble"><div class="umonth">Máj</div></div><div class="ucebne-unit">Ja a môj svet</div><ul class="ucebne-topics"><li>Lúka plná kvetov</li><li>Moja mamka mamička</li><li>Naše Slovensko</li><li>Naša Bratislava</li></ul></div>
+              <div class="ucebne-card ucm-jun"><div class="ucebne-bubble"><div class="umonth">Jún</div></div><div class="ucebne-unit">Veselé leto</div><ul class="ucebne-topics"><li>Deti sveta</li><li>Letom svetom</li><li>Podmorský svet</li><li>Exotické zvieratá</li><li>Rozlúčka so škôlkou</li></ul></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+</section>
+
+<!-- wave schedule→gallery -->
+<svg class="wave" viewBox="0 0 1440 55" preserveAspectRatio="none" style="display:block;margin-bottom:-2px;background:#BEEED7;" xmlns="http://www.w3.org/2000/svg">
+  <path d="M0,35 C400,5 800,55 1200,22 C1340,8 1410,40 1440,32 L1440,55 L0,55Z" fill="#B4DEFF"/>
+</svg>
+
+<!-- ===========================
+     GALLERY
+=========================== -->
+<section class="gallery-section bg-blue-pale" id="galeria" style="position:relative;">
+  <!-- CLOUD DECORATIONS GALLERY -->
+  <div class="cloud-deco cloud-10" style="position:absolute;top:8%;right:2%;width:160px;opacity:0.4;pointer-events:none;z-index:0;"><svg viewBox="0 0 198.9 90.1" xmlns="http://www.w3.org/2000/svg"><path d="M142.2,47.3c0-18.8-15.3-34.1-34.1-34.1-8.2,0-15.7,2.9-21.6,7.6C77.8,8.2,63.5,0,47.2,0,21.1,0,0,21.1,0,47.2v13c0,16.5,13.4,29.9,29.9,29.9h139.1c16.5,0,29.9-13.4,29.9-29.9,0,0,0-11.9-56.7-12.9Z" fill="#fff"/></svg></div>
+  <div class="cloud-deco cloud-7" style="position:absolute;bottom:15%;left:0%;width:100px;opacity:0.4;pointer-events:none;z-index:0;"><svg viewBox="0 0 74.6 41.8" xmlns="http://www.w3.org/2000/svg"><path d="M50.3,5.3c-3.3,0-6.2,1.1-8.6,3C38.2,3.3,32.5,0,26,0,15.7,0,7.2,8.4,7.2,18.8v1.5c-4.1.8-7.2,4.3-7.2,8.6,0,3.8,2.5,7,5.9,8.5,2.2,1,4.8,1.4,7.5,1.2,2.2,2,5.1,3.2,8.2,3.2h41.1c6.6,0,11.9-5.3,11.9-11.9,0-16.2-8.4-24.6-24.3-24.6Z" fill="#fff"/></svg></div>
+
+  <div class="section-inner"><div class="gallery-header fade-in">
+    <div>
+      <span class="label">Fotografie</span>
+      <h2>Zo života škôlky</h2>
+    </div>
+    <a href="#galeria" class="btn btn-primary" style="font-size:13px;padding:10px 22px;" onclick="event.preventDefault();openFullGallery()">Zobraziť celú galériu →</a>
+  </div>
+
+  <div class="gallery-track" id="galleryTrack">
+    <div class="gallery-item" style="display:flex;align-items:center;justify-content:center;font-family:\'Inter\',sans-serif;font-size:11px;color:#5590C4;">foto 1</div>
+    <div class="gallery-item" style="display:flex;align-items:center;justify-content:center;font-family:\'Inter\',sans-serif;font-size:11px;color:#5590C4;">foto 2</div>
+    <div class="gallery-item" style="display:flex;align-items:center;justify-content:center;font-family:\'Inter\',sans-serif;font-size:11px;color:#5590C4;">foto 3</div>
+    <div class="gallery-item" style="display:flex;align-items:center;justify-content:center;font-family:\'Inter\',sans-serif;font-size:11px;color:#5590C4;">foto 4</div>
+    <div class="gallery-item" style="display:flex;align-items:center;justify-content:center;font-family:\'Inter\',sans-serif;font-size:11px;color:#5590C4;">foto 5</div>
+    <div class="gallery-item" style="display:flex;align-items:center;justify-content:center;font-family:\'Inter\',sans-serif;font-size:11px;color:#5590C4;">foto 6</div>
+    <div class="gallery-item" style="display:flex;align-items:center;justify-content:center;font-family:\'Inter\',sans-serif;font-size:11px;color:#5590C4;">foto 7</div>
+    <div class="gallery-item" style="display:flex;align-items:center;justify-content:center;font-family:\'Inter\',sans-serif;font-size:11px;color:#5590C4;">foto 8</div>
+    <div class="gallery-item" style="display:flex;align-items:center;justify-content:center;font-family:\'Inter\',sans-serif;font-size:11px;color:#5590C4;">foto 9</div>
+    <div class="gallery-item" style="display:flex;align-items:center;justify-content:center;font-family:\'Inter\',sans-serif;font-size:11px;color:#5590C4;">foto 10</div>
+    <div class="gallery-item" style="display:flex;align-items:center;justify-content:center;font-family:\'Inter\',sans-serif;font-size:11px;color:#5590C4;">foto 11</div>
+    <div class="gallery-item" style="display:flex;align-items:center;justify-content:center;font-family:\'Inter\',sans-serif;font-size:11px;color:#5590C4;">foto 12</div>
+  </div>
+
+  <div class="gallery-dots" id="galleryDots">
+    <button class="gallery-dot active" data-idx="0"></button>
+    <button class="gallery-dot" data-idx="1"></button>
+    <button class="gallery-dot" data-idx="2"></button>
+    <button class="gallery-dot" data-idx="3"></button>
+  </div></div>
+</section>
+
+<!-- wave gallery→news -->
+<svg class="wave" viewBox="0 0 1440 55" preserveAspectRatio="none" style="display:block;margin-bottom:-2px;background:#B4DEFF;" xmlns="http://www.w3.org/2000/svg">
+  <path d="M0,30 C300,5 700,55 1100,18 C1300,4 1400,40 1440,30 L1440,55 L0,55Z" fill="#FFF1D1"/>
+</svg>
+
+<!-- ===========================
+     NEWS
+=========================== -->
+<section class="section bg-warm" id="aktuality" style="position:relative;">
+    
+    <!-- CLOUD DECORATIONS NEWS -->
+    <div class="cloud-deco cloud-2" style="position:absolute;top:5%;right:0%;width:200px;opacity:0.4;pointer-events:none;z-index:0;"><svg viewBox="0 0 218.2 104.9" xmlns="http://www.w3.org/2000/svg"><path d="M126.1,13.2c-8.2,0-15.7,2.9-21.6,7.6C95.8,8.2,81.5,0,65.2,0,39.1,0,18,21.1,18,47.2c0,1.3,0,2.5.1,3.8C7.8,53,0,61.8,0,72.5c0,9.6,6.2,17.5,14.8,21.3,5.6,2.5,12.1,3.5,18.9,3,5.4,5,12.6,8.1,20.5,8.1h134.1c16.5,0,29.9-13.4,29.9-29.9v-15.9c0-23-5.7-45.1-92.1-45.9Z" fill="#fff"/></svg></div>
+    <div class="cloud-deco cloud-8" style="position:absolute;top:30%;left:-1%;width:110px;opacity:0.4;pointer-events:none;z-index:0;"><svg viewBox="0 0 74.6 41.8" xmlns="http://www.w3.org/2000/svg"><path d="M50.3,5.3c-3.3,0-6.2,1.1-8.6,3C38.2,3.3,32.5,0,26,0,15.7,0,7.2,8.4,7.2,18.8v1.5c-4.1.8-7.2,4.3-7.2,8.6,0,3.8,2.5,7,5.9,8.5,2.2,1,4.8,1.4,7.5,1.2,2.2,2,5.1,3.2,8.2,3.2h41.1c6.6,0,11.9-5.3,11.9-11.9,0-16.2-8.4-24.6-24.3-24.6Z" fill="#fff"/></svg></div>
+    <div class="cloud-deco cloud-3" style="position:absolute;bottom:10%;left:1%;width:160px;opacity:0.4;pointer-events:none;z-index:0;"><svg viewBox="0 0 198.9 90.1" xmlns="http://www.w3.org/2000/svg"><path d="M142.2,47.3c0-18.8-15.3-34.1-34.1-34.1-8.2,0-15.7,2.9-21.6,7.6C77.8,8.2,63.5,0,47.2,0,21.1,0,0,21.1,0,47.2v13c0,16.5,13.4,29.9,29.9,29.9h139.1c16.5,0,29.9-13.4,29.9-29.9,0,0,0-11.9-56.7-12.9Z" fill="#fff"/></svg></div>
+    <div class="cloud-deco cloud-12" style="position:absolute;bottom:2%;right:3%;width:90px;opacity:0.4;pointer-events:none;z-index:0;"><svg viewBox="0 0 74.6 41.8" xmlns="http://www.w3.org/2000/svg"><path d="M50.3,5.3c-3.3,0-6.2,1.1-8.6,3C38.2,3.3,32.5,0,26,0,15.7,0,7.2,8.4,7.2,18.8v1.5c-4.1.8-7.2,4.3-7.2,8.6,0,3.8,2.5,7,5.9,8.5,2.2,1,4.8,1.4,7.5,1.2,2.2,2,5.1,3.2,8.2,3.2h41.1c6.6,0,11.9-5.3,11.9-11.9,0-16.2-8.4-24.6-24.3-24.6Z" fill="#fff"/></svg></div>
+    <div class="section-inner" style="position:relative;z-index:1;"><div class="news-header fade-in">
+    <div>
+      <span class="label" style="color:#C49000;">Aktuality</span>
+      <h2>Novinky v škôlke</h2>
+    </div>
+    <a href="novinky.html" class="btn btn-primary" style="font-size:13px;padding:10px 22px;">Všetky novinky →</a>
+  </div>
+  <div class="news-grid fade-in" id="cms-news"></div>
+</section>
+
+
+
+<!-- ===========================
+     PRICING
+=========================== -->
+<section class="section" style="background:#1A5FA8;padding-top:110px;padding-bottom:90px;position:relative;" id="cennik">
+  <!-- wave top -->
+  <div style="position:absolute;top:-1px;left:0;width:100%;line-height:0;pointer-events:none;z-index:2;">
+    <svg viewBox="0 0 1440 70" preserveAspectRatio="none" style="width:100%;display:block;" xmlns="http://www.w3.org/2000/svg">
+      <path d="M0,0 L1440,0 L1440,18 C960,62 480,62 0,18 Z" fill="#FFF1D1"/>
+    </svg>
+  </div>
+  <!-- wave bottom -->
+  <div style="position:absolute;bottom:-1px;left:0;width:100%;line-height:0;pointer-events:none;z-index:2;">
+    <svg viewBox="0 0 1440 70" preserveAspectRatio="none" style="width:100%;display:block;" xmlns="http://www.w3.org/2000/svg">
+      <path d="M0,70 L1440,70 L1440,70 L0,70 Z" fill="#B4DEFF"/>
+    </svg>
+  </div>
+    <div class="section-inner">
+  <div class="section-center fade-in">
+    <span class="label" style="color:#F9C832;">Transparentné ceny</span>
+    <h2 style="color:#fff;">Cenník školného</h2>
+    <p class="desc" style="color:rgba(255,255,255,.65);">Celodenná aj poldenná dochádzka, strava vrátane možnosti pre deti s intoleranciami.</p>
+  </div>
+  <div class="pricing-grid fade-in">
+    <div class="price-card">
+      <div class="price-header dark"><h3>Celodenná dochádzka</h3></div>
+      <div class="price-body">
+        <div class="price-amount" id="cms-price-full">410 €</div>
+        <div class="price-period">/ mesiac</div>
+        <div class="price-detail" id="cms-price-full-detail">Celodenná strava: 5,04 € / deň<br>Pre deti s intoleranciami: cena dohodou</div>
+      </div>
+    </div>
+    <div class="price-card">
+      <div class="price-header yellow"><h3>Poldenná dochádzka</h3></div>
+      <div class="price-body">
+        <div class="price-amount" id="cms-price-half">340 €</div>
+        <div class="price-period">/ mesiac · obmedzený počet</div>
+        <div class="price-detail" id="cms-price-half-detail">Poldenná strava: 4,02 € / deň<br>Pre deti s intoleranciami: cena dohodou</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+
+<!-- ===========================
+     CONTACT
+=========================== -->
+<section class="section bg-blue-pale" id="kontakt" style="position:relative;">
+  <div class="cloud-deco cloud-5" style="position:absolute;pointer-events:none;opacity:0.4;z-index:0;top:5%;right:-1%;"><svg viewBox="0 0 218.2 104.9" xmlns="http://www.w3.org/2000/svg" style="width:160px;display:block;"><path d="M126.1,13.2c-8.2,0-15.7,2.9-21.6,7.6C95.8,8.2,81.5,0,65.2,0,39.1,0,18,21.1,18,47.2c0,1.3,0,2.5.1,3.8C7.8,53,0,61.8,0,72.5c0,9.6,6.2,17.5,14.8,21.3,5.6,2.5,12.1,3.5,18.9,3,5.4,5,12.6,8.1,20.5,8.1h134.1c16.5,0,29.9-13.4,29.9-29.9v-15.9c0-23-5.7-45.1-92.1-45.9Z" fill="#fff"/></svg></div><div class="cloud-deco cloud-11" style="position:absolute;pointer-events:none;opacity:0.4;z-index:0;top:30%;left:1%;"><svg viewBox="0 0 74.6 41.8" xmlns="http://www.w3.org/2000/svg" style="width:75px;display:block;"><path d="M50.3,5.3c-3.3,0-6.2,1.1-8.6,3C38.2,3.3,32.5,0,26,0,15.7,0,7.2,8.4,7.2,18.8v1.5c-4.1.8-7.2,4.3-7.2,8.6,0,3.8,2.5,7,5.9,8.5,2.2,1,4.8,1.4,7.5,1.2,2.2,2,5.1,3.2,8.2,3.2h41.1c6.6,0,11.9-5.3,11.9-11.9,0-16.2-8.4-24.6-24.3-24.6Z" fill="#fff"/></svg></div><div class="cloud-deco cloud-8" style="position:absolute;pointer-events:none;opacity:0.4;z-index:0;bottom:8%;right:2%;"><svg viewBox="0 0 198.9 90.1" xmlns="http://www.w3.org/2000/svg" style="width:130px;display:block;"><path d="M142.2,47.3c0-18.8-15.3-34.1-34.1-34.1-8.2,0-15.7,2.9-21.6,7.6C77.8,8.2,63.5,0,47.2,0,21.1,0,0,21.1,0,47.2v13c0,16.5,13.4,29.9,29.9,29.9h139.1c16.5,0,29.9-13.4,29.9-29.9,0,0,0-11.9-56.7-12.9Z" fill="#fff"/></svg></div><div class="cloud-deco cloud-2" style="position:absolute;pointer-events:none;opacity:0.4;z-index:0;bottom:5%;left:50%;"><svg viewBox="0 0 74.6 41.8" xmlns="http://www.w3.org/2000/svg" style="width:55px;display:block;"><path d="M50.3,5.3c-3.3,0-6.2,1.1-8.6,3C38.2,3.3,32.5,0,26,0,15.7,0,7.2,8.4,7.2,18.8v1.5c-4.1.8-7.2,4.3-7.2,8.6,0,3.8,2.5,7,5.9,8.5,2.2,1,4.8,1.4,7.5,1.2,2.2,2,5.1,3.2,8.2,3.2h41.1c6.6,0,11.9-5.3,11.9-11.9,0-16.2-8.4-24.6-24.3-24.6Z" fill="#fff"/></svg></div>
+    <div class="section-center fade-in">
+    <span class="label">Navštívte nás</span>
+    <h2>Kontakt & Kde nás nájdete</h2>
+  </div>
+  <!-- Download buttons -->
+  <div id="cms-downloads" style="display:none;text-align:center;margin-bottom:28px;"></div>
+  <div class="section-inner"><div style="max-width:860px;margin:0 auto;">
+    <div class="contact-cards fade-in">
+      <div class="contact-card blue">
+        <div class="contact-icon" id="cms-icon-adresa">📍</div>
+        <div class="contact-body">
+          <div class="contact-label">Adresa</div>
+          <div class="contact-value" id="cms-address">Sečovská 144/3, 821 02 Bratislava, Ružinov</div>
+        </div>
+      </div>
+      <a class="contact-card yellow" href="tel:0918607935">
+          <div class="contact-icon" id="cms-icon-telefon">📞</div>
+          <div class="contact-body">
+            <div class="contact-label">Telefón</div>
+            <div class="cms-phone contact-value">0918 607 935</div>
+            <div class="contact-sub">kliknutím zavoláte</div>
+          </div>
+      </a>
+      <a class="contact-card green" id="cms-email-link" href="mailto:info@skolka-vcielka.sk">
+          <div class="contact-icon" id="cms-icon-email">✉️</div>
+          <div class="contact-body">
+            <div class="contact-label">E-mail</div>
+            <div class="cms-email contact-value"></div>
+            <div class="contact-sub">kliknutím napíšete</div>
+          </div>
+      </a>
+      <div class="contact-card red">
+        <div class="contact-icon" id="cms-icon-hodiny">🕐</div>
+        <div class="contact-body">
+          <div class="contact-label">Prevádzková doba</div>
+          <div class="contact-value" id="cms-hours">Pondelok – Piatok, 7:00 – 17:00</div>
+        </div>
+      </div>
+    </div>
+    <div class="map-wrap fade-in">
+      <iframe
+        src="https://maps.google.com/maps?q=Se%C4%8Dovsk%C3%A1+144%2F3,+Bratislava,+Slovakia&output=embed&hl=sk&z=16"
+        allowfullscreen=""
+        loading="lazy"
+        referrerpolicy="no-referrer-when-downgrade"
+        title="Mapa – Materská škola Včielka">
+      </iframe>
+    </div>
+  </div></div>
+  <div style="text-align:center;margin-top:40px;">
+    <a href="#home" style="display:inline-flex;align-items:center;gap:8px;border:1.5px solid rgba(255,255,255,.8);color:#fff;padding:10px 24px;border-radius:50px;font-family:'Quicksand',sans-serif;font-size:13px;font-weight:700;text-decoration:none;transition:background .2s;" onmouseover="this.style.background='rgba(255,255,255,.15)'" onmouseout="this.style.background='transparent'">
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M7 11V3M3 7l4-4 4 4" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      Späť na vrch
+    </a>
+  </div>
+</section>
+
+<!-- wave contact→footer -->
+<svg class="wave" viewBox="0 0 1440 44" preserveAspectRatio="none" style="display:block;margin-bottom:-2px;background:#B4DEFF;" xmlns="http://www.w3.org/2000/svg">
+  <path d="M0,20 C300,44 700,0 1100,30 C1300,42 1420,10 1440,18 L1440,46 L0,46Z" fill="#0D3D6E"/>
+</svg>
+
+<!-- ===========================
+     FOOTER
+=========================== -->
+<footer class="footer">
+  <div class="footer-inner">
+  <div class="footer-grid">
+    <div>
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:11px;">
+        <img src="VCIELKA_LOGO.png" alt="Včielka" class="cms-logo" style="height:40px;width:auto;object-fit:contain;"/>
+        <h4 style="margin:0;">Materská škola Včielka</h4>
+      </div>
+      <p class="footer-desc" id="cms-footer-desc">Súkromná materská škola akreditovaná MŠVVaŠ SR. Program Zvedavá Včielka pre deti od 2,5 do 6 rokov v Ružinove, Bratislava.</p>
+      <a href="skolka.html" class="footer-vs">🔐 Virtuálna škôlka</a>
+    </div>
+    <div id="cms-footer-links-col">
+      <h4 id="cms-footer-links-title">Rýchle odkazy</h4>
+      <a href="#o-nas" class="footer-link">O nás</a>
+      <a href="#sluzby" class="footer-link">Naše služby</a>
+      <a href="#program" class="footer-link">Zvedavá Včielka</a>
+      <a href="#program" class="footer-link">Denný poriadok</a>
+      <a href="#galeria" class="footer-link">Galéria</a>
+      <a href="#aktuality" class="footer-link">Aktuality</a>
+      <a href="#cennik" class="footer-link">Cenník</a>
+      <a href="#kontakt" class="footer-link">Kontakt</a>
+    </div>
+    <div>
+      <h4>Kontakt</h4>
+      <span class="footer-link">Sečovská 144/3, Ružinov</span>
+      <a href="tel:0918607935" class="footer-link">0918 607 935</a>
+      <a id="cms-footer-email-link" href="#" class="footer-link"></a>
+      <span class="footer-link">Po–Pia: 7:00 – 17:00</span>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span class="footer-copy" id="cms-footer-copy-left">© 2025 Materská škola Včielka · Všetky práva vyhradené</span>
+    <span class="footer-copy"><a href="privacy.html" style="color:rgba(255,255,255,.4);text-decoration:none;transition:color .2s;" onmouseover="this.style.color='rgba(255,255,255,.75)'" onmouseout="this.style.color='rgba(255,255,255,.4)'">Ochrana súkromia & Cookies</a></span>
+    <span class="footer-copy" id="cms-footer-copy-right">Vytvorené s 🐝 láskou v Bratislave</span>
+  </div>
+  </div>
+</footer>
+
+
+
+<!-- FULL GALLERY POPUP -->
+<div class="gallery-popup-overlay" id="galleryPopupOverlay">
+  <div class="gallery-popup-header">
+    <h2>🖼️ Galéria škôlky</h2>
+    <button class="gallery-popup-close" onclick="closeFullGallery()">✕</button>
+  </div>
+  <div class="gallery-popup-grid" id="galleryPopupGrid">
+    <div style="color:rgba(255,255,255,.5);font-size:13px;">Načítavam...</div>
+  </div>
+</div>
+
+<!-- NEWS POPUP -->
+<div class="news-popup-overlay" id="newsPopupOverlay" onclick="if(event.target===this)closeNewsPopup()">
+  <div class="news-popup" id="newsPopup">
+    <div class="news-popup-header" id="popupHeader">
+      <button class="news-popup-close" onclick="closeNewsPopup()">✕</button>
+      <div class="news-popup-header-placeholder" id="popupHeaderPlaceholder">📰</div>
+    </div>
+    <div class="news-popup-body">
+      <div class="news-popup-date" id="popupDate"></div>
+      <div class="news-popup-title" id="popupTitle"></div>
+      <div class="news-popup-excerpt" id="popupExcerpt"></div>
+      <div class="news-popup-content" id="popupContent"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ACTIVITY POPUP -->
+<div class="act-popup-overlay" id="actPopupOverlay" onclick="if(event.target===this)closeActPopup()">
+  <div class="act-popup">
+    <div class="act-popup-header">
+      <div>
+        <div id="actPopupIcon" style="font-size:40px;margin-bottom:10px;line-height:1;"></div>
+        <div id="actPopupTitle" style="font-family:'Quicksand',sans-serif;font-size:20px;font-weight:700;color:#1a1a1a;"></div>
+      </div>
+      <button class="act-popup-close" onclick="closeActPopup()">✕</button>
+    </div>
+    <div class="act-popup-body">
+      <div id="actPopupText"></div>
+      <div id="actPopupImgWrap" style="display:none;padding-top:16px;">
+        <img id="actPopupImg" src="" alt="" style="width:100%;height:auto;border-radius:16px;display:block;"/>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- LIGHTBOX -->
+<div class="lightbox" id="lightbox">
+  <button class="lightbox-close" id="lbClose">✕</button>
+  <button class="lightbox-prev" id="lbPrev">&#8249;</button>
+  <img id="lbImg" src="" alt=""/>
+  <button class="lightbox-next" id="lbNext">&#8250;</button>
+</div>
+
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+document.addEventListener('DOMContentLoaded',function(){
+// ===== MOBILE MENU =====
+const burger=document.getElementById('burger');
+const menu=document.getElementById('mobileMenu');
+const menuClose=document.getElementById('menuClose');
+function openMobileMenu(){
+  menu.classList.remove('closing');
+  menu.classList.add('open');
+  document.body.style.overflow='hidden';
+}
+function closeMobileMenu(){
+  menu.classList.remove('open');
+  menu.classList.add('closing');
+  document.body.style.overflow='';
+}
+menu.addEventListener('animationend',function(e){
+  if(e.animationName==='nmClose'){menu.classList.remove('closing');}
+});
+burger.addEventListener('click',function(){
+  if(menu.classList.contains('open')||menu.classList.contains('closing')){closeMobileMenu();}
+  else{openMobileMenu();}
+});
+menuClose.addEventListener('click',closeMobileMenu);
+menu.addEventListener('click',function(e){
+  var a=e.target.closest('a');
+  if(!a)return;
+  closeMobileMenu();
+  var h=a.getAttribute('href');
+  if(h&&h.startsWith('#')){
+    e.preventDefault();
+    setTimeout(function(){var t=document.querySelector(h);if(t)t.scrollIntoView({behavior:'smooth'});},420);
+  }
+});
+
+// ===== SCROLL FADE IN =====
+const obs=new IntersectionObserver((entries)=>{
+  entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');}});
+},{threshold:0.12});
+document.querySelectorAll('.fade-in').forEach(el=>obs.observe(el));
+
+// ===== GALLERY SCROLL DOTS =====
+const track=document.getElementById('galleryTrack');
+const dots=document.querySelectorAll('.gallery-dot');
+if(track){
+  track.addEventListener('scroll',()=>{
+    const idx=Math.round(track.scrollLeft/(track.scrollWidth/dots.length));
+    dots.forEach((d,i)=>{d.classList.toggle('active',i===idx);});
+  });
+  dots.forEach(d=>{
+    d.addEventListener('click',()=>{
+      const idx=+d.dataset.idx;
+      track.scrollTo({left:idx*(track.scrollWidth/dots.length),behavior:'smooth'});
+    });
+  });
+  // drag to scroll
+  let isDown=false,startX,scrollL;
+  track.addEventListener('mousedown',e=>{isDown=true;startX=e.pageX-track.offsetLeft;scrollL=track.scrollLeft;});
+  track.addEventListener('mouseleave',()=>isDown=false);
+  track.addEventListener('mouseup',()=>isDown=false);
+  track.addEventListener('mousemove',e=>{if(!isDown)return;e.preventDefault();const x=e.pageX-track.offsetLeft;track.scrollLeft=scrollL-(x-startX)*1.5;});
+  // wheel scrolls gallery horizontally on desktop (smooth momentum)
+  let _gwTarget=track.scrollLeft, _gwRaf=null;
+  function _gwAnimate(){
+    const diff=_gwTarget-track.scrollLeft;
+    if(Math.abs(diff)<0.5){ track.scrollLeft=_gwTarget; _gwRaf=null; return; }
+    track.scrollLeft+=diff*0.12;
+    _gwRaf=requestAnimationFrame(_gwAnimate);
+  }
+  track.addEventListener('wheel',e=>{
+    if(!window.matchMedia('(hover:hover)').matches) return;
+    e.preventDefault();
+    _gwTarget=Math.max(0,Math.min(track.scrollWidth-track.clientWidth, _gwTarget+e.deltaY*1.8));
+    if(!_gwRaf) _gwRaf=requestAnimationFrame(_gwAnimate);
+  },{passive:false});
+}
+
+
+
+// ===== ZVEDAVA TOGGLE =====
+function toggleZvedava(){
+  const btn = document.getElementById('zvedavaBtn');
+  const text = document.getElementById('zvedavaText');
+  if(!btn || !text) return;
+  const isOpen = text.classList.contains('open');
+  text.classList.toggle('open', !isOpen);
+  btn.classList.toggle('open', !isOpen);
+  if(!isOpen) setTimeout(()=>{ text.scrollIntoView({behavior:'smooth', block:'nearest'}); }, 100);
+}
+
+// ===== ABOUT TOGGLE =====
+function toggleAbout(){
+  const btn = document.getElementById('aboutBtn');
+  const text = document.getElementById('aboutText');
+  if(!btn || !text) return;
+  const isOpen = text.classList.contains('open');
+  text.classList.toggle('open', !isOpen);
+  btn.classList.toggle('open', !isOpen);
+  if(!isOpen){
+    setTimeout(()=>{ text.scrollIntoView({behavior:'smooth', block:'nearest'}); }, 100);
+  }
+}
+
+// ===== SCROLL TO NEWS =====
+function scrollToNews(e){
+  e.preventDefault();
+  const el = document.getElementById('aktuality');
+  if(el) el.scrollIntoView({behavior:'smooth'});
+  return false;
+}
+
+// ===== LIGHTBOX =====
+const galleryImgs = [...document.querySelectorAll('.gallery-item img')];
+let lbCurrent = 0;
+const lb = document.getElementById('lightbox');
+const lbImg = document.getElementById('lbImg');
+const lbClose = document.getElementById('lbClose');
+const lbPrev = document.getElementById('lbPrev');
+const lbNext = document.getElementById('lbNext');
+
+window.openLightbox = function(idx){
+  lbCurrent = idx;
+  lbImg.src = galleryImgs[idx].src;
+  lb.classList.add('open');
+  document.body.style.overflow='hidden';
+}
+window.closeLightbox = function(){
+  lb.classList.remove('open');
+  document.body.style.overflow='';
+}
+window.lbGo = function(dir){
+  const allImgs = [...document.querySelectorAll('#galleryTrack .gallery-item img')];
+  lbCurrent = (lbCurrent + dir + allImgs.length) % allImgs.length;
+  if(allImgs[lbCurrent]) lbImg.src = allImgs[lbCurrent].src;
+}
+
+galleryImgs.forEach((img,i)=>{
+  const item = img.closest('.gallery-item');
+  if(item) item.addEventListener('click',()=>openLightbox(i));
+});
+
+// Also handle dynamically loaded CMS gallery images
+document.getElementById('galleryTrack').addEventListener('click', function(e){
+  const item = e.target.closest('.gallery-item');
+  if(!item) return;
+  const img = item.querySelector('img');
+  if(!img) return;
+  const allImgs = [...document.querySelectorAll('#galleryTrack .gallery-item img')];
+  const idx = allImgs.indexOf(img);
+  if(idx >= 0) openLightbox(idx);
+});
+
+window.openLightbox = function(idx){
+  const allImgs = [...document.querySelectorAll('#galleryTrack .gallery-item img')];
+  lbCurrent = idx;
+  if(allImgs[idx]) lbImg.src = allImgs[idx].src;
+  lb.classList.add('open');
+  document.body.style.overflow='hidden';
+}
+lbClose.addEventListener('click',closeLightbox);
+lb.addEventListener('click',e=>{if(e.target===lb)closeLightbox();});
+lbPrev.addEventListener('click',e=>{e.stopPropagation();lbGo(-1);});
+lbNext.addEventListener('click',e=>{e.stopPropagation();lbGo(1);});
+document.addEventListener('keydown',e=>{
+  if(!lb.classList.contains('open'))return;
+  if(e.key==='Escape')closeLightbox();
+  if(e.key==='ArrowLeft')lbGo(-1);
+  if(e.key==='ArrowRight')lbGo(1);
+});
+
+}); // end DOMContentLoaded
+</script>
+
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+// ===== CMS LOADER =====
+const SUPA_URL = 'https://fmjtzuligqsugsauqkgz.supabase.co';
+const SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZtanR6dWxpZ3FzdWdzYXVxa2d6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU0MTQyMTUsImV4cCI6MjA5MDk5MDIxNX0.gRF-roExLgnVDG4bSNt7EzX6c1v-JtM5v6ZcX8dY934';
+let cms = null;
+try {
+  const { createClient } = supabase;
+  cms = createClient(SUPA_URL, SUPA_KEY);
+} catch(initErr) {
+  console.error('Supabase init error:', initErr);
+}
+
+async function loadCMS() {
+  if (!cms) { console.error("Supabase not initialized"); return; }
+  try {
+    // ── Settings ──
+    const { data: settings, error: settingsErr } = await cms.from('settings').select('*');
+    console.log('Settings:', settings?.length, 'Error:', settingsErr?.message);
+    const s = settings ? Object.fromEntries(settings.map(r => [r.key, r.value])) : {};
+    if (s) {
+      // Hero
+      const _heroTitle = document.getElementById('cms-hero-title');
+      if (_heroTitle) { const raw = s.hero_title || 'Kde deti rastú a objavujú svet'; _heroTitle.innerHTML = raw.replace('rastú','<em>rastú</em>'); _heroTitle.style.opacity='1'; }
+      const _heroSub = document.getElementById('cms-hero-subtitle');
+      if (_heroSub) { _heroSub.textContent = s.hero_subtitle || 'Súkromná materská škola s odborným tímom, bohatým programom Zvedavá Včielka a láskyplným prostredím pre deti od 2,5 do 6 rokov.'; _heroSub.style.opacity='1'; }
+      if (s.hero_photo) { const bg = document.getElementById('cms-hero-bg'); if(bg) { bg.src = s.hero_photo; bg.style.display='block'; } }
+      if (s.logo_url) { document.querySelectorAll('.cms-logo').forEach(el => el.src = s.logo_url); }
+      // Contact
+      if (s.contact_address) { const el = document.getElementById('cms-address'); if(el) el.textContent = s.contact_address; }
+      if (s.contact_phone) { document.querySelectorAll('.cms-phone').forEach(el => { el.textContent = s.contact_phone; el.href = 'tel:'+s.contact_phone.replace(/\s/g,''); }); }
+      { const _em = s.contact_email?.trim() || 'info@skolka-vcielka.sk';
+        document.querySelectorAll('.cms-email').forEach(el => { el.textContent = _em; });
+        const _el = document.getElementById('cms-email-link'); if(_el) _el.href = 'mailto:'+_em;
+        const _fl = document.getElementById('cms-footer-email-link'); if(_fl){ _fl.textContent = _em; _fl.href = 'mailto:'+_em; }
+      }
+      if (s.contact_hours) { const el = document.getElementById('cms-hours'); if(el) el.textContent = s.contact_hours; }
+      // O nás
+      // Section icons (contact + program z-items)
+      const _iconMap = {adresa:'📍',email:'✉️',telefon:'📞',hodiny:'🕐',social:'🐝',kreativ:'🎨',sport:'🏃',intellect:'🔬'};
+      Object.keys(_iconMap).forEach(k => {
+        const val = s['icon_'+k]; if(!val) return;
+        const el = document.getElementById('cms-icon-'+k); if(!el) return;
+        el.innerHTML = `<img src="${val}" style="width:100%;height:100%;object-fit:contain;" alt=""/>`;
+        el.dataset.hasImg = '1';
+      });
+
+      if (s.onas_p1) { const el = document.getElementById('cms-onas-p1'); if(el) el.innerHTML = s.onas_p1; }
+      if (s.onas_p2) { const el = document.getElementById('cms-onas-p2'); if(el) el.innerHTML = s.onas_p2; }
+      if (s.onas_extra_p1) { const el = document.getElementById('cms-onas-extra-p1'); if(el) el.innerHTML = s.onas_extra_p1; }
+      if (s.onas_extra_p2) { const el = document.getElementById('cms-onas-extra-p2'); if(el) el.innerHTML = s.onas_extra_p2; }
+      if (s.program_text) { const el = document.getElementById('cms-program-text'); if(el) el.innerHTML = s.program_text; }
+      if (s.onas_list) { const el = document.getElementById('cms-onas-list'); if(el) el.innerHTML = s.onas_list.split('\n').filter(l=>l.trim()).map(l=>`<li>${l.trim()}</li>`).join(''); }
+      // PPV
+      if (s.ppv_intro) { const el = document.getElementById('cms-ppv-intro'); if(el) el.innerHTML = s.ppv_intro; }
+      if (s.ppv_extra && s.ppv_extra.trim()) {
+        const el = document.getElementById('cms-ppv-extra'); if(el) el.innerHTML = s.ppv_extra;
+        const btn = document.getElementById('ppvBtn'); if(btn) btn.style.display = '';
+      }
+      // Pricing
+      if (s.price_full_amount) { const el = document.getElementById('cms-price-full'); if(el) el.textContent = s.price_full_amount+' €'; }
+      if (s.price_full_detail) { const el = document.getElementById('cms-price-full-detail'); if(el) el.innerHTML = (s.price_full_detail||'').replace(/\\n/g,'<br>').replace(/\n/g,'<br>'); }
+      if (s.price_half_amount) { const el = document.getElementById('cms-price-half'); if(el) el.textContent = s.price_half_amount+' €'; }
+      if (s.price_half_detail) { const el = document.getElementById('cms-price-half-detail'); if(el) el.innerHTML = (s.price_half_detail||'').replace(/\\n/g,'<br>').replace(/\n/g,'<br>'); }
+    }
+
+    // ── Activities ──
+    const { data: acts } = await cms.from('activities').select('*').order('sort_order');
+    if (acts && acts.length) {
+      window._cmsActivities = acts;
+      const grid = document.getElementById('cms-activities');
+      if (grid) grid.innerHTML = acts.map((a, i) => `
+        <div class="service-card ${a.color}${a.popup_text ? ' clickable' : ''}" ${a.popup_text ? `onclick="openActPopup(${i})"` : ''}>
+          <div class="service-img">${a.photo_url ? '<img src="'+a.photo_url+'" style="width:100%;height:100%;object-fit:cover;"/>' : (a.icon && a.icon.startsWith('http') ? '<img src="'+a.icon+'" style="width:72px;height:72px;object-fit:contain;filter:drop-shadow(0 4px 12px rgba(0,0,0,.12));" alt=""/>' : a.icon)}</div>
+          <div class="service-body">
+            <h3>${a.title}</h3>
+            <p>${a.description||''}</p>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    // ── News ──
+    const { data: newsList, error: newsErr } = await cms.from('news').select('*').order('featured', {ascending:false}).order('created_at', {ascending:false}).limit(3);
+    console.log('News:', newsList?.length, 'Error:', newsErr?.message);
+    if (newsList && newsList.length > 0) {
+      window._cmsNews = newsList;
+      const container = document.getElementById('cms-news');
+      if (container) container.innerHTML = newsList.map(n => `
+        <div class="news-card ${n.color}" style="cursor:pointer;" onclick="openNewsPopupById(${n.id})">
+          <div class="news-img">${n.photo_url ? '<img src="'+n.photo_url+'" alt=""/>' : '📸 foto akcie'}</div>
+          <div class="news-body">
+            <div class="news-date">${new Date(n.published_at||n.created_at).toLocaleDateString('sk-SK',{day:'numeric',month:'long',year:'numeric'})}</div>
+            <div class="news-title">${n.title}</div>
+            <div class="news-excerpt">${n.excerpt||''}</div>
+            <a href="#" onclick="event.stopPropagation();openNewsPopupById(${n.id});return false;" class="news-more">Čítať viac →</a>
+          </div>
+        </div>
+      `).join('');
+      // hero blob — use featured news, fallback to latest
+      const featured = newsList.find(n => n.featured) || newsList[0];
+      const blob = document.getElementById('heroNewsBlob');
+      if (blob && featured) {
+        document.getElementById('heroNewsTitle').textContent = featured.title;
+        if (featured.photo_url) {
+          const ph = document.getElementById('heroBlobPhoto');
+          if(ph){ ph.src = featured.photo_url; ph.style.display='block'; }
+        }
+        blob.style.display = 'block';
+        blob._newsId = featured.id;
+        window._cmsNews = window._cmsNews || [];
+        if (!window._cmsNews.find(x => x.id === featured.id)) window._cmsNews.push(featured);
+      }
+    }
+
+    // ── Gallery ──
+    const { data: gallery } = await cms.from('gallery').select('*').order('sort_order').limit(12);
+    if (gallery && gallery.length) {
+      const track = document.getElementById('galleryTrack');
+      if (track) track.innerHTML = gallery.map(g => `
+        <div class="gallery-item"><img src="${g.photo_url}" alt="foto" loading="lazy"/></div>
+      `).join('');
+    }
+
+    // ── Testimonials ──
+    const { data: testis } = await cms.from('testimonials').select('*').order('sort_order');
+    if (testis && testis.length) {
+      const container = document.getElementById('cms-testimonials');
+      if (container) container.innerHTML = testis.map(t => `
+        <div class="testi-card">
+          <div class="testi-stars">★★★★★</div>
+          <p class="testi-text">"${t.text}"</p>
+          <div class="testi-name">${t.author}</div>
+        </div>
+      `).join('');
+    }
+
+
+    // ── Footer ──
+    if (s.footer_desc) { const el = document.getElementById('cms-footer-desc'); if(el) el.textContent = s.footer_desc; }
+    if (s.footer_copy_left) { const el = document.getElementById('cms-footer-copy-left'); if(el) el.textContent = s.footer_copy_left; }
+    if (s.footer_copy_right) { const el = document.getElementById('cms-footer-copy-right'); if(el) el.textContent = s.footer_copy_right; }
+    if (s.footer_links_title) { const el = document.getElementById('cms-footer-links-title'); if(el) el.textContent = s.footer_links_title; }
+    if (s.footer_links) {
+      const col = document.getElementById('cms-footer-links-col');
+      if (col) {
+        const title = col.querySelector('h4');
+        const lines = s.footer_links.split('\n').filter(Boolean);
+        col.innerHTML = (title ? title.outerHTML : '<h4>Rýchle odkazy</h4>') +
+          lines.map(l => {
+            const [name, href] = l.split('|');
+            return `<a href="${(href||'#').trim()}" class="footer-link">${name.trim()}</a>`;
+          }).join('');
+      }
+    }
+
+    // ── Documents ──
+    const { data: docs, error: docsErr } = await cms.from('documents').select('*').order('sort_order');
+    console.log('Docs loaded:', docs, 'Error:', docsErr);
+    const container = document.getElementById('cms-downloads');
+    if (docs && docs.length > 0 && container) {
+      container.style.display = 'block';
+      container.style.padding = '0 0 8px 0';
+      container.innerHTML = docs.map(d => `
+        <a href="${d.file_url}" target="_blank" class="download-btn">
+          <span class="dl-icon">📄</span>
+          ${d.button_text || d.title}
+        </a>
+      `).join('');
+    } else if (docsErr) {
+      console.error('Documents error:', docsErr);
+    }
+  } catch(e) {
+    console.error('CMS error:', e.message, e.stack);
+    const _ht = document.getElementById('cms-hero-title');
+    if (_ht && !_ht.textContent.trim()) { _ht.innerHTML = 'Kde deti <em>rastú</em><br>a objavujú svet'; _ht.style.opacity='1'; }
+    const _hs = document.getElementById('cms-hero-subtitle');
+    if (_hs && !_hs.textContent.trim()) { _hs.textContent = 'Súkromná materská škola s odborným tímom, bohatým programom Zvedavá Včielka a láskyplným prostredím pre deti od 2,5 do 6 rokov.'; _hs.style.opacity='1'; }
+  }
+}
+
+document.addEventListener('DOMContentLoaded', loadCMS);
+
+// ===== ENSURE POPUPS EXIST IN DOM =====
+(function(){
+  if(!document.getElementById('newsPopupOverlay')){
+    const d=document.createElement('div');
+    d.className='news-popup-overlay';d.id='newsPopupOverlay';
+    d.onclick=function(e){if(e.target===d)closeNewsPopup();};
+    const p=document.createElement('div');p.className='news-popup';p.id='newsPopup';
+    d.appendChild(p);document.body.appendChild(d);
+  }
+  if(!document.getElementById('galleryPopupOverlay')){
+    const d=document.createElement('div');
+    d.className='gallery-popup-overlay';d.id='galleryPopupOverlay';
+    d.innerHTML='<div class="gallery-popup-header"><h2>🖼️ Galéria škôlky</h2><button class="gallery-popup-close" onclick="closeFullGallery()">✕</button></div><div class="gallery-popup-grid" id="galleryPopupGrid"></div>';
+    document.body.appendChild(d);
+  }
+  if(!document.getElementById('lightbox')){
+    const d=document.createElement('div');
+    d.className='lightbox';d.id='lightbox';
+    d.onclick=function(e){if(e.target===d)closeLightbox();};
+    d.innerHTML='<button class="lightbox-close" id="lbClose" onclick="closeLightbox()">✕</button><button class="lightbox-prev" id="lbPrev" onclick="lbGo(-1)">❮</button><img id="lbImg" src="" alt=""/><button class="lightbox-next" id="lbNext" onclick="lbGo(1)">❯</button>';
+    document.body.appendChild(d);
+  }
+})();
+
+
+
+
+// ===== ZVEDAVA TOGGLE =====
+function toggleZvedava(){
+  const btn = document.getElementById('zvedavaBtn');
+  const text = document.getElementById('zvedavaText');
+  if(!btn || !text) return;
+  const isOpen = text.classList.contains('open');
+  text.classList.toggle('open', !isOpen);
+  btn.classList.toggle('open', !isOpen);
+  if(!isOpen) setTimeout(()=>{ text.scrollIntoView({behavior:'smooth', block:'nearest'}); }, 100);
+}
+
+// ===== ABOUT TOGGLE =====
+function toggleAbout(){
+  const btn = document.getElementById('aboutBtn');
+  const text = document.getElementById('aboutText');
+  if(!btn || !text) return;
+  const isOpen = text.classList.contains('open');
+  text.classList.toggle('open', !isOpen);
+  btn.classList.toggle('open', !isOpen);
+  if(!isOpen){
+    setTimeout(()=>{ text.scrollIntoView({behavior:'smooth', block:'nearest'}); }, 100);
+  }
+}
+
+// ===== O NÁS TOGGLE =====
+function toggleOnas(){
+  const btn = document.getElementById('onasBtn');
+  const area = document.getElementById('onasExpand');
+  const lbl = document.getElementById('onasBtnLabel');
+  if(!btn || !area) return;
+  const open = area.classList.toggle('open');
+  btn.classList.toggle('open', open);
+  lbl.textContent = open ? 'Čítať menej' : 'Čítať viac';
+}
+
+// ===== PPV TOGGLE =====
+function togglePpv(){
+  const btn = document.getElementById('ppvBtn');
+  const area = document.getElementById('ppvExpand');
+  const lbl = document.getElementById('ppvBtnLabel');
+  if(!btn || !area) return;
+  const open = area.classList.toggle('open');
+  btn.classList.toggle('open', open);
+  lbl.textContent = open ? 'Menej' : 'Viac';
+}
+
+// ===== SCROLL TO NEWS =====
+function scrollToNews(e){
+  e.preventDefault();
+  const el = document.getElementById('aktuality');
+  if(el) el.scrollIntoView({behavior:'smooth'});
+  return false;
+}
+
+// ===== LIGHTBOX =====
+const _galleryImgs = () => [...document.querySelectorAll('.gallery-item img')];
+let _lbCurrent = 0;
+function openLightbox(idx){
+  const imgs = _galleryImgs();
+  if(!imgs.length) return;
+  _lbCurrent = idx;
+  const lb = document.getElementById('lightbox');
+  const lbImg = document.getElementById('lbImg');
+  if(lb && lbImg){ lbImg.src = imgs[idx].src; lb.classList.add('open'); document.body.style.overflow='hidden'; }
+}
+function openLightboxUrl(url){
+  const lb = document.getElementById('lightbox');
+  const lbImg = document.getElementById('lbImg');
+  if(lb && lbImg){ lbImg.src = url; lb.classList.add('open'); document.body.style.overflow='hidden'; }
+}
+function closeLightbox(){
+  const lb = document.getElementById('lightbox');
+  if(lb){ lb.classList.remove('open'); document.body.style.overflow=''; }
+}
+function lbGo(dir){
+  const imgs = _galleryImgs();
+  _lbCurrent = (_lbCurrent + dir + imgs.length) % imgs.length;
+  const lbImg = document.getElementById('lbImg');
+  if(lbImg) lbImg.src = imgs[_lbCurrent].src;
+}
+
+// ===== FULL GALLERY POPUP =====
+async function openFullGallery(){
+  const ov = document.getElementById('galleryPopupOverlay');
+  if(!ov) return;
+  ov.classList.add('open');
+  document.body.style.overflow='hidden';
+  const grid = document.getElementById('galleryPopupGrid');
+  const imgs = _galleryImgs();
+  if(imgs.length){
+    grid.innerHTML = imgs.map((img,i) =>
+      `<div class="gallery-popup-item" onclick="openLightboxUrl('${img.src}')"><img src="${img.src}" alt="foto" loading="lazy"/></div>`
+    ).join('');
+  } else {
+    try {
+      const { createClient } = supabase;
+      const db2 = createClient('https://fmjtzuligqsugsauqkgz.supabase.co','eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZtanR6dWxpZ3FzdWdzYXVxa2d6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU0MTQyMTUsImV4cCI6MjA5MDk5MDIxNX0.gRF-roExLgnVDG4bSNt7EzX6c1v-JtM5v6ZcX8dY934');
+      const { data: gItems } = await db2.from('gallery').select('*').order('sort_order');
+      if(gItems?.length){
+        grid.innerHTML = gItems.map((g,i) =>
+          `<div class="gallery-popup-item" onclick="openLightboxUrl('${g.photo_url}')"><img src="${g.photo_url}" alt="foto" loading="lazy"/></div>`
+        ).join('');
+      } else { grid.innerHTML='<div style="color:rgba(255,255,255,.5);">Galéria je prázdna.</div>'; }
+    } catch(e){ grid.innerHTML='<div style="color:rgba(255,255,255,.5);">Chyba načítania.</div>'; }
+  }
+}
+function closeFullGallery(){
+  const ov = document.getElementById('galleryPopupOverlay');
+  if(ov){ ov.classList.remove('open'); document.body.style.overflow=''; }
+}
+
+// ===== NEWS POPUP =====
+function openNewsFromHero(){
+  const blob = document.getElementById('heroNewsBlob');
+  if(blob && blob._newsId) {
+    openNewsPopupById(blob._newsId);
+  }
+}
+function openNewsPopupById(id){
+  const news = (window._cmsNews||[]).find(n => n.id === id);
+  if(news) _showPopup(news);
+}
+function openNewsPopup(el){
+  const card = el.closest('.news-card');
+  if(!card) return;
+  const title = card.querySelector('.news-title')?.textContent||'';
+  const date = card.querySelector('.news-date')?.textContent||'';
+  const excerpt = card.querySelector('.news-excerpt')?.textContent||'';
+  const imgEl = card.querySelector('.news-img img');
+  const img = imgEl ? imgEl.src : '';
+  const color = [...card.classList].find(cl=>['blue','yellow','green','red'].includes(cl))||'blue';
+  const cached = (window._cmsNews||[]).find(n=>n.title===title);
+  _showPopup({title, published_at:date, content:cached?.content||excerpt, photo_url:img, color});
+}
+function _showPopup(news){
+  const colors = {blue:'#C8E6FA',yellow:'#FFE87A',green:'#B2E8C8',red:'#FFD5D0'};
+  const hdr = document.getElementById('popupHeader');
+  if(!hdr) return;
+  if(news.photo_url){
+    hdr.style.background='transparent';
+    hdr.innerHTML='<button class="news-popup-close" onclick="closeNewsPopup()">✕</button><img src="'+news.photo_url+'" alt="" style="width:100%;height:100%;object-fit:cover;"/>';
+  } else {
+    hdr.style.background = colors[news.color]||'#C8E6FA';
+    hdr.innerHTML='<button class="news-popup-close" onclick="closeNewsPopup()">✕</button><div class="news-popup-header-placeholder" style="color:#1A5FA8;">📰</div>';
+  }
+  const d = document.getElementById('popupDate');
+  if(d) d.textContent = news.published_at ? new Date(news.published_at).toLocaleDateString('sk-SK',{day:'numeric',month:'long',year:'numeric'}) : '';
+  const t = document.getElementById('popupTitle');
+  if(t) t.textContent = news.title||'';
+  const ex = document.getElementById('popupExcerpt');
+  if(ex) ex.textContent = news.excerpt||'';
+  const ct = document.getElementById('popupContent');
+  if(ct) ct.innerHTML = (news.content||'').replace(/\n/g,'<br>');
+  const ov = document.getElementById('newsPopupOverlay');
+  if(ov){ ov.classList.add('open'); document.body.style.overflow='hidden'; }
+}
+function closeNewsPopup(){
+  const ov = document.getElementById('newsPopupOverlay');
+  if(ov){ ov.classList.remove('open'); setTimeout(()=>{ document.body.style.overflow=''; },340); }
+}
+
+function openActPopup(idx){
+  const a = (window._cmsActivities||[])[idx];
+  if(!a) return;
+  const _iconEl = document.getElementById('actPopupIcon');
+  if (a.icon && a.icon.startsWith('http')) {
+    _iconEl.innerHTML = `<img src="${a.icon}" style="width:77px;height:77px;object-fit:contain;border-radius:18px;filter:drop-shadow(0 6px 18px rgba(0,0,0,.14));" alt=""/>`;
+    _iconEl.style.fontSize = '';
+  } else {
+    _iconEl.textContent = a.icon||'';
+    _iconEl.style.fontSize = '32px';
+  }
+  document.getElementById('actPopupTitle').textContent = a.title||'';
+  function _autoLink(h){return h.replace(/(https?:\/\/[^&\s<"']+)/g,function(u){u=u.replace(/[.,;:!?)\]]+$/,'');return '<a href="'+u+'" target="_blank" rel="noopener noreferrer">'+u+'</a>';});}
+  document.getElementById('actPopupText').innerHTML = _autoLink((a.popup_text||'').replace(/\n/g,'<br>'));
+  const imgWrap = document.getElementById('actPopupImgWrap');
+  const img = document.getElementById('actPopupImg');
+  if(a.popup_photo_url && imgWrap && img){ img.src = a.popup_photo_url; imgWrap.style.display='block'; }
+  else if(imgWrap){ imgWrap.style.display='none'; }
+  const ov = document.getElementById('actPopupOverlay');
+  const body = document.querySelector('.act-popup-body');
+  if(body) body.scrollTop = 0;
+  if(ov){ ov.classList.add('open'); document.body.style.overflow='hidden'; }
+}
+function closeActPopup(){
+  const ov = document.getElementById('actPopupOverlay');
+  if(ov){ ov.classList.remove('open'); setTimeout(()=>{ document.body.style.overflow=''; },340); }
+}
+
+// ===== UČEBNÉ OSNOVY INLINE =====
+function toggleUcebneInline(){
+  const btn  = document.getElementById('ucebneBtn');
+  const text = document.getElementById('ucebneInlineText');
+  if(!btn || !text) return;
+  const isOpen = text.classList.contains('open');
+  if(!isOpen){
+    document.getElementById('zvedavaText')?.classList.remove('open');
+    document.getElementById('zvedavaBtn')?.classList.remove('open');
+    text.classList.add('open');
+    btn.classList.add('open');
+    // after the max-height transition finishes, let shadows breathe outside
+    setTimeout(()=>{ if(text.classList.contains('open')) text.style.overflow='visible'; }, 520);
+    setTimeout(()=>{ text.scrollIntoView({behavior:'smooth', block:'nearest'}); }, 100);
+  } else {
+    text.style.overflow='hidden'; // clip again before closing animation
+    text.classList.remove('open');
+    btn.classList.remove('open');
+  }
+}
+function closeUcebneOsnovy(){
+  const text = document.getElementById('ucebneInlineText');
+  if(text){ text.style.overflow='hidden'; text.classList.remove('open'); }
+  document.getElementById('ucebneBtn')?.classList.remove('open');
+}
+
+// Close all with Escape
+document.addEventListener('keydown', e=>{
+  if(e.key==='Escape'){ closeLightbox(); closeFullGallery(); closeNewsPopup(); closeActPopup(); closeUcebneOsnovy(); }
+});
+
+// ===== HERO PARALLAX =====
+(function(){
+  const bg = document.getElementById('cms-hero-bg');
+  const hero = document.querySelector('.hero');
+  if(!bg || !hero) return;
+  function onScroll(){
+    const sy = window.scrollY;
+    if(sy > hero.offsetHeight) return;
+    bg.style.transform = 'translateY(' + (sy * 0.22) + 'px)';
+  }
+  window.addEventListener('scroll', onScroll, {passive:true});
+})();
+
+// ===== MOUSE-FOLLOW BEE (O NÁS section only) =====
+document.addEventListener('DOMContentLoaded', function(){
+  const bee = document.getElementById('mouseFollowBee');
+  if(!bee) return;
+  const onas = document.querySelector('section.bg-yellow-pale');
+  let mx = 0, my = 0, cx = 0, cy = 0;
+  function lerp(a,b,t){ return a+(b-a)*t; }
+  function tick(){
+    cx = lerp(cx, mx, 0.07);
+    cy = lerp(cy, my, 0.07);
+    bee.style.left = cx + 'px';
+    bee.style.top  = cy + 'px';
+    requestAnimationFrame(tick);
+  }
+  document.addEventListener('mousemove', e=>{
+    mx = e.clientX;
+    my = e.clientY;
+    if(!onas){ bee.style.opacity='0'; return; }
+    const r = onas.getBoundingClientRect();
+    const inside = e.clientY >= r.top && e.clientY <= r.bottom && e.clientX >= r.left && e.clientX <= r.right;
+    bee.style.opacity = inside ? '1' : '0';
+  });
+  tick();
+});
+
+// ===== PRICE CARD 3D TILT =====
+document.querySelectorAll('.price-card').forEach(function(card) {
+  var rx = 0, ry = 0, lf = 0;
+  var rxT = 0, ryT = 0, lfT = 0;
+  var raf = null;
+  var over = false;
+
+  function lerp(a, b, t){ return a + (b - a) * t; }
+
+  function tick() {
+    rx = lerp(rx, rxT, 0.1);
+    ry = lerp(ry, ryT, 0.1);
+    lf = lerp(lf, lfT, 0.1);
+    var sc = 1 + Math.abs(lf) * 0.0018;
+    card.style.transform =
+      'perspective(800px) rotateX('+rx+'deg) rotateY('+ry+'deg) translateY('+lf+'px) scale('+sc+')';
+    card.style.boxShadow =
+      (-ry * 2.2)+'px '+(rx * 1.4 + 20)+'px 52px rgba(0,0,0,'+(0.10 + Math.abs(lf)*0.009)+')';
+    if (over || Math.abs(rx)>0.05 || Math.abs(ry)>0.05 || Math.abs(lf)>0.05) {
+      raf = requestAnimationFrame(tick);
+    } else {
+      rx = ry = lf = 0;
+      card.style.transform = '';
+      card.style.boxShadow = '';
+      raf = null;
+    }
+  }
+
+  function go(){ if(!raf) raf = requestAnimationFrame(tick); }
+
+  card.addEventListener('mouseenter', function(){ over=true; lfT=-11; go(); });
+  card.addEventListener('mousemove', function(e){
+    var r = card.getBoundingClientRect();
+    var x = (e.clientX - r.left - r.width  / 2) / r.width;
+    var y = (e.clientY - r.top  - r.height / 2) / r.height;
+    rxT = -y * 14;
+    ryT =  x * 14;
+    go();
+  });
+  card.addEventListener('mouseleave', function(){ over=false; rxT=0; ryT=0; lfT=0; go(); });
+});
+
+// Lightbox arrows
+document.addEventListener('DOMContentLoaded', function(){
+  const lbPrev = document.getElementById('lbPrev');
+  const lbNext = document.getElementById('lbNext');
+  const lbClose = document.getElementById('lbClose');
+  const lb = document.getElementById('lightbox');
+  if(lbPrev) lbPrev.addEventListener('click', e=>{e.stopPropagation();lbGo(-1);});
+  if(lbNext) lbNext.addEventListener('click', e=>{e.stopPropagation();lbGo(1);});
+  if(lb) lb.addEventListener('click',e=>{if(e.target===lb)closeLightbox();});
+  if(lbClose) lbClose.addEventListener('click',closeLightbox);
+});
+
+// ── Desktop: auto-hide nav on scroll, reveal on mouse near top ──
+(function(){
+  if(window.innerWidth <= 900) return;
+  const nav = document.querySelector('.nav');
+  const pin = document.getElementById('nav-pin-logo');
+  if(!nav || !pin) return;
+
+  let hidden = false;
+  let lastY = window.scrollY;
+  const THRESHOLD = 80; // px scrolled before we hide
+
+  function show(){
+    if(!hidden) return;
+    hidden = false;
+    nav.classList.remove('nav-hidden');
+    pin.classList.remove('visible');
+  }
+  function hide(){
+    if(hidden) return;
+    hidden = true;
+    nav.classList.add('nav-hidden');
+    pin.classList.add('visible');
+  }
+
+  window.addEventListener('scroll', ()=>{
+    const y = window.scrollY;
+    if(y < THRESHOLD){ show(); }
+    else if(y > lastY + 6){ hide(); }
+    lastY = y;
+  }, {passive:true});
+
+  // Reveal when mouse drifts to within 56 px of the top edge
+  window.addEventListener('mousemove', e=>{
+    if(e.clientY < 56) show();
+  });
+
+  window.addEventListener('resize', ()=>{
+    if(window.innerWidth <= 900) show();
+  });
+})();
+</script>
+
+<!-- cookie notice -->
+<div id="cookie-banner" style="display:none;position:fixed;bottom:0;left:0;right:0;background:#F9C832;color:#0D3D6E;padding:14px 20px;z-index:9999;align-items:center;justify-content:center;gap:14px;font-family:'Quicksand',sans-serif;font-size:14px;font-weight:600;box-shadow:0 -2px 20px rgba(0,0,0,.15);flex-wrap:wrap;text-align:center;">
+  <span>Táto stránka používa nevyhnutné cookies pre prihlásenie a bezpečnosť. Prehliadaním súhlasíte. <a href="privacy.html" style="color:#1A5FA8;text-decoration:underline;">Zásady ochrany súkromia</a></span>
+  <button onclick="document.getElementById('cookie-banner').style.display='none';localStorage.setItem('cookie_ok','1');" style="background:#1A5FA8;color:#fff;border:none;border-radius:50px;padding:8px 22px;font-family:'Quicksand',sans-serif;font-weight:700;font-size:13px;cursor:pointer;white-space:nowrap;flex-shrink:0;">Rozumiem</button>
+</div>
+<script>if(!localStorage.getItem('cookie_ok')){var b=document.getElementById('cookie-banner');b.style.display='flex';}</script>
+
+<!-- mouse-follow bee logo -->
+<div id="mouseFollowBee" style="position:fixed;pointer-events:none;z-index:8000;opacity:0;transition:opacity .4s;transform:translate(-50%,-50%);top:0;left:0;">
+  <img src="vcielka_logo2.png" alt="" style="width:44px;height:auto;filter:drop-shadow(0 3px 10px rgba(0,0,0,.18));"/>
+</div>
+
+</body>
+</html>

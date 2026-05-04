@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="sk">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Novinky – Včielka</title>
+<meta name="description" content="Aktuality a novinky zo Školky Včielka Bratislava Ružinov"/>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<link rel="icon" type="image/png" href="vcielka_logo2.png"/>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@700;800&family=Quicksand:wght@500;600;700&family=Inter:wght@400;500&display=swap" rel="stylesheet"/>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Inter',sans-serif;background:#D9EFFF;color:#1a1a1a;overflow-wrap:break-word;word-break:normal;hyphens:none;}
+:root{--blue:#1A5FA8;--yellow:#F9C832;--navy:#0D3D6E;}
+
+/* NAV */
+.nav{background:#F9C832;padding:0 32px;height:64px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;box-shadow:0 2px 20px rgba(26,95,168,.1);}
+.nav-logo{display:flex;align-items:center;gap:10px;text-decoration:none;}
+.nav-logo img{height:46px;width:auto;object-fit:contain;}
+.nav-back{font-family:'Quicksand',sans-serif;font-size:13px;font-weight:700;color:#1A5FA8;background:#C8E6FA;padding:8px 18px;border-radius:50px;text-decoration:none;}
+
+/* HEADER */
+.page-header{background:var(--blue);padding:44px 32px 44px;text-align:center;}
+.page-header h1{font-family:'Nunito',sans-serif;font-size:clamp(28px,5vw,44px);font-weight:800;color:#fff;margin-bottom:10px;}
+.page-header p{font-family:'Inter',sans-serif;font-size:15px;color:rgba(255,255,255,.75);}
+
+/* WAVE */
+.wave{line-height:0;display:block;margin-bottom:-2px;margin-top:-2px;}
+.wave svg{width:100%;display:block;}
+
+/* CONTENT */
+.content{max-width:1000px;margin:0 auto;padding:48px 32px 64px;}
+
+/* NEWS LIST */
+.news-list{display:flex;flex-direction:column;gap:28px;}
+.news-article{background:#fff;border-radius:24px;overflow:hidden;display:grid;grid-template-columns:300px 1fr;box-shadow:0 4px 24px rgba(26,95,168,.08);transition:transform .2s;}
+.news-article:hover{transform:translateY(-3px);}
+.news-article-img{height:100%;min-height:220px;background:#C8E6FA;display:flex;align-items:center;justify-content:center;font-size:40px;overflow:hidden;}
+.news-article-img img{width:100%;height:100%;object-fit:cover;}
+.news-article-body{padding:28px 32px;}
+.news-article-tag{display:inline-block;background:#D9EFFF;color:var(--blue);font-family:'Quicksand',sans-serif;font-size:10px;font-weight:700;padding:4px 12px;border-radius:50px;text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px;}
+.news-article-date{font-family:'Inter',sans-serif;font-size:12px;color:#999;margin-bottom:8px;}
+.news-article-title{font-family:'Quicksand',sans-serif;font-size:20px;font-weight:700;color:#1a1a1a;margin-bottom:10px;line-height:1.3;}
+.news-article-excerpt{font-family:'Inter',sans-serif;font-size:14px;color:#555;line-height:1.65;margin-bottom:18px;}
+.news-article-link{font-family:'Quicksand',sans-serif;font-size:13px;font-weight:700;color:var(--blue);background:#D9EFFF;padding:10px 22px;border-radius:50px;text-decoration:none;display:inline-block;transition:.2s;}
+.news-article-link:hover{background:#C8E6FA;}
+
+/* Loading / empty states */
+.loading{text-align:center;padding:60px;color:#888;font-family:'Inter',sans-serif;}
+
+/* FOOTER */
+.footer{background:var(--navy);padding:32px;text-align:center;}
+.footer-copy{font-family:'Inter',sans-serif;font-size:12px;color:rgba(255,255,255,.35);}
+
+@media(max-width:700px){
+  .news-article{grid-template-columns:1fr;}
+  .news-article-img{min-height:180px;}
+  .content{padding:32px 18px 48px;}
+}
+
+.nav-logo-text{font-family:'Quicksand',sans-serif;font-size:18px;font-weight:700;color:#1a1a1a;text-decoration:none;}
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <a href="index.html" class="nav-logo" style="display:flex;align-items:center;gap:10px;text-decoration:none;">
+    <img src="VCIELKA_LOGO.png" alt="Materská škola Včielka" style="height:46px;width:auto;object-fit:contain;"/>
+  </a>
+  <a href="index.html" class="nav-back">← Späť na hlavnú</a>
+</nav>
+
+<div class="page-header">
+  <h1>Novinky v škôlke</h1>
+  <p>Aktuality, udalosti a správy zo Materskej školy Včielka</p>
+</div>
+
+<svg viewBox="0 0 1440 90" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg" style="display:block;width:100%;margin-top:-1px;">
+  <rect width="1440" height="90" fill="#1A5FA8"/>
+  <path d="M0,90 L0,45 Q360,0 720,45 Q1080,90 1440,45 L1440,90 Z" fill="#D9EFFF"/>
+</svg>
+
+<div class="content">
+  <div class="news-list" id="newsList">
+    <div class="loading">Načítavam novinky...</div>
+  </div>
+</div>
+
+<div class="footer">
+  <span class="footer-copy">© 2025 Materská škola Včielka · Bratislava Ružinov</span>
+</div>
+
+<script>
+const SUPA_URL = 'https://fmjtzuligqsugsauqkgz.supabase.co';
+const SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZtanR6dWxpZ3FzdWdzYXVxa2d6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU0MTQyMTUsImV4cCI6MjA5MDk5MDIxNX0.gRF-roExLgnVDG4bSNt7EzX6c1v-JtM5v6ZcX8dY934';
+const tagColors = {blue:'#D9EFFF',yellow:'#FFF8DC',green:'#E2F5EC'};
+
+async function loadNews() {
+  try {
+    const { createClient } = supabase;
+    const db = createClient(SUPA_URL, SUPA_KEY);
+    const { data, error } = await db.from('news').select('*').order('created_at', {ascending:false});
+    const list = document.getElementById('newsList');
+    if (error || !data || data.length === 0) {
+      list.innerHTML = '<div class="loading">Zatiaľ žiadne novinky.</div>';
+      return;
+    }
+    list.innerHTML = data.map(n => `
+      <div class="news-article">
+        <div class="news-article-img" style="background:${tagColors[n.color]||'#D9EFFF'};">
+          ${n.photo_url ? `<img src="${n.photo_url}" alt="${n.title}"/>` : '📰'}
+        </div>
+        <div class="news-article-body">
+          <div class="news-article-date">${new Date(n.published_at||n.created_at).toLocaleDateString('sk-SK',{day:'numeric',month:'long',year:'numeric'})}</div>
+          <div class="news-article-title">${n.title}</div>
+          <div class="news-article-excerpt">${n.excerpt||''}</div>
+          <a href="novinka.html?id=${n.id}" class="news-article-link">Čítať celý článok →</a>
+        </div>
+      </div>
+    `).join('');
+  } catch(e) {
+    document.getElementById('newsList').innerHTML = '<div class="loading">Chyba načítania.</div>';
+  }
+}
+loadNews();
+</script>
+
+<!-- cookie notice -->
+<div id="cookie-banner" style="display:none;position:fixed;bottom:0;left:0;right:0;background:#F9C832;color:#0D3D6E;padding:14px 20px;z-index:9999;align-items:center;justify-content:center;gap:14px;font-family:'Quicksand',sans-serif;font-size:14px;font-weight:600;box-shadow:0 -2px 20px rgba(0,0,0,.15);flex-wrap:wrap;text-align:center;">
+  <span>Táto stránka používa nevyhnutné cookies pre prihlásenie a bezpečnosť. Prehliadaním súhlasíte. <a href="privacy.html" style="color:#1A5FA8;text-decoration:underline;">Zásady ochrany súkromia</a></span>
+  <button onclick="document.getElementById('cookie-banner').style.display='none';localStorage.setItem('cookie_ok','1');" style="background:#1A5FA8;color:#fff;border:none;border-radius:50px;padding:8px 22px;font-family:'Quicksand',sans-serif;font-weight:700;font-size:13px;cursor:pointer;white-space:nowrap;flex-shrink:0;">Rozumiem</button>
+</div>
+<script>if(!localStorage.getItem('cookie_ok')){var b=document.getElementById('cookie-banner');b.style.display='flex';}</script>
+</body>
+</html>

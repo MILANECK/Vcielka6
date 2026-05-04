@@ -1,0 +1,2254 @@
+<!DOCTYPE html>
+<html lang="sk">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Správca webu – Včielka</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<link rel="icon" type="image/png" href="vcielka_logo2.png"/>
+<link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@500;600;700&family=Inter:wght@400;500&display=swap" rel="stylesheet"/>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Inter',sans-serif;background:#F0F7FF;color:#1a1a1a;min-height:100vh;overflow-wrap:break-word;word-break:normal;hyphens:none;}
+
+/* LOGIN */
+.login-wrap{display:flex;align-items:center;justify-content:center;min-height:100vh;padding:20px;}
+.login-box{background:#fff;border-radius:24px;padding:48px 40px;width:100%;max-width:400px;box-shadow:0 8px 40px rgba(26,95,168,.1);}
+.login-logo{text-align:center;margin-bottom:32px;}
+.login-logo img{height:56px;}
+.login-logo h1{font-family:'Quicksand',sans-serif;font-size:22px;font-weight:700;color:#1A5FA8;margin-top:12px;}
+.login-logo p{font-size:13px;color:#888;margin-top:4px;}
+.login-box label{display:block;font-size:12px;font-weight:600;color:#555;margin-bottom:6px;margin-top:18px;}
+.login-box input{width:100%;padding:12px 16px;border:1.5px solid #E0ECFF;border-radius:12px;font-size:14px;font-family:'Inter',sans-serif;outline:none;transition:.2s;}
+.login-box input:focus{border-color:#4A9FD4;}
+.login-btn{width:100%;background:#F9C832;color:#1a1a1a;font-family:'Quicksand',sans-serif;font-size:15px;font-weight:700;padding:14px;border:none;border-radius:50px;cursor:pointer;margin-top:24px;transition:.2s;}
+.login-btn:hover{opacity:.88;}
+.login-error{color:#e74c3c;font-size:13px;text-align:center;margin-top:12px;display:none;}
+
+/* LAYOUT */
+.app{display:none;min-height:100vh;}
+.sidebar{position:fixed;top:0;left:0;width:240px;height:100vh;background:#1A5FA8;padding:24px 16px;overflow-y:auto;z-index:10;}
+.sidebar-logo{display:flex;align-items:center;gap:10px;padding:8px 12px;margin-bottom:24px;flex-wrap:nowrap;}
+.sidebar-logo img{height:44px;filter:none;}
+.sidebar-logo span{font-family:'Quicksand',sans-serif;font-size:13px;font-weight:700;color:#fff;line-height:1.3;}
+.nav-item{display:flex;align-items:center;gap:10px;padding:11px 14px;border-radius:12px;cursor:pointer;color:rgba(255,255,255,.75);font-family:'Quicksand',sans-serif;font-size:13px;font-weight:600;margin-bottom:4px;transition:.2s;}
+.nav-item:hover{background:rgba(255,255,255,.12);color:#fff;}
+.nav-item.active{background:#F9C832;color:#1a1a1a;}
+.nav-item .icon{font-size:16px;width:20px;text-align:center;}
+.nav-divider{height:1px;background:rgba(255,255,255,.15);margin:12px 0;}
+.logout-btn{display:flex;align-items:center;gap:10px;padding:11px 14px;border-radius:12px;cursor:pointer;color:rgba(255,255,255,.6);font-family:'Quicksand',sans-serif;font-size:13px;font-weight:600;margin-top:8px;transition:.2s;width:100%;background:none;border:none;}
+.logout-btn:hover{color:#fff;background:rgba(255,0,0,.2);}
+
+.main{margin-left:240px;padding:32px;min-height:100vh;}
+.page-title{font-family:'Quicksand',sans-serif;font-size:24px;font-weight:700;color:#1A5FA8;margin-bottom:8px;}
+.page-sub{font-size:13px;color:#888;margin-bottom:28px;}
+
+/* CARDS */
+.card{background:#fff;border-radius:20px;padding:28px;margin-bottom:20px;box-shadow:0 2px 16px rgba(26,95,168,.06);}
+.card-title{font-family:'Quicksand',sans-serif;font-size:16px;font-weight:700;color:#1a1a1a;margin-bottom:18px;display:flex;align-items:center;gap:8px;}
+
+/* FORM ELEMENTS */
+.field{margin-bottom:18px;}
+.field label{display:block;font-size:12px;font-weight:600;color:#555;margin-bottom:6px;}
+.field input,.field textarea,.field select{width:100%;padding:11px 14px;border:1.5px solid #E0ECFF;border-radius:12px;font-size:13px;font-family:'Inter',sans-serif;outline:none;transition:.2s;resize:vertical;}
+.field input:focus,.field textarea:focus{border-color:#4A9FD4;}
+.field textarea{min-height:80px;}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+.three-col{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;}
+
+/* BUTTONS */
+.btn-save{background:#F9C832;color:#1a1a1a;font-family:'Quicksand',sans-serif;font-size:13px;font-weight:700;padding:11px 24px;border:none;border-radius:50px;cursor:pointer;transition:.2s;}
+.btn-save:hover{opacity:.85;}
+.btn-save:disabled{opacity:.5;cursor:default;}
+.btn-danger{background:#fee2e2;color:#dc2626;font-family:'Quicksand',sans-serif;font-size:12px;font-weight:700;padding:8px 16px;border:none;border-radius:50px;cursor:pointer;}
+.btn-danger:hover{background:#fecaca;}
+.btn-add{background:#D9EFFF;color:#1A5FA8;font-family:'Quicksand',sans-serif;font-size:13px;font-weight:700;padding:11px 24px;border:none;border-radius:50px;cursor:pointer;margin-bottom:16px;}
+.btn-add:hover{background:#C8E6FA;}
+.btn-secondary{background:#f0f0f0;color:#333;font-family:'Quicksand',sans-serif;font-size:13px;font-weight:600;padding:11px 20px;border:none;border-radius:50px;cursor:pointer;}
+
+/* IMAGE UPLOAD */
+.img-upload{border:2px dashed #C8E6FA;border-radius:16px;padding:24px;text-align:center;cursor:pointer;transition:.2s;position:relative;}
+.img-upload:hover{border-color:#4A9FD4;background:#F0F7FF;}
+.img-upload input{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%;}
+.img-upload .icon{font-size:28px;margin-bottom:8px;}
+.img-upload p{font-size:12px;color:#888;}
+.img-preview{width:100%;max-height:160px;object-fit:cover;border-radius:12px;margin-top:10px;display:none;}
+
+/* ACTIVITY CARDS */
+.activity-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px;}
+.activity-card{background:#F8FBFF;border:1.5px solid #E0ECFF;border-radius:16px;padding:18px;}
+.activity-card-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;}
+.activity-card-icon{font-size:24px;}
+.activity-photo{width:100%;height:100px;object-fit:cover;border-radius:10px;margin-bottom:10px;display:block;}
+.activity-photo-placeholder{width:100%;height:100px;background:#E0ECFF;border-radius:10px;display:flex;align-items:center;justify-content:center;margin-bottom:10px;font-size:28px;cursor:pointer;border:2px dashed #C8E6FA;position:relative;}
+.activity-photo-placeholder input{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%;}
+/* FORMATTING TOOLBAR */
+.fmt-wrap{position:relative;}
+.fmt-toolbar{display:flex;gap:4px;margin-bottom:5px;flex-wrap:wrap;}
+.fmt-btn{background:#E0ECFF;border:none;border-radius:6px;padding:3px 9px;font-family:'Quicksand',sans-serif;font-size:12px;font-weight:700;cursor:pointer;color:#1A5FA8;transition:.15s;line-height:1.6;}
+.fmt-btn:hover{background:#C8E6FA;}
+.fmt-btn.b{font-weight:900;font-style:normal;}
+.fmt-btn.i{font-style:italic;}
+.fmt-sep{width:1px;background:#C8E6FA;margin:2px 2px;}
+.fmt-lh{position:relative;display:inline-flex;}
+.fmt-lh-pop{display:none;position:absolute;top:calc(100% + 3px);left:0;background:#fff;border:1.5px solid #C8E6FA;border-radius:8px;box-shadow:0 4px 14px rgba(26,95,168,.12);z-index:200;overflow:hidden;min-width:52px;}
+.fmt-lh-pop.open{display:block;}
+.fmt-lh-opt{display:block;width:100%;padding:5px 10px;border:none;background:none;font-family:'Quicksand',sans-serif;font-size:12px;font-weight:700;color:#1A5FA8;cursor:pointer;text-align:center;transition:.12s;white-space:nowrap;}
+.fmt-lh-opt:hover{background:#EEF7FF;}
+.fake-textarea{width:100%;min-height:75px;padding:8px 10px;border:1.5px solid #C8E6FA;border-radius:10px;font-family:'Inter',sans-serif;font-size:14px;color:#333;background:#fff;outline:none;line-height:1.6;box-sizing:border-box;cursor:text;overflow-y:auto;resize:vertical;}
+.fake-textarea:focus{border-color:#1A5FA8;box-shadow:0 0 0 3px rgba(26,95,168,.08);}
+.fake-textarea[data-tall]{min-height:110px;}
+.drag-handle{cursor:grab;font-size:20px;color:#c0cfe8;user-select:none;padding:0 2px;line-height:1;margin-right:4px;}
+.drag-handle:active{cursor:grabbing;}
+.activity-card.drag-over{border-color:#1A5FA8!important;background:#EEF4FF!important;box-shadow:0 0 0 3px rgba(26,95,168,.15);}
+.activity-card[draggable="true"]{transition:opacity .2s,box-shadow .2s;}
+
+/* NEWS ITEMS */
+.news-item{background:#F8FBFF;border:1.5px solid #E0ECFF;border-radius:16px;padding:20px;margin-bottom:14px;}
+.news-item-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;}
+.news-photo{width:100%;height:120px;object-fit:cover;border-radius:10px;margin-bottom:12px;}
+
+/* GALLERY GRID */
+.gallery-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px;}
+.gallery-item{position:relative;border-radius:14px;overflow:hidden;aspect-ratio:4/3;cursor:grab;transition:opacity .2s,transform .2s;}
+.gallery-item:active{cursor:grabbing;}
+.gallery-item img{width:100%;height:100%;object-fit:cover;}
+.gallery-item-del{position:absolute;top:6px;right:6px;background:rgba(0,0,0,.6);color:#fff;border:none;border-radius:50%;width:26px;height:26px;cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;}
+.gallery-item.drag-over{outline:3px dashed #4A9FD4;outline-offset:2px;transform:scale(1.04);}
+.gallery-item.dragging{opacity:.35;}
+.gallery-item.sk-selected{outline:3px solid #1A5FA8;outline-offset:-3px;}
+.gallery-item.sk-selected .sk-check{background:#1A5FA8;border-color:#1A5FA8;color:#fff;}
+.sk-check{position:absolute;top:6px;left:6px;width:22px;height:22px;border-radius:50%;border:2px solid rgba(255,255,255,.85);background:rgba(0,0,0,.28);display:flex;align-items:center;justify-content:center;font-size:11px;color:transparent;cursor:pointer;transition:.15s;z-index:2;}
+.sk-sel-bar{display:flex;align-items:center;gap:8px;flex-wrap:wrap;padding:10px 0 4px;border-top:1px solid #E0ECFF;margin-top:10px;}
+.sk-dl-btn{display:inline-flex;align-items:center;gap:6px;background:#1A5FA8;color:#fff;font-family:'Quicksand',sans-serif;font-size:12px;font-weight:700;padding:8px 16px;border-radius:50px;border:none;cursor:pointer;opacity:.35;pointer-events:none;transition:.2s;}
+.sk-dl-btn.active{opacity:1;pointer-events:auto;}
+.sk-dl-btn.active:hover{background:#154e8a;}
+.sk-sel-count{font-family:'Quicksand',sans-serif;font-size:12px;color:#888;font-weight:600;min-width:80px;}
+.sk-sel-action{background:#f0f0f0;color:#333;font-family:'Quicksand',sans-serif;font-size:11px;font-weight:600;padding:6px 12px;border:none;border-radius:50px;cursor:pointer;}
+.sk-sel-action:hover{background:#ddd;}
+.storage-panel{background:#fff;border-radius:20px;padding:20px 24px;margin-bottom:20px;box-shadow:0 2px 16px rgba(26,95,168,.06);}
+.storage-bar-wrap{background:#E0ECFF;border-radius:50px;height:10px;overflow:hidden;margin:10px 0 6px;}
+.storage-bar-fill{height:100%;border-radius:50px;background:#1A5FA8;transition:width .6s ease;}
+.storage-bar-fill.warn{background:#F59E0B;}
+.storage-bar-fill.danger{background:#EF4444;}
+.folder-size-tag{font-size:11px;color:#6B7CB3;font-weight:600;}
+.gallery-upload{border:2px dashed #C8E6FA;border-radius:14px;aspect-ratio:1;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;position:relative;transition:.2s;}
+.gallery-upload:hover{border-color:#4A9FD4;background:#F0F7FF;}
+.gallery-upload input{position:absolute;inset:0;opacity:0;cursor:pointer;}
+.gallery-upload span{font-size:28px;margin-bottom:6px;}
+.gallery-upload p{font-size:11px;color:#888;}
+
+/* TOAST */
+.toast{position:fixed;bottom:28px;right:28px;background:#1A5FA8;color:#fff;font-family:'Quicksand',sans-serif;font-size:14px;font-weight:600;padding:14px 24px;border-radius:50px;box-shadow:0 4px 24px rgba(0,0,0,.2);z-index:1000;transform:translateY(80px);opacity:0;transition:.3s;}
+.toast.show{transform:translateY(0);opacity:1;}
+.toast.success{background:#22c55e;}
+.toast.error{background:#ef4444;}
+
+/* SECTION PAGES */
+.section-page{display:none;}
+.section-page.active{display:block;}
+
+/* LOGO UPLOAD */
+.logo-current{height:60px;margin-bottom:14px;display:block;}
+
+/* ── TOOLTIPS ── */
+[data-tip]{position:relative;}
+[data-tip]::before{content:attr(data-tip);position:absolute;bottom:calc(100% + 8px);left:50%;transform:translateX(-50%) translateY(4px);background:rgba(15,25,50,.93);color:#fff;padding:6px 11px;border-radius:8px;font-size:11.5px;font-weight:600;white-space:nowrap;pointer-events:none;opacity:0;transition:opacity .16s,transform .16s;z-index:9999;font-family:'Quicksand',sans-serif;box-shadow:0 3px 12px rgba(0,0,0,.22);}
+[data-tip]::after{content:'';position:absolute;bottom:calc(100% + 3px);left:50%;transform:translateX(-50%) translateY(4px);border:5px solid transparent;border-top-color:rgba(15,25,50,.93);pointer-events:none;opacity:0;transition:opacity .16s,transform .16s;z-index:9999;}
+[data-tip]:hover::before,[data-tip]:hover::after{opacity:1;transform:translateX(-50%) translateY(0);}
+[data-tip-r]::before{left:auto;right:0;transform:translateY(4px);}
+[data-tip-r]::after{left:auto;right:16px;transform:translateY(4px);}
+[data-tip-r]:hover::before,[data-tip-r]:hover::after{transform:translateY(0);}
+</style>
+</head>
+<body>
+
+<!-- LOGIN SCREEN -->
+<div class="login-wrap" id="loginWrap">
+  <div class="login-box">
+    <div class="login-logo">
+      <img src="vcielka_logo2.png" alt="Včielka" style="height:80px;width:auto;margin:0 auto 8px;display:block;"/>
+      <h1>Správca webu</h1>
+      <p>Materská škola Včielka · Admin panel</p>
+    </div>
+    <label>Heslo</label>
+    <input type="password" id="passwordInput" placeholder="Zadajte heslo..." onkeydown="if(event.key==='Enter')doLogin()"/>
+    <button class="login-btn" data-tip="Prihlásiť sa do správcovského panela" onclick="doLogin()">Prihlásiť sa</button>
+    <div class="login-error" id="loginError">Nesprávne heslo. Skúste znova.</div>
+  </div>
+</div>
+
+<!-- ADMIN APP -->
+<div class="app" id="app">
+
+  <!-- SIDEBAR -->
+  <div class="sidebar">
+    <div class="sidebar-logo">
+      <img src="vcielka_logo2.png" alt="Včielka" style="height:44px;width:auto;flex-shrink:0;"/>
+      <span>Materská škola Včielka</span>
+    </div>
+    <div class="nav-item active" onclick="showPage('hero')" id="nav-hero">
+      <span class="icon">🏠</span> Hero sekcia
+    </div>
+    <div class="nav-item" onclick="showPage('onas')" id="nav-onas">
+      <span class="icon">📖</span> O nás & PPV
+    </div>
+    <div class="nav-item" onclick="showPage('activities')" id="nav-activities">
+      <span class="icon">🎯</span> Aktivity
+    </div>
+    <div class="nav-item" onclick="showPage('news')" id="nav-news">
+      <span class="icon">📰</span> Novinky
+    </div>
+    <div class="nav-item" onclick="showPage('gallery')" id="nav-gallery">
+      <span class="icon">🖼️</span> Galéria
+    </div>
+    <div class="nav-divider"></div>
+    <div class="nav-item" onclick="showPage('contact')" id="nav-contact">
+      <span class="icon">📞</span> Kontakt
+    </div>
+    <div class="nav-item" onclick="showPage('pricing')" id="nav-pricing">
+      <span class="icon">💰</span> Cenník
+    </div>
+    <div class="nav-item" onclick="showPage('logo')" id="nav-logo">
+      <span class="icon">🐝</span> Logo
+    </div>
+    <div class="nav-item" onclick="showPage('footer')" id="nav-footer">
+      <span class="icon">📋</span> Pätička (footer)
+    </div>
+    <div class="nav-item" onclick="showPage('documents')" id="nav-documents">
+      <span class="icon">📄</span> Na stiahnutie
+    </div>
+    <div class="nav-item" onclick="showPage('jedalny')" id="nav-jedalny">
+      <span class="icon">🍽️</span> Jedálny lístok
+    </div>
+    <div class="nav-divider"></div>
+    <div class="nav-item" onclick="showPage('skolka')" id="nav-skolka">
+      <span class="icon">📸</span> Virtuálna Škôlka
+    </div>
+    <div class="nav-item" onclick="showPage('skolka_pw')" id="nav-skolka_pw">
+      <span class="icon">🔑</span> VS Heslo
+    </div>
+    <div class="nav-item" onclick="showPage('admin_pw')" id="nav-admin_pw">
+      <span class="icon">🛡️</span> Admin Heslo
+    </div>
+    <div class="nav-divider"></div>
+    <button class="logout-btn" data-tip="Odhlásiť sa zo správcu" data-tip-r onclick="doLogout()"><span>🚪</span> Odhlásiť sa</button>
+  </div>
+
+  <!-- MAIN CONTENT -->
+  <div class="main">
+
+    <!-- O NÁS & PPV -->
+    <div class="section-page" id="page-onas">
+      <div class="page-title">📖 O nás & Povinné vzdelávanie</div>
+      <div class="page-sub">Texty v sekcii "O nás" a "Povinné predprimárne vzdelávanie" na hlavnej stránke</div>
+
+      <div class="card">
+        <div class="card-title">✏️ Viditeľné texty (vždy zobrazené)</div>
+        <div class="field fmt-wrap">
+          <label>1. odstavec</label>
+          <div class="fmt-toolbar">
+            <button class="fmt-btn b" type="button" data-action="bold" onmousedown="event.preventDefault();fmtWrap(this)">B</button>
+            <button class="fmt-btn i" type="button" data-action="italic" onmousedown="event.preventDefault();fmtWrap(this)">I</button>
+            <div class="fmt-sep"></div>
+            <button class="fmt-btn" type="button" data-size="0.82em" onmousedown="event.preventDefault();fmtWrap(this)">S</button>
+            <button class="fmt-btn" type="button" data-size="1em" onmousedown="event.preventDefault();fmtWrap(this)">M</button>
+            <button class="fmt-btn" type="button" data-size="1.2em" onmousedown="event.preventDefault();fmtWrap(this)">L</button>
+            <div class="fmt-sep"></div>
+            <button class="fmt-btn" type="button" data-action="justifyLeft" onmousedown="event.preventDefault();fmtWrap(this)" title="Zarovnať vľavo"><svg width="13" height="10" viewBox="0 0 13 10" fill="none"><rect x="0" y="0" width="13" height="1.8" rx="0.9" fill="currentColor"/><rect x="0" y="4.1" width="8" height="1.8" rx="0.9" fill="currentColor"/><rect x="0" y="8.2" width="11" height="1.8" rx="0.9" fill="currentColor"/></svg></button>
+            <button class="fmt-btn" type="button" data-action="justifyCenter" onmousedown="event.preventDefault();fmtWrap(this)" title="Zarovnať na stred"><svg width="13" height="10" viewBox="0 0 13 10" fill="none"><rect x="0" y="0" width="13" height="1.8" rx="0.9" fill="currentColor"/><rect x="2.5" y="4.1" width="8" height="1.8" rx="0.9" fill="currentColor"/><rect x="1" y="8.2" width="11" height="1.8" rx="0.9" fill="currentColor"/></svg></button>
+            <button class="fmt-btn" type="button" data-action="justifyRight" onmousedown="event.preventDefault();fmtWrap(this)" title="Zarovnať vpravo"><svg width="13" height="10" viewBox="0 0 13 10" fill="none"><rect x="0" y="0" width="13" height="1.8" rx="0.9" fill="currentColor"/><rect x="5" y="4.1" width="8" height="1.8" rx="0.9" fill="currentColor"/><rect x="2" y="8.2" width="11" height="1.8" rx="0.9" fill="currentColor"/></svg></button>
+            <div class="fmt-sep"></div>
+            <div class="fmt-lh"><button class="fmt-btn" type="button" title="Riadkovanie" onmousedown="event.preventDefault();saveFmtSel(event,this);" onclick="toggleFmtLh(this)" style="padding:3px 7px;"><svg width="13" height="11" viewBox="0 0 13 11" fill="none"><rect x="4" y="0" width="9" height="1.5" rx=".75" fill="currentColor"/><rect x="4" y="4.75" width="9" height="1.5" rx=".75" fill="currentColor"/><rect x="4" y="9.5" width="9" height="1.5" rx=".75" fill="currentColor"/><path d="M1.5 2.5v6" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/><path d="M.5 4L1.5 2.5L2.5 4" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" fill="none"/><path d="M.5 7L1.5 8.5L2.5 7" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg></button><div class="fmt-lh-pop"><button class="fmt-lh-opt" onmousedown="event.preventDefault();applyFmtLh(this,'1.2')">1.2×</button><button class="fmt-lh-opt" onmousedown="event.preventDefault();applyFmtLh(this,'1.5')">1.5×</button><button class="fmt-lh-opt" onmousedown="event.preventDefault();applyFmtLh(this,'1.8')">1.8×</button><button class="fmt-lh-opt" onmousedown="event.preventDefault();applyFmtLh(this,'2.2')">2.2×</button></div></div>
+          </div>
+          <div class="fake-textarea" id="onas_p1" contenteditable="true"></div>
+        </div>
+        <div class="field fmt-wrap">
+          <label>2. odstavec</label>
+          <div class="fmt-toolbar">
+            <button class="fmt-btn b" type="button" data-action="bold" onmousedown="event.preventDefault();fmtWrap(this)">B</button>
+            <button class="fmt-btn i" type="button" data-action="italic" onmousedown="event.preventDefault();fmtWrap(this)">I</button>
+            <div class="fmt-sep"></div>
+            <button class="fmt-btn" type="button" data-size="0.82em" onmousedown="event.preventDefault();fmtWrap(this)">S</button>
+            <button class="fmt-btn" type="button" data-size="1em" onmousedown="event.preventDefault();fmtWrap(this)">M</button>
+            <button class="fmt-btn" type="button" data-size="1.2em" onmousedown="event.preventDefault();fmtWrap(this)">L</button>
+            <div class="fmt-sep"></div>
+            <button class="fmt-btn" type="button" data-action="justifyLeft" onmousedown="event.preventDefault();fmtWrap(this)" title="Zarovnať vľavo"><svg width="13" height="10" viewBox="0 0 13 10" fill="none"><rect x="0" y="0" width="13" height="1.8" rx="0.9" fill="currentColor"/><rect x="0" y="4.1" width="8" height="1.8" rx="0.9" fill="currentColor"/><rect x="0" y="8.2" width="11" height="1.8" rx="0.9" fill="currentColor"/></svg></button>
+            <button class="fmt-btn" type="button" data-action="justifyCenter" onmousedown="event.preventDefault();fmtWrap(this)" title="Zarovnať na stred"><svg width="13" height="10" viewBox="0 0 13 10" fill="none"><rect x="0" y="0" width="13" height="1.8" rx="0.9" fill="currentColor"/><rect x="2.5" y="4.1" width="8" height="1.8" rx="0.9" fill="currentColor"/><rect x="1" y="8.2" width="11" height="1.8" rx="0.9" fill="currentColor"/></svg></button>
+            <button class="fmt-btn" type="button" data-action="justifyRight" onmousedown="event.preventDefault();fmtWrap(this)" title="Zarovnať vpravo"><svg width="13" height="10" viewBox="0 0 13 10" fill="none"><rect x="0" y="0" width="13" height="1.8" rx="0.9" fill="currentColor"/><rect x="5" y="4.1" width="8" height="1.8" rx="0.9" fill="currentColor"/><rect x="2" y="8.2" width="11" height="1.8" rx="0.9" fill="currentColor"/></svg></button>
+            <div class="fmt-sep"></div>
+            <div class="fmt-lh"><button class="fmt-btn" type="button" title="Riadkovanie" onmousedown="event.preventDefault();saveFmtSel(event,this);" onclick="toggleFmtLh(this)" style="padding:3px 7px;"><svg width="13" height="11" viewBox="0 0 13 11" fill="none"><rect x="4" y="0" width="9" height="1.5" rx=".75" fill="currentColor"/><rect x="4" y="4.75" width="9" height="1.5" rx=".75" fill="currentColor"/><rect x="4" y="9.5" width="9" height="1.5" rx=".75" fill="currentColor"/><path d="M1.5 2.5v6" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/><path d="M.5 4L1.5 2.5L2.5 4" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" fill="none"/><path d="M.5 7L1.5 8.5L2.5 7" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg></button><div class="fmt-lh-pop"><button class="fmt-lh-opt" onmousedown="event.preventDefault();applyFmtLh(this,'1.2')">1.2×</button><button class="fmt-lh-opt" onmousedown="event.preventDefault();applyFmtLh(this,'1.5')">1.5×</button><button class="fmt-lh-opt" onmousedown="event.preventDefault();applyFmtLh(this,'1.8')">1.8×</button><button class="fmt-lh-opt" onmousedown="event.preventDefault();applyFmtLh(this,'2.2')">2.2×</button></div></div>
+          </div>
+          <div class="fake-textarea" id="onas_p2" contenteditable="true" data-tall></div>
+        </div>
+        <button class="btn-save" data-tip="Uložiť texty sekcie O nás" onclick="saveSettings(['onas_p1','onas_p2'])">💾 Uložiť</button>
+      </div>
+
+      <div class="card">
+        <div class="card-title">📂 Rozbaľovací obsah (po kliknutí „Čítať viac")</div>
+        <div class="field fmt-wrap">
+          <label>3. odstavec</label>
+          <div class="fmt-toolbar">
+            <button class="fmt-btn b" type="button" data-action="bold" onmousedown="event.preventDefault();fmtWrap(this)">B</button>
+            <button class="fmt-btn i" type="button" data-action="italic" onmousedown="event.preventDefault();fmtWrap(this)">I</button>
+            <div class="fmt-sep"></div>
+            <button class="fmt-btn" type="button" data-size="0.82em" onmousedown="event.preventDefault();fmtWrap(this)">S</button>
+            <button class="fmt-btn" type="button" data-size="1em" onmousedown="event.preventDefault();fmtWrap(this)">M</button>
+            <button class="fmt-btn" type="button" data-size="1.2em" onmousedown="event.preventDefault();fmtWrap(this)">L</button>
+            <div class="fmt-sep"></div>
+            <button class="fmt-btn" type="button" data-action="justifyLeft" onmousedown="event.preventDefault();fmtWrap(this)" title="Zarovnať vľavo"><svg width="13" height="10" viewBox="0 0 13 10" fill="none"><rect x="0" y="0" width="13" height="1.8" rx="0.9" fill="currentColor"/><rect x="0" y="4.1" width="8" height="1.8" rx="0.9" fill="currentColor"/><rect x="0" y="8.2" width="11" height="1.8" rx="0.9" fill="currentColor"/></svg></button>
+            <button class="fmt-btn" type="button" data-action="justifyCenter" onmousedown="event.preventDefault();fmtWrap(this)" title="Zarovnať na stred"><svg width="13" height="10" viewBox="0 0 13 10" fill="none"><rect x="0" y="0" width="13" height="1.8" rx="0.9" fill="currentColor"/><rect x="2.5" y="4.1" width="8" height="1.8" rx="0.9" fill="currentColor"/><rect x="1" y="8.2" width="11" height="1.8" rx="0.9" fill="currentColor"/></svg></button>
+            <button class="fmt-btn" type="button" data-action="justifyRight" onmousedown="event.preventDefault();fmtWrap(this)" title="Zarovnať vpravo"><svg width="13" height="10" viewBox="0 0 13 10" fill="none"><rect x="0" y="0" width="13" height="1.8" rx="0.9" fill="currentColor"/><rect x="5" y="4.1" width="8" height="1.8" rx="0.9" fill="currentColor"/><rect x="2" y="8.2" width="11" height="1.8" rx="0.9" fill="currentColor"/></svg></button>
+            <div class="fmt-sep"></div>
+            <div class="fmt-lh"><button class="fmt-btn" type="button" title="Riadkovanie" onmousedown="event.preventDefault();saveFmtSel(event,this);" onclick="toggleFmtLh(this)" style="padding:3px 7px;"><svg width="13" height="11" viewBox="0 0 13 11" fill="none"><rect x="4" y="0" width="9" height="1.5" rx=".75" fill="currentColor"/><rect x="4" y="4.75" width="9" height="1.5" rx=".75" fill="currentColor"/><rect x="4" y="9.5" width="9" height="1.5" rx=".75" fill="currentColor"/><path d="M1.5 2.5v6" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/><path d="M.5 4L1.5 2.5L2.5 4" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" fill="none"/><path d="M.5 7L1.5 8.5L2.5 7" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg></button><div class="fmt-lh-pop"><button class="fmt-lh-opt" onmousedown="event.preventDefault();applyFmtLh(this,'1.2')">1.2×</button><button class="fmt-lh-opt" onmousedown="event.preventDefault();applyFmtLh(this,'1.5')">1.5×</button><button class="fmt-lh-opt" onmousedown="event.preventDefault();applyFmtLh(this,'1.8')">1.8×</button><button class="fmt-lh-opt" onmousedown="event.preventDefault();applyFmtLh(this,'2.2')">2.2×</button></div></div>
+          </div>
+          <div class="fake-textarea" id="onas_extra_p1" contenteditable="true"></div>
+        </div>
+        <div class="field fmt-wrap">
+          <label>4. odstavec</label>
+          <div class="fmt-toolbar">
+            <button class="fmt-btn b" type="button" data-action="bold" onmousedown="event.preventDefault();fmtWrap(this)">B</button>
+            <button class="fmt-btn i" type="button" data-action="italic" onmousedown="event.preventDefault();fmtWrap(this)">I</button>
+            <div class="fmt-sep"></div>
+            <button class="fmt-btn" type="button" data-size="0.82em" onmousedown="event.preventDefault();fmtWrap(this)">S</button>
+            <button class="fmt-btn" type="button" data-size="1em" onmousedown="event.preventDefault();fmtWrap(this)">M</button>
+            <button class="fmt-btn" type="button" data-size="1.2em" onmousedown="event.preventDefault();fmtWrap(this)">L</button>
+            <div class="fmt-sep"></div>
+            <button class="fmt-btn" type="button" data-action="justifyLeft" onmousedown="event.preventDefault();fmtWrap(this)" title="Zarovnať vľavo"><svg width="13" height="10" viewBox="0 0 13 10" fill="none"><rect x="0" y="0" width="13" height="1.8" rx="0.9" fill="currentColor"/><rect x="0" y="4.1" width="8" height="1.8" rx="0.9" fill="currentColor"/><rect x="0" y="8.2" width="11" height="1.8" rx="0.9" fill="currentColor"/></svg></button>
+            <button class="fmt-btn" type="button" data-action="justifyCenter" onmousedown="event.preventDefault();fmtWrap(this)" title="Zarovnať na stred"><svg width="13" height="10" viewBox="0 0 13 10" fill="none"><rect x="0" y="0" width="13" height="1.8" rx="0.9" fill="currentColor"/><rect x="2.5" y="4.1" width="8" height="1.8" rx="0.9" fill="currentColor"/><rect x="1" y="8.2" width="11" height="1.8" rx="0.9" fill="currentColor"/></svg></button>
+            <button class="fmt-btn" type="button" data-action="justifyRight" onmousedown="event.preventDefault();fmtWrap(this)" title="Zarovnať vpravo"><svg width="13" height="10" viewBox="0 0 13 10" fill="none"><rect x="0" y="0" width="13" height="1.8" rx="0.9" fill="currentColor"/><rect x="5" y="4.1" width="8" height="1.8" rx="0.9" fill="currentColor"/><rect x="2" y="8.2" width="11" height="1.8" rx="0.9" fill="currentColor"/></svg></button>
+            <div class="fmt-sep"></div>
+            <div class="fmt-lh"><button class="fmt-btn" type="button" title="Riadkovanie" onmousedown="event.preventDefault();saveFmtSel(event,this);" onclick="toggleFmtLh(this)" style="padding:3px 7px;"><svg width="13" height="11" viewBox="0 0 13 11" fill="none"><rect x="4" y="0" width="9" height="1.5" rx=".75" fill="currentColor"/><rect x="4" y="4.75" width="9" height="1.5" rx=".75" fill="currentColor"/><rect x="4" y="9.5" width="9" height="1.5" rx=".75" fill="currentColor"/><path d="M1.5 2.5v6" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/><path d="M.5 4L1.5 2.5L2.5 4" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" fill="none"/><path d="M.5 7L1.5 8.5L2.5 7" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg></button><div class="fmt-lh-pop"><button class="fmt-lh-opt" onmousedown="event.preventDefault();applyFmtLh(this,'1.2')">1.2×</button><button class="fmt-lh-opt" onmousedown="event.preventDefault();applyFmtLh(this,'1.5')">1.5×</button><button class="fmt-lh-opt" onmousedown="event.preventDefault();applyFmtLh(this,'1.8')">1.8×</button><button class="fmt-lh-opt" onmousedown="event.preventDefault();applyFmtLh(this,'2.2')">2.2×</button></div></div>
+          </div>
+          <div class="fake-textarea" id="onas_extra_p2" contenteditable="true"></div>
+        </div>
+        <div class="field">
+          <label>Odrážky (každá položka na nový riadok)</label>
+          <textarea id="onas_list" style="min-height:130px;" placeholder="zariadenie spĺňa štátne vzdelávacie štandardy...&#10;učitelia s odborným vzdelaním a praxou...&#10;plynulý prechod detí do základnej školy...&#10;pravidelné kontroly a dodržiavanie noriem..."></textarea>
+        </div>
+        <button class="btn-save" data-tip="Uložiť rozbaľovací obsah O nás" onclick="saveSettings(['onas_extra_p1','onas_extra_p2','onas_list'])">💾 Uložiť</button>
+      </div>
+
+      <div class="card">
+        <div class="card-title">🐝 Zvedavá Včielka — text programu</div>
+        <p style="font-size:12px;color:#888;margin-bottom:14px;">Text sa zobrazí po kliknutí na „Viac o programe" v sekcii <strong>Program</strong> na hlavnej stránke. Podporuje tučné a kurzívne formátovanie.</p>
+        <div class="field fmt-wrap">
+          <div class="fmt-toolbar">
+            <button class="fmt-btn b" type="button" data-action="bold" onmousedown="event.preventDefault();fmtWrap(this)">B</button>
+            <button class="fmt-btn i" type="button" data-action="italic" onmousedown="event.preventDefault();fmtWrap(this)">I</button>
+            <div class="fmt-sep"></div>
+            <button class="fmt-btn" type="button" data-size="0.82em" onmousedown="event.preventDefault();fmtWrap(this)">S</button>
+            <button class="fmt-btn" type="button" data-size="1em" onmousedown="event.preventDefault();fmtWrap(this)">M</button>
+            <button class="fmt-btn" type="button" data-size="1.2em" onmousedown="event.preventDefault();fmtWrap(this)">L</button>
+            <div class="fmt-sep"></div>
+            <button class="fmt-btn" type="button" data-action="justifyLeft" onmousedown="event.preventDefault();fmtWrap(this)" title="Zarovnať vľavo"><svg width="13" height="10" viewBox="0 0 13 10" fill="none"><rect x="0" y="0" width="13" height="1.8" rx="0.9" fill="currentColor"/><rect x="0" y="4.1" width="8" height="1.8" rx="0.9" fill="currentColor"/><rect x="0" y="8.2" width="11" height="1.8" rx="0.9" fill="currentColor"/></svg></button>
+            <button class="fmt-btn" type="button" data-action="justifyCenter" onmousedown="event.preventDefault();fmtWrap(this)" title="Zarovnať na stred"><svg width="13" height="10" viewBox="0 0 13 10" fill="none"><rect x="0" y="0" width="13" height="1.8" rx="0.9" fill="currentColor"/><rect x="2.5" y="4.1" width="8" height="1.8" rx="0.9" fill="currentColor"/><rect x="1" y="8.2" width="11" height="1.8" rx="0.9" fill="currentColor"/></svg></button>
+            <button class="fmt-btn" type="button" data-action="justifyRight" onmousedown="event.preventDefault();fmtWrap(this)" title="Zarovnať vpravo"><svg width="13" height="10" viewBox="0 0 13 10" fill="none"><rect x="0" y="0" width="13" height="1.8" rx="0.9" fill="currentColor"/><rect x="5" y="4.1" width="8" height="1.8" rx="0.9" fill="currentColor"/><rect x="2" y="8.2" width="11" height="1.8" rx="0.9" fill="currentColor"/></svg></button>
+            <div class="fmt-sep"></div>
+            <div class="fmt-lh"><button class="fmt-btn" type="button" title="Riadkovanie" onmousedown="event.preventDefault();saveFmtSel(event,this);" onclick="toggleFmtLh(this)" style="padding:3px 7px;"><svg width="13" height="11" viewBox="0 0 13 11" fill="none"><rect x="4" y="0" width="9" height="1.5" rx=".75" fill="currentColor"/><rect x="4" y="4.75" width="9" height="1.5" rx=".75" fill="currentColor"/><rect x="4" y="9.5" width="9" height="1.5" rx=".75" fill="currentColor"/><path d="M1.5 2.5v6" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/><path d="M.5 4L1.5 2.5L2.5 4" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" fill="none"/><path d="M.5 7L1.5 8.5L2.5 7" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg></button><div class="fmt-lh-pop"><button class="fmt-lh-opt" onmousedown="event.preventDefault();applyFmtLh(this,'1.2')">1.2×</button><button class="fmt-lh-opt" onmousedown="event.preventDefault();applyFmtLh(this,'1.5')">1.5×</button><button class="fmt-lh-opt" onmousedown="event.preventDefault();applyFmtLh(this,'1.8')">1.8×</button><button class="fmt-lh-opt" onmousedown="event.preventDefault();applyFmtLh(this,'2.2')">2.2×</button></div></div>
+          </div>
+          <div class="fake-textarea" id="program_text" contenteditable="true" data-tall style="min-height:160px;"></div>
+        </div>
+        <button class="btn-save" data-tip="Uložiť text programu" onclick="saveSettings(['program_text'])">💾 Uložiť</button>
+      </div>
+
+      <div class="card">
+        <div class="card-title">🖼️ Ikonky programu Zvedavá Včielka</div>
+        <p style="font-size:12px;color:#888;margin-bottom:18px;">Obrázky ikon pre 4 oblasti rozvoja (zobrazené v sekcii Program). Nahranie prebehne okamžite.</p>
+        <div class="two-col">
+          <div>
+            <label style="font-size:12px;font-weight:600;color:#555;display:block;margin-bottom:8px;">🐝 Sociálno-emocionálny rozvoj</label>
+            <div id="icon-preview-social" style="width:64px;height:64px;border-radius:14px;background:#FFF9E0;display:flex;align-items:center;justify-content:center;font-size:28px;margin-bottom:8px;overflow:hidden;">🐝</div>
+            <div style="display:flex;gap:6px;">
+              <label style="flex:1;display:flex;align-items:center;justify-content:center;gap:4px;background:#D9EFFF;color:#1A5FA8;font-family:'Quicksand',sans-serif;font-size:11px;font-weight:700;padding:6px 8px;border-radius:50px;cursor:pointer;">
+                <input type="file" accept="image/*" style="display:none;" onchange="uploadSectionIcon(this,'icon_social')"/>🖼️ Nahrať</label>
+              <button class="btn-danger" style="padding:5px 10px;font-size:11px;" data-tip="Odstrániť ikonku" onclick="removeSectionIcon('icon_social')">🗑️</button>
+            </div>
+          </div>
+          <div>
+            <label style="font-size:12px;font-weight:600;color:#555;display:block;margin-bottom:8px;">🎨 Kreatívne myslenie</label>
+            <div id="icon-preview-kreativ" style="width:64px;height:64px;border-radius:14px;background:#FFF9E0;display:flex;align-items:center;justify-content:center;font-size:28px;margin-bottom:8px;overflow:hidden;">🎨</div>
+            <div style="display:flex;gap:6px;">
+              <label style="flex:1;display:flex;align-items:center;justify-content:center;gap:4px;background:#D9EFFF;color:#1A5FA8;font-family:'Quicksand',sans-serif;font-size:11px;font-weight:700;padding:6px 8px;border-radius:50px;cursor:pointer;">
+                <input type="file" accept="image/*" style="display:none;" onchange="uploadSectionIcon(this,'icon_kreativ')"/>🖼️ Nahrať</label>
+              <button class="btn-danger" style="padding:5px 10px;font-size:11px;" data-tip="Odstrániť ikonku" onclick="removeSectionIcon('icon_kreativ')">🗑️</button>
+            </div>
+          </div>
+          <div>
+            <label style="font-size:12px;font-weight:600;color:#555;display:block;margin-bottom:8px;">🏃 Telesný rozvoj</label>
+            <div id="icon-preview-sport" style="width:64px;height:64px;border-radius:14px;background:#FFF9E0;display:flex;align-items:center;justify-content:center;font-size:28px;margin-bottom:8px;overflow:hidden;">🏃</div>
+            <div style="display:flex;gap:6px;">
+              <label style="flex:1;display:flex;align-items:center;justify-content:center;gap:4px;background:#D9EFFF;color:#1A5FA8;font-family:'Quicksand',sans-serif;font-size:11px;font-weight:700;padding:6px 8px;border-radius:50px;cursor:pointer;">
+                <input type="file" accept="image/*" style="display:none;" onchange="uploadSectionIcon(this,'icon_sport')"/>🖼️ Nahrať</label>
+              <button class="btn-danger" style="padding:5px 10px;font-size:11px;" data-tip="Odstrániť ikonku" onclick="removeSectionIcon('icon_sport')">🗑️</button>
+            </div>
+          </div>
+          <div>
+            <label style="font-size:12px;font-weight:600;color:#555;display:block;margin-bottom:8px;">🔬 Intelektuálny rozvoj</label>
+            <div id="icon-preview-intellect" style="width:64px;height:64px;border-radius:14px;background:#FFF9E0;display:flex;align-items:center;justify-content:center;font-size:28px;margin-bottom:8px;overflow:hidden;">🔬</div>
+            <div style="display:flex;gap:6px;">
+              <label style="flex:1;display:flex;align-items:center;justify-content:center;gap:4px;background:#D9EFFF;color:#1A5FA8;font-family:'Quicksand',sans-serif;font-size:11px;font-weight:700;padding:6px 8px;border-radius:50px;cursor:pointer;">
+                <input type="file" accept="image/*" style="display:none;" onchange="uploadSectionIcon(this,'icon_intellect')"/>🖼️ Nahrať</label>
+              <button class="btn-danger" style="padding:5px 10px;font-size:11px;" data-tip="Odstrániť ikonku" onclick="removeSectionIcon('icon_intellect')">🗑️</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">📜 Povinné predprimárne vzdelávanie</div>
+        <p style="font-size:12px;color:#888;margin-bottom:14px;">Krátky úryvok sa zobrazí na hlavnej stránke. Celý text sa zobrazí na samostatnej podstránke <strong>ppv.html</strong> po kliknutí na tlačidlo „Čítať viac →".</p>
+        <div class="field fmt-wrap">
+          <label>Krátky úryvok (na hlavnej stránke)</label>
+          <div class="fmt-toolbar">
+            <button class="fmt-btn b" type="button" data-action="bold" onmousedown="event.preventDefault();fmtWrap(this)">B</button>
+            <button class="fmt-btn i" type="button" data-action="italic" onmousedown="event.preventDefault();fmtWrap(this)">I</button>
+            <div class="fmt-sep"></div>
+            <button class="fmt-btn" type="button" data-size="0.82em" onmousedown="event.preventDefault();fmtWrap(this)">S</button>
+            <button class="fmt-btn" type="button" data-size="1em" onmousedown="event.preventDefault();fmtWrap(this)">M</button>
+            <button class="fmt-btn" type="button" data-size="1.2em" onmousedown="event.preventDefault();fmtWrap(this)">L</button>
+            <div class="fmt-sep"></div>
+            <button class="fmt-btn" type="button" data-action="justifyLeft" onmousedown="event.preventDefault();fmtWrap(this)" title="Zarovnať vľavo"><svg width="13" height="10" viewBox="0 0 13 10" fill="none"><rect x="0" y="0" width="13" height="1.8" rx="0.9" fill="currentColor"/><rect x="0" y="4.1" width="8" height="1.8" rx="0.9" fill="currentColor"/><rect x="0" y="8.2" width="11" height="1.8" rx="0.9" fill="currentColor"/></svg></button>
+            <button class="fmt-btn" type="button" data-action="justifyCenter" onmousedown="event.preventDefault();fmtWrap(this)" title="Zarovnať na stred"><svg width="13" height="10" viewBox="0 0 13 10" fill="none"><rect x="0" y="0" width="13" height="1.8" rx="0.9" fill="currentColor"/><rect x="2.5" y="4.1" width="8" height="1.8" rx="0.9" fill="currentColor"/><rect x="1" y="8.2" width="11" height="1.8" rx="0.9" fill="currentColor"/></svg></button>
+            <button class="fmt-btn" type="button" data-action="justifyRight" onmousedown="event.preventDefault();fmtWrap(this)" title="Zarovnať vpravo"><svg width="13" height="10" viewBox="0 0 13 10" fill="none"><rect x="0" y="0" width="13" height="1.8" rx="0.9" fill="currentColor"/><rect x="5" y="4.1" width="8" height="1.8" rx="0.9" fill="currentColor"/><rect x="2" y="8.2" width="11" height="1.8" rx="0.9" fill="currentColor"/></svg></button>
+            <div class="fmt-sep"></div>
+            <div class="fmt-lh"><button class="fmt-btn" type="button" title="Riadkovanie" onmousedown="event.preventDefault();saveFmtSel(event,this);" onclick="toggleFmtLh(this)" style="padding:3px 7px;"><svg width="13" height="11" viewBox="0 0 13 11" fill="none"><rect x="4" y="0" width="9" height="1.5" rx=".75" fill="currentColor"/><rect x="4" y="4.75" width="9" height="1.5" rx=".75" fill="currentColor"/><rect x="4" y="9.5" width="9" height="1.5" rx=".75" fill="currentColor"/><path d="M1.5 2.5v6" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/><path d="M.5 4L1.5 2.5L2.5 4" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" fill="none"/><path d="M.5 7L1.5 8.5L2.5 7" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg></button><div class="fmt-lh-pop"><button class="fmt-lh-opt" onmousedown="event.preventDefault();applyFmtLh(this,'1.2')">1.2×</button><button class="fmt-lh-opt" onmousedown="event.preventDefault();applyFmtLh(this,'1.5')">1.5×</button><button class="fmt-lh-opt" onmousedown="event.preventDefault();applyFmtLh(this,'1.8')">1.8×</button><button class="fmt-lh-opt" onmousedown="event.preventDefault();applyFmtLh(this,'2.2')">2.2×</button></div></div>
+          </div>
+          <div class="fake-textarea" id="ppv_intro" contenteditable="true" style="min-height:120px;"></div>
+        </div>
+        <div class="field fmt-wrap">
+          <label>Celý text podstránky ppv.html (môže byť dlhý — podporuje nové riadky)</label>
+          <div class="fmt-toolbar">
+            <button class="fmt-btn b" type="button" data-action="bold" onmousedown="event.preventDefault();fmtWrap(this)">B</button>
+            <button class="fmt-btn i" type="button" data-action="italic" onmousedown="event.preventDefault();fmtWrap(this)">I</button>
+            <div class="fmt-sep"></div>
+            <button class="fmt-btn" type="button" data-size="0.82em" onmousedown="event.preventDefault();fmtWrap(this)">S</button>
+            <button class="fmt-btn" type="button" data-size="1em" onmousedown="event.preventDefault();fmtWrap(this)">M</button>
+            <button class="fmt-btn" type="button" data-size="1.2em" onmousedown="event.preventDefault();fmtWrap(this)">L</button>
+            <div class="fmt-sep"></div>
+            <button class="fmt-btn" type="button" data-action="justifyLeft" onmousedown="event.preventDefault();fmtWrap(this)" title="Zarovnať vľavo"><svg width="13" height="10" viewBox="0 0 13 10" fill="none"><rect x="0" y="0" width="13" height="1.8" rx="0.9" fill="currentColor"/><rect x="0" y="4.1" width="8" height="1.8" rx="0.9" fill="currentColor"/><rect x="0" y="8.2" width="11" height="1.8" rx="0.9" fill="currentColor"/></svg></button>
+            <button class="fmt-btn" type="button" data-action="justifyCenter" onmousedown="event.preventDefault();fmtWrap(this)" title="Zarovnať na stred"><svg width="13" height="10" viewBox="0 0 13 10" fill="none"><rect x="0" y="0" width="13" height="1.8" rx="0.9" fill="currentColor"/><rect x="2.5" y="4.1" width="8" height="1.8" rx="0.9" fill="currentColor"/><rect x="1" y="8.2" width="11" height="1.8" rx="0.9" fill="currentColor"/></svg></button>
+            <button class="fmt-btn" type="button" data-action="justifyRight" onmousedown="event.preventDefault();fmtWrap(this)" title="Zarovnať vpravo"><svg width="13" height="10" viewBox="0 0 13 10" fill="none"><rect x="0" y="0" width="13" height="1.8" rx="0.9" fill="currentColor"/><rect x="5" y="4.1" width="8" height="1.8" rx="0.9" fill="currentColor"/><rect x="2" y="8.2" width="11" height="1.8" rx="0.9" fill="currentColor"/></svg></button>
+            <div class="fmt-sep"></div>
+            <div class="fmt-lh"><button class="fmt-btn" type="button" title="Riadkovanie" onmousedown="event.preventDefault();saveFmtSel(event,this);" onclick="toggleFmtLh(this)" style="padding:3px 7px;"><svg width="13" height="11" viewBox="0 0 13 11" fill="none"><rect x="4" y="0" width="9" height="1.5" rx=".75" fill="currentColor"/><rect x="4" y="4.75" width="9" height="1.5" rx=".75" fill="currentColor"/><rect x="4" y="9.5" width="9" height="1.5" rx=".75" fill="currentColor"/><path d="M1.5 2.5v6" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/><path d="M.5 4L1.5 2.5L2.5 4" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" fill="none"/><path d="M.5 7L1.5 8.5L2.5 7" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg></button><div class="fmt-lh-pop"><button class="fmt-lh-opt" onmousedown="event.preventDefault();applyFmtLh(this,'1.2')">1.2×</button><button class="fmt-lh-opt" onmousedown="event.preventDefault();applyFmtLh(this,'1.5')">1.5×</button><button class="fmt-lh-opt" onmousedown="event.preventDefault();applyFmtLh(this,'1.8')">1.8×</button><button class="fmt-lh-opt" onmousedown="event.preventDefault();applyFmtLh(this,'2.2')">2.2×</button></div></div>
+          </div>
+          <div class="fake-textarea" id="ppv_extra" contenteditable="true" data-tall style="min-height:260px;"></div>
+        </div>
+        <button class="btn-save" data-tip="Uložiť text PPV sekcie" onclick="saveSettings(['ppv_intro','ppv_extra'])">💾 Uložiť</button>
+      </div>
+    </div>
+
+    <!-- HERO -->
+    <div class="section-page active" id="page-hero">
+      <div class="page-title">🏠 Hero sekcia</div>
+      <div class="page-sub">Hlavný nadpis a popis škôlky na úvodnej stránke</div>
+      <div class="card">
+        <div class="card-title">✏️ Texty</div>
+        <div class="field"><label>Hlavný nadpis</label><input type="text" id="hero_title" placeholder="Kde detičky rastú..."/></div>
+        <div class="field"><label>Popis (krátky text pod nadpisom)</label><textarea id="hero_subtitle"></textarea></div>
+        <button class="btn-save" data-tip="Uložiť titulok a podtitulok hero sekcie" onclick="saveSettings(['hero_title','hero_subtitle'])">💾 Uložiť texty</button>
+      </div>
+      <div class="card">
+        <div class="card-title">📸 Hero fotografia</div>
+        <img id="hero_photo_preview" class="img-preview" style="display:block;max-height:220px;"/>
+        <div class="img-upload">
+          <input type="file" accept="image/*" onchange="uploadHeroPhoto(this)"/>
+          <div class="icon">📸</div>
+          <p>Kliknite sem alebo potiahnite fotografiu<br/><small>Odporúčaná veľkosť: 1920×1080px · WebP alebo JPG</small></p>
+        </div>
+      </div>
+    </div>
+
+    <!-- ACTIVITIES -->
+    <div class="section-page" id="page-activities">
+      <div class="page-title">🎯 Aktivity</div>
+      <div class="page-sub">Upravte názov, popis a fotografiu každej aktivity</div>
+      <button class="btn-add" data-tip="Pridať novú aktivitu na web" onclick="addActivity()">+ Pridať aktivitu</button>
+      <div class="activity-grid" id="activitiesGrid">
+        <div style="padding:40px;text-align:center;color:#888;">Načítavam...</div>
+      </div>
+    </div>
+
+    <!-- NEWS -->
+    <div class="section-page" id="page-news">
+      <div class="page-title">📰 Novinky</div>
+      <div class="page-sub">Pridávajte a upravujte aktuality zo škôlky</div>
+      <button class="btn-add" data-tip="Pridať novú novinku na web" onclick="addNews()">+ Pridať novinku</button>
+      <div id="newsList"></div>
+    </div>
+
+    <!-- GALLERY -->
+    <div class="section-page" id="page-gallery">
+      <div class="page-title">🖼️ Galéria</div>
+      <div class="page-sub">Nahrávajte a spravujte fotografie zo života škôlky</div>
+      <div class="card" style="margin-bottom:20px;">
+        <label id="galleryUploadBtn" style="display:inline-flex;align-items:center;gap:10px;background:#F9C832;color:#1a1a1a;font-family:'Quicksand',sans-serif;font-size:13px;font-weight:700;padding:12px 24px;border-radius:50px;cursor:pointer;">
+          <input type="file" accept="image/*" multiple style="display:none;" onchange="uploadGalleryPhotos(this)"/>
+          📷 + Nahrať fotografie
+        </label>
+        <p style="font-size:12px;color:#888;margin-top:10px;">Môžete vybrať viacero fotografií naraz. Kliknite na ✕ pre vymazanie.</p>
+      </div>
+      <div class="gallery-grid" id="galleryItemsGrid">
+        <div style="color:#888;font-size:13px;">Načítavam...</div>
+      </div>
+    </div>
+
+    <!-- TESTIMONIALS -->
+    <div class="section-page" id="page-testimonials">
+      <div class="page-title">💬 Referencie rodičov</div>
+      <div class="page-sub">Pridávajte a upravujte hodnotenia rodičov</div>
+      <button class="btn-add" data-tip="Pridať nové hodnotenie od rodiča" onclick="addTestimonial()">+ Pridať referenciu</button>
+      <div id="testimonialsList"></div>
+    </div>
+
+    <!-- CONTACT -->
+    <div class="section-page" id="page-contact">
+      <div class="page-title">📞 Kontaktné údaje</div>
+      <div class="page-sub">Adresa, telefón, email a otváracie hodiny</div>
+      <div class="card">
+        <div class="field"><label>📍 Adresa</label><input type="text" id="contact_address"/></div>
+        <div class="two-col">
+          <div class="field"><label>📞 Telefón</label><input type="text" id="contact_phone"/></div>
+          <div class="field"><label>✉️ E-mail</label><input type="text" id="contact_email"/></div>
+        </div>
+        <div class="field"><label>🕐 Prevádzková doba</label><input type="text" id="contact_hours"/></div>
+        <button class="btn-save" data-tip="Uložiť kontaktné informácie" onclick="saveSettings(['contact_address','contact_phone','contact_email','contact_hours'])">💾 Uložiť kontakt</button>
+      </div>
+      <div class="card">
+        <div class="card-title">🖼️ Ikonky kontaktných kariet</div>
+        <p style="font-size:12px;color:#888;margin-bottom:18px;">Nahrajte obrázky ikon pre každú kontaktnú kartu. Nahranie prebehne okamžite.</p>
+        <div class="two-col">
+          <div>
+            <label style="font-size:12px;font-weight:600;color:#555;display:block;margin-bottom:8px;">📍 Adresa</label>
+            <div id="icon-preview-adresa" style="width:64px;height:64px;border-radius:14px;background:#f0f6ff;display:flex;align-items:center;justify-content:center;font-size:28px;margin-bottom:8px;overflow:hidden;">📍</div>
+            <div style="display:flex;gap:6px;">
+              <label style="flex:1;display:flex;align-items:center;justify-content:center;gap:4px;background:#D9EFFF;color:#1A5FA8;font-family:'Quicksand',sans-serif;font-size:11px;font-weight:700;padding:6px 8px;border-radius:50px;cursor:pointer;">
+                <input type="file" accept="image/*" style="display:none;" onchange="uploadSectionIcon(this,'icon_adresa')"/>🖼️ Nahrať</label>
+              <button class="btn-danger" style="padding:5px 10px;font-size:11px;" data-tip="Odstrániť ikonku" onclick="removeSectionIcon('icon_adresa')">🗑️</button>
+            </div>
+          </div>
+          <div>
+            <label style="font-size:12px;font-weight:600;color:#555;display:block;margin-bottom:8px;">📞 Telefón</label>
+            <div id="icon-preview-telefon" style="width:64px;height:64px;border-radius:14px;background:#f0f6ff;display:flex;align-items:center;justify-content:center;font-size:28px;margin-bottom:8px;overflow:hidden;">📞</div>
+            <div style="display:flex;gap:6px;">
+              <label style="flex:1;display:flex;align-items:center;justify-content:center;gap:4px;background:#D9EFFF;color:#1A5FA8;font-family:'Quicksand',sans-serif;font-size:11px;font-weight:700;padding:6px 8px;border-radius:50px;cursor:pointer;">
+                <input type="file" accept="image/*" style="display:none;" onchange="uploadSectionIcon(this,'icon_telefon')"/>🖼️ Nahrať</label>
+              <button class="btn-danger" style="padding:5px 10px;font-size:11px;" data-tip="Odstrániť ikonku" onclick="removeSectionIcon('icon_telefon')">🗑️</button>
+            </div>
+          </div>
+          <div>
+            <label style="font-size:12px;font-weight:600;color:#555;display:block;margin-bottom:8px;">✉️ E-mail</label>
+            <div id="icon-preview-email" style="width:64px;height:64px;border-radius:14px;background:#f0f6ff;display:flex;align-items:center;justify-content:center;font-size:28px;margin-bottom:8px;overflow:hidden;">✉️</div>
+            <div style="display:flex;gap:6px;">
+              <label style="flex:1;display:flex;align-items:center;justify-content:center;gap:4px;background:#D9EFFF;color:#1A5FA8;font-family:'Quicksand',sans-serif;font-size:11px;font-weight:700;padding:6px 8px;border-radius:50px;cursor:pointer;">
+                <input type="file" accept="image/*" style="display:none;" onchange="uploadSectionIcon(this,'icon_email')"/>🖼️ Nahrať</label>
+              <button class="btn-danger" style="padding:5px 10px;font-size:11px;" data-tip="Odstrániť ikonku" onclick="removeSectionIcon('icon_email')">🗑️</button>
+            </div>
+          </div>
+          <div>
+            <label style="font-size:12px;font-weight:600;color:#555;display:block;margin-bottom:8px;">🕐 Prevádzková doba</label>
+            <div id="icon-preview-hodiny" style="width:64px;height:64px;border-radius:14px;background:#f0f6ff;display:flex;align-items:center;justify-content:center;font-size:28px;margin-bottom:8px;overflow:hidden;">🕐</div>
+            <div style="display:flex;gap:6px;">
+              <label style="flex:1;display:flex;align-items:center;justify-content:center;gap:4px;background:#D9EFFF;color:#1A5FA8;font-family:'Quicksand',sans-serif;font-size:11px;font-weight:700;padding:6px 8px;border-radius:50px;cursor:pointer;">
+                <input type="file" accept="image/*" style="display:none;" onchange="uploadSectionIcon(this,'icon_hodiny')"/>🖼️ Nahrať</label>
+              <button class="btn-danger" style="padding:5px 10px;font-size:11px;" data-tip="Odstrániť ikonku" onclick="removeSectionIcon('icon_hodiny')">🗑️</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PRICING -->
+    <div class="section-page" id="page-pricing">
+      <div class="page-title">💰 Cenník</div>
+      <div class="page-sub">Ceny a podmienky školného</div>
+      <div class="card">
+        <div class="card-title">Celodenná dochádzka</div>
+        <div class="two-col">
+          <div class="field"><label>Cena (€/mesiac)</label><input type="text" id="price_full_amount"/></div>
+        </div>
+        <div class="field"><label>Detail (strava, podmienky...)</label><textarea id="price_full_detail"></textarea></div>
+      </div>
+      <div class="card">
+        <div class="card-title">Poldenná dochádzka</div>
+        <div class="two-col">
+          <div class="field"><label>Cena (€/mesiac)</label><input type="text" id="price_half_amount"/></div>
+        </div>
+        <div class="field"><label>Detail (strava, podmienky...)</label><textarea id="price_half_detail"></textarea></div>
+      </div>
+      <button class="btn-save" data-tip="Uložiť ceny v cenníku" onclick="saveSettings(['price_full_amount','price_full_detail','price_half_amount','price_half_detail'])">💾 Uložiť cenník</button>
+    </div>
+
+
+    <!-- FOOTER -->
+    <div class="section-page" id="page-footer">
+      <div class="page-title">📋 Pätička webu</div>
+      <div class="page-sub">Text, rýchle odkazy a kontaktné údaje v spodnej časti stránky</div>
+      <div class="card">
+        <div class="card-title">📝 Popis škôlky (ľavý stĺpec)</div>
+        <div class="field"><label>Text o škôlke</label><textarea id="footer_desc" style="min-height:90px;"></textarea></div>
+        <button class="btn-save" data-tip="Uložiť popis v pätičke" onclick="saveSettings(['footer_desc'])">💾 Uložiť</button>
+      </div>
+      <div class="card">
+        <div class="card-title">🔗 Rýchle odkazy (stredný stĺpec)</div>
+        <div class="field"><label>Názov sekcie</label><input type="text" id="footer_links_title" placeholder="Rýchle odkazy"/></div>
+        <div class="field"><label>Položky (každá na nový riadok, formát: Názov|#odkaz)</label>
+          <textarea id="footer_links" style="min-height:160px;" placeholder="O nás|#o-nas&#10;Naše služby|#sluzby&#10;Galéria|#galeria&#10;Cenník|#cennik&#10;Kontakt|#kontakt"></textarea>
+        </div>
+        <button class="btn-save" data-tip="Uložiť rýchle odkazy v pätičke" onclick="saveSettings(['footer_links_title','footer_links'])">💾 Uložiť</button>
+      </div>
+      <div class="card">
+        <div class="card-title">📞 Kontakt v pätičke (pravý stĺpec)</div>
+        <p style="font-size:12px;color:#888;margin-bottom:14px;">Kontaktné údaje sa synchronizujú automaticky zo sekcie Kontakt.</p>
+        <div class="field"><label>Adresa</label><input type="text" id="contact_address" readonly style="opacity:.6;"/></div>
+        <div class="field"><label>Telefón</label><input type="text" id="contact_phone" readonly style="opacity:.6;"/></div>
+        <div class="field"><label>E-mail</label><input type="text" id="contact_email" readonly style="opacity:.6;"/></div>
+        <div class="field"><label>Otváracie hodiny</label><input type="text" id="contact_hours" readonly style="opacity:.6;"/></div>
+        <p style="font-size:11px;color:#aaa;">Pre zmenu kontaktov prejdite do sekcie Kontakt.</p>
+      </div>
+      <div class="card">
+        <div class="card-title">©️ Copyright text</div>
+        <div class="field"><label>Text (ľavý)</label><input type="text" id="footer_copy_left" placeholder="© 2025 Materská škola Včielka · Všetky práva vyhradené"/></div>
+        <div class="field"><label>Text (pravý)</label><input type="text" id="footer_copy_right" placeholder="Vytvorené s 🐝 láskou v Bratislave"/></div>
+        <button class="btn-save" data-tip="Uložiť copyright text" onclick="saveSettings(['footer_copy_left','footer_copy_right'])">💾 Uložiť</button>
+      </div>
+    </div>
+
+    <!-- DOCUMENTS -->
+    <div class="section-page" id="page-documents">
+      <div class="page-title">📄 Na stiahnutie</div>
+      <div class="page-sub">PDF dokumenty pre rodičov — prihláška, GDPR a ďalšie. Zobrazujú sa na webe len ak sú nahraté.</div>
+
+      <div class="card" style="background:#F0F7FF;margin-bottom:24px;">
+        <div class="card-title">➕ Pridať nový dokument</div>
+        <div class="two-col">
+          <div class="field"><label>Názov dokumentu</label><input type="text" id="new_doc_title" placeholder="napr. Prihláška do škôlky"/></div>
+          <div class="field"><label>Text tlačidla</label><input type="text" id="new_doc_btn" placeholder="napr. Stiahnuť prihlášku"/></div>
+        </div>
+        <div class="field"><label>PDF súbor</label>
+          <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
+            <label style="display:inline-flex;align-items:center;gap:8px;background:#EEF7FF;color:#1A5FA8;font-family:'Quicksand',sans-serif;font-size:13px;font-weight:700;padding:11px 20px;border-radius:50px;cursor:pointer;">
+              <input type="file" accept=".pdf" id="new_doc_file" style="display:none;" onchange="showDocFileName(this)"/>
+              📄 Vybrať PDF súbor
+            </label>
+            <span id="docFileName" style="font-size:12px;color:#888;font-family:'Inter',sans-serif;">Žiadny súbor</span>
+          </div>
+        </div>
+        <button class="btn-save" data-tip="Nahrať nový súbor na stiahnutie" onclick="uploadDocument()">📤 Nahrať dokument</button>
+      </div>
+
+      <div id="documentsList">
+        <div style="color:#888;font-size:13px;">Načítavam...</div>
+      </div>
+    </div>
+    <!-- LOGO -->
+    <div class="section-page" id="page-logo">
+      <div class="page-title">🐝 Logo škôlky</div>
+      <div class="page-sub">Nahrajte nové logo — PNG s priesvitným pozadím</div>
+      <div class="card">
+        <div class="card-title">Aktuálne logo</div>
+        <img id="logo_preview" class="logo-current" src="VCIELKA_LOGO.png" alt="Logo"/>
+        <div class="img-upload" style="margin-top:16px;">
+          <input type="file" accept="image/png,image/svg+xml,image/webp" onchange="uploadLogo(this)"/>
+          <div class="icon">🐝</div>
+          <p>Kliknite sem pre nahratie nového loga<br/><small>PNG s priesvitným pozadím · odporúčané</small></p>
+        </div>
+      </div>
+    </div>
+
+
+    <!-- JEDÁLNY LÍSTOK -->
+    <div class="section-page" id="page-jedalny" style="max-width:none;">
+      <div style="display:flex;gap:28px;align-items:flex-start;">
+
+        <!-- LEFT: FORM -->
+        <div style="flex:1;min-width:0;">
+          <div class="page-title" style="margin-bottom:4px;">🍽️ Jedálny lístok</div>
+          <div class="page-sub" style="margin-bottom:16px;">Vyplňte polia — náhľad sa aktualizuje v reálnom čase.</div>
+
+          <div class="card" style="margin-bottom:14px;">
+            <div class="card-title">📋 Základné informácie</div>
+            <div class="two-col">
+              <div class="field"><label>Týždeň od</label><input type="date" id="jl-week" oninput="updateJLPreview()"/></div>
+              <div class="field"><label>Ovocie týždňa</label><input type="text" id="jl-ovocie" placeholder="napr. jablko *" oninput="updateJLPreview()"/></div>
+            </div>
+            <div class="field"><label>Mliečny program</label><input type="text" id="jl-mliecny" placeholder="napr. mliečko Lipánek*" oninput="updateJLPreview()"/></div>
+          </div>
+
+          <div class="card" style="margin-bottom:10px;border-left:4px solid #E8B84B;">
+            <div class="card-title" style="color:#C8920A;">☀️ Pondelok</div>
+            <div class="field"><label>Desiata</label><textarea id="jl-pondelok-desiata" rows="2" oninput="updateJLPreview()"></textarea></div>
+            <div class="field"><label>Obed</label><textarea id="jl-pondelok-obed" rows="3" oninput="updateJLPreview()"></textarea></div>
+            <div class="field"><label>Olovrant</label><textarea id="jl-pondelok-olovrant" rows="2" oninput="updateJLPreview()"></textarea></div>
+          </div>
+
+          <div class="card" style="margin-bottom:10px;border-left:4px solid #7BBF72;">
+            <div class="card-title" style="color:#3A7A3A;">🌿 Utorok</div>
+            <div class="field"><label>Desiata</label><textarea id="jl-utorok-desiata" rows="2" oninput="updateJLPreview()"></textarea></div>
+            <div class="field"><label>Obed</label><textarea id="jl-utorok-obed" rows="3" oninput="updateJLPreview()"></textarea></div>
+            <div class="field"><label>Olovrant</label><textarea id="jl-utorok-olovrant" rows="2" oninput="updateJLPreview()"></textarea></div>
+          </div>
+
+          <div class="card" style="margin-bottom:10px;border-left:4px solid #9B87C4;">
+            <div class="card-title" style="color:#6A58A0;">⭐ Streda</div>
+            <div class="field"><label>Desiata</label><textarea id="jl-streda-desiata" rows="2" oninput="updateJLPreview()"></textarea></div>
+            <div class="field"><label>Obed</label><textarea id="jl-streda-obed" rows="3" oninput="updateJLPreview()"></textarea></div>
+            <div class="field"><label>Olovrant</label><textarea id="jl-streda-olovrant" rows="2" oninput="updateJLPreview()"></textarea></div>
+          </div>
+
+          <div class="card" style="margin-bottom:10px;border-left:4px solid #F0A056;">
+            <div class="card-title" style="color:#C06010;">🌱 Štvrtok</div>
+            <div class="field"><label>Desiata</label><textarea id="jl-stvrtok-desiata" rows="2" oninput="updateJLPreview()"></textarea></div>
+            <div class="field"><label>Obed</label><textarea id="jl-stvrtok-obed" rows="3" oninput="updateJLPreview()"></textarea></div>
+            <div class="field"><label>Olovrant</label><textarea id="jl-stvrtok-olovrant" rows="2" oninput="updateJLPreview()"></textarea></div>
+          </div>
+
+          <div class="card" style="margin-bottom:10px;border-left:4px solid #6BB0D9;">
+            <div class="card-title" style="color:#2A70A0;">🤍 Piatok</div>
+            <div class="field"><label>Desiata</label><textarea id="jl-piatok-desiata" rows="2" oninput="updateJLPreview()"></textarea></div>
+            <div class="field"><label>Obed</label><textarea id="jl-piatok-obed" rows="3" oninput="updateJLPreview()"></textarea></div>
+            <div class="field"><label>Olovrant</label><textarea id="jl-piatok-olovrant" rows="2" oninput="updateJLPreview()"></textarea></div>
+          </div>
+
+          <div class="card" style="margin-bottom:20px;">
+            <div class="card-title">📌 Spodná časť</div>
+            <div class="field"><label>Text EU financovania</label><input type="text" id="jl-eu" value="„Školský program" je financovaný z prostriedkov SR a Európskej únie." oninput="updateJLPreview()"/></div>
+            <div class="field"><label>Alergény</label><textarea id="jl-alergeny" rows="8" oninput="updateJLPreview()">Zoznam alergénnych zložiek:
+① obilniny obsahujúce lepok (t.j. pšenica, raž, jačmeň, špalda, kamut) a výrobky z nich
+② kôrovce a výrobky z nich
+③ vajcia a výrobky z nich
+④ ryby a výrobky z rýb
+⑤ arašidy a výrobky z nich
+⑥ sója a výrobky zo sóje
+⑦ mlieko a výrobky z mlieka
+⑧ orechy a výrobky z nich
+⑨ zeler a výrobky zo zeleru
+⑩ horčica a výrobky z horčice
+⑪ sezamové semená a výrobky z nich
+⑫ oxid siričitý a siričitany v koncentrácii viac ako 10 mg/kg alebo 10 mg/l
+⑬ vlčí bôb a výrobky z neho
+⑭ mäkkýše a výrobky z nich</textarea></div>
+          </div>
+
+          <div style="display:flex;gap:12px;flex-wrap:wrap;margin-bottom:40px;">
+            <button class="btn-save" onclick="printJL()">⬇️ Exportovať PDF</button>
+            <button class="btn-save" style="background:#28a745;" onclick="publishJL()">📤 Publikovať na web</button>
+          </div>
+        </div>
+
+        <!-- RIGHT: LIVE PREVIEW -->
+        <div id="jl-preview-panel" style="flex-shrink:0;position:sticky;top:0;height:100vh;display:flex;flex-direction:column;gap:8px;padding:20px 0;">
+          <!-- Label + zoom controls -->
+          <div style="display:flex;align-items:center;justify-content:space-between;padding:0 4px;flex-shrink:0;">
+            <div style="font-family:'Quicksand',sans-serif;font-weight:700;font-size:12px;color:#888;letter-spacing:.5px;text-transform:uppercase;">Náhľad v reálnom čase</div>
+            <div style="display:flex;align-items:center;gap:6px;">
+              <button onclick="jlZoomStep(-0.1)" title="Oddialiť" style="width:30px;height:30px;border:1.5px solid #E0ECFF;border-radius:8px;background:#fff;font-size:18px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;color:#1A5FA8;line-height:1;padding:0;">−</button>
+              <span id="jl-zoom-pct" style="font-family:'Quicksand',sans-serif;font-size:12px;font-weight:700;color:#1A5FA8;min-width:40px;text-align:center;">100%</span>
+              <button onclick="jlZoomStep(0.1)" title="Priblížiť" style="width:30px;height:30px;border:1.5px solid #E0ECFF;border-radius:8px;background:#fff;font-size:18px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;color:#1A5FA8;line-height:1;padding:0;">+</button>
+            </div>
+          </div>
+          <!-- Scrollable preview container -->
+          <div id="jl-preview-wrap" style="flex:1;overflow:auto;border-radius:14px;box-shadow:0 6px 28px rgba(0,0,0,.22);">
+            <div id="jl-preview-sizer" style="width:420px;height:594px;overflow:hidden;">
+              <div id="jl-preview-scaler" style="width:794px;transform-origin:top left;">
+                <div id="jl-preview-page" style="width:794px;min-height:1123px;background:#F8F4ED url('jedalny-bg.png') center top/cover no-repeat;position:relative;font-family:'Quicksand',sans-serif;">
+                  <div id="jl-preview-overlay" style="position:absolute;top:248px;left:72px;right:62px;"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- VIRTUÁLNA ŠKOLKA -->
+    <div class="section-page" id="page-skolka">
+      <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:4px;">
+        <div>
+          <div class="page-title">📸 Virtuálna Škôlka</div>
+          <div class="page-sub" style="margin-bottom:0;">Spravujte priečinky a fotografie pre editor foto rámčekov</div>
+        </div>
+        <div style="display:flex;gap:10px;flex-wrap:wrap;">
+          <a href="skolka.html" target="_blank" class="btn-save" style="text-decoration:none;display:inline-flex;align-items:center;gap:7px;">🔐 Virtuálna Škôlka (verejná)</a>
+          <a href="vcielka_editor.html" target="_blank" class="btn-add" style="text-decoration:none;display:inline-flex;align-items:center;gap:7px;">🖼️ Otvoriť Editor</a>
+        </div>
+      </div>
+
+      <!-- Storage info panel -->
+      <div class="storage-panel" id="sk_storage_panel">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:2px;">
+          <span style="font-family:'Quicksand',sans-serif;font-weight:700;font-size:13px;color:#1a1a1a;">💾 Využitý priestor – Virtuálna Škôlka</span>
+          <span style="font-family:'Quicksand',sans-serif;font-size:13px;font-weight:700;color:#1A5FA8;" id="sk_storage_pct">—</span>
+        </div>
+        <div class="storage-bar-wrap">
+          <div class="storage-bar-fill" id="sk_storage_bar" style="width:0%;"></div>
+        </div>
+        <div style="display:flex;justify-content:space-between;font-size:11px;color:#888;font-family:'Quicksand',sans-serif;font-weight:600;">
+          <span id="sk_storage_used">Načítavam…</span>
+          <span>Limit: 1 024 MB (Free tier)</span>
+        </div>
+      </div>
+
+      <!-- Create folder -->
+      <div class="card" style="background:#F0F7FF;margin-bottom:24px;">
+        <div class="card-title">➕ Nový priečinok</div>
+        <div style="display:flex;gap:12px;align-items:flex-end;flex-wrap:wrap;">
+          <div class="field" style="flex:1;min-width:180px;margin-bottom:0;">
+            <label>Názov priečinka</label>
+            <input type="text" id="skolka_new_folder" placeholder="napr. Trieda Mackov · Jar 2025" onkeydown="if(event.key==='Enter')createSkolkaFolder()"/>
+          </div>
+          <button class="btn-save" data-tip="Vytvoriť nový foto priečinok" onclick="createSkolkaFolder()" style="margin-bottom:0;">📁 Vytvoriť priečinok</button>
+        </div>
+      </div>
+
+      <!-- Folders list -->
+      <div id="skolka_folders_list">
+        <div style="color:#888;font-size:13px;padding:20px;">Načítavam priečinky…</div>
+      </div>
+    </div>
+
+    <!-- SKOLKA photo upload modal (fullscreen) -->
+    <div id="skolka_upload_modal" style="display:none;position:fixed;inset:0;background:rgba(0,20,50,.7);z-index:2000;align-items:center;justify-content:center;">
+      <div style="background:#fff;border-radius:24px;padding:28px;width:90%;max-width:640px;max-height:88vh;display:flex;flex-direction:column;gap:14px;">
+        <div style="display:flex;align-items:center;justify-content:space-between;">
+          <div style="font-family:'Quicksand',sans-serif;font-weight:700;font-size:16px;" id="skolka_modal_title">Nahrať fotografie</div>
+          <button onclick="closeSkolkaModal()" style="background:none;border:none;font-size:20px;cursor:pointer;color:#888;">✕</button>
+        </div>
+        <label style="display:inline-flex;align-items:center;gap:10px;background:#F9C832;color:#1a1a1a;font-family:'Quicksand',sans-serif;font-size:13px;font-weight:700;padding:12px 24px;border-radius:50px;cursor:pointer;width:fit-content;">
+          <input type="file" accept="image/*" multiple style="display:none;" id="skolka_photo_input" onchange="uploadSkolkaPhotos(this)"/>
+          📷 Vybrať fotografie zo zariadenia
+        </label>
+        <div id="skolka_modal_grid" class="gallery-grid" style="overflow-y:auto;flex:1;"></div>
+      </div>
+    </div>
+
+    <!-- ADMIN HESLO -->
+    <div class="section-page" id="page-admin_pw">
+      <div class="page-title">🛡️ Admin heslo</div>
+      <div class="page-sub">Zmena hesla pre prihlásenie do tohto administrátorského rozhrania</div>
+      <div class="card" style="max-width:480px;">
+        <div class="card-title">🔐 Zmena hesla</div>
+        <p style="font-size:13px;color:#888;margin-bottom:18px;">Pre zmenu zadajte aktuálne heslo a nové heslo.</p>
+        <div class="field">
+          <label>Aktuálne heslo</label>
+          <input type="password" id="admin_pw_current" placeholder="Zadajte aktuálne heslo…"/>
+        </div>
+        <div class="field">
+          <label>Nové heslo</label>
+          <input type="password" id="admin_pw_new" placeholder="Zadajte nové heslo…"/>
+        </div>
+        <div class="field">
+          <label>Potvrdiť nové heslo</label>
+          <input type="password" id="admin_pw_confirm" placeholder="Zopakujte nové heslo…"/>
+        </div>
+        <div style="margin-top:6px;">
+          <button class="btn-save" onclick="saveAdminPw()">💾 Zmeniť heslo</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- VS HESLO -->
+    <div class="section-page" id="page-skolka_pw">
+      <div class="page-title">🔑 Heslo pre Virtuálnu Škôlku</div>
+      <div class="page-sub">Nastavte prístupové heslo pre rodičov na stránke skolka.html</div>
+      <div class="card" style="max-width:480px;">
+        <div class="card-title">🔐 Prístupové heslo</div>
+        <p style="font-size:13px;color:#888;margin-bottom:18px;">Toto heslo zadávajú rodičia pri vstupe do Virtuálnej Školky. Predvolené heslo: <strong>vcielka2025</strong></p>
+        <div class="field">
+          <label>Aktuálne heslo (zadajte pre overenie)</label>
+          <input type="password" id="vs_pw_current" placeholder="Zadajte aktuálne heslo…"/>
+        </div>
+        <div class="field">
+          <label>Nové heslo</label>
+          <input type="text" id="vs_pw_new" placeholder="Zadajte nové heslo…"/>
+        </div>
+        <div style="display:flex;gap:10px;align-items:center;margin-top:6px;flex-wrap:wrap;">
+          <button class="btn-save" data-tip="Uložiť prístupové heslo pre rodičov" onclick="saveSkolkaPw()">💾 Uložiť heslo</button>
+          <a href="skolka.html" target="_blank" class="btn-secondary" style="text-decoration:none;">🔐 Otvoriť stránku</a>
+        </div>
+      </div>
+      <div class="card" style="max-width:480px;">
+        <div class="card-title">🔗 URL adresa editora</div>
+        <p style="font-size:13px;color:#888;margin-bottom:18px;">Zadajte presnú cestu k súboru editora na vašom serveri. Napr. <code style="background:#f0f6ff;padding:2px 6px;border-radius:6px;">/vcielka_editor.html</code> alebo plnú URL.</p>
+        <div class="field">
+          <label>Aktuálna URL</label>
+          <input type="text" id="editor_url_current" placeholder="Načítavam…" readonly style="opacity:.6;"/>
+        </div>
+        <div class="field">
+          <label>Nová URL editora</label>
+          <input type="text" id="editor_url_new" placeholder="napr. /vcielka_editor.html"/>
+        </div>
+        <button class="btn-save" data-tip="Uložiť URL adresu editora rámikov" onclick="saveEditorUrl()">💾 Uložiť URL</button>
+      </div>
+    </div>
+  </div><!-- /main -->
+</div><!-- /app -->
+
+<div class="toast" id="toast"></div>
+
+<script>
+const SUPABASE_URL = 'https://fmjtzuligqsugsauqkgz.supabase.co';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZtanR6dWxpZ3FzdWdzYXVxa2d6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU0MTQyMTUsImV4cCI6MjA5MDk5MDIxNX0.gRF-roExLgnVDG4bSNt7EzX6c1v-JtM5v6ZcX8dY934';
+const { createClient } = supabase;
+const db = createClient(SUPABASE_URL, SUPABASE_KEY);
+
+// ===== AUTH =====
+async function doLogin() {
+  const pw = document.getElementById('passwordInput').value;
+  const { data, error } = await db.rpc('admin_verify_password', { pw });
+  if (!error && data === true) {
+    sessionStorage.setItem('admin_auth', '1');
+    document.getElementById('loginWrap').style.display = 'none';
+    document.getElementById('app').style.display = 'flex';
+    initApp();
+  } else {
+    document.getElementById('loginError').style.display = 'block';
+  }
+}
+function doLogout() {
+  sessionStorage.removeItem('admin_auth');
+  location.reload();
+}
+
+// ===== TOAST =====
+function toast(msg, type='success') {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = `toast ${type} show`;
+  setTimeout(() => t.className = 'toast', 2800);
+}
+
+// ===== NAVIGATION =====
+function showPage(name) {
+  document.querySelectorAll('.section-page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.getElementById('page-'+name).classList.add('active');
+  document.getElementById('nav-'+name).classList.add('active');
+  loadPage(name);
+}
+
+// ===== INIT =====
+function initApp() {
+  if (sessionStorage.getItem('admin_auth') !== '1') return;
+  loadPage('hero');
+}
+
+async function loadPage(name) {
+  if (name === 'skolka') { loadSkolka(); return; }
+  if (name === 'skolka_pw') { loadSkolkaPw(); return; }
+  if (name === 'admin_pw') { return; }
+  if (name === 'hero') await loadSettings(['hero_title','hero_subtitle','hero_photo']);
+  if (name === 'onas') await loadSettings(['onas_p1','onas_p2','onas_extra_p1','onas_extra_p2','onas_list','ppv_intro','ppv_extra','program_text','icon_social','icon_kreativ','icon_sport','icon_intellect']);
+  if (name === 'contact') await loadSettings(['contact_address','contact_phone','contact_email','contact_hours','icon_adresa','icon_telefon','icon_email','icon_hodiny']);
+  if (name === 'pricing') await loadSettings(['price_full_amount','price_full_detail','price_half_amount','price_half_detail']);
+  if (name === 'activities') await loadActivities();
+  if (name === 'news') await loadNews();
+  if (name === 'gallery') await loadGallery();
+  if (name === 'testimonials') await loadTestimonials();
+  if (name === 'logo') await loadSettings(['logo_url']);
+  if (name === 'documents') await loadDocuments();
+  if (name === 'jedalny') { loadJLLocal(); return; }
+  if (name === 'footer') await loadSettings(['footer_desc','footer_links_title','footer_links','footer_copy_left','footer_copy_right','contact_address','contact_phone','contact_email','contact_hours']);
+}
+
+// ===== SETTINGS =====
+async function loadSettings(keys) {
+  const { data } = await db.from('settings').select('*').in('key', keys);
+  if (!data) return;
+  data.forEach(row => {
+    // Section icon previews
+    if (row.key.startsWith('icon_') && row.value) {
+      const prev = document.getElementById('icon-preview-' + row.key.replace('icon_',''));
+      if (prev) { prev.innerHTML = `<img src="${row.value}" style="width:100%;height:100%;object-fit:contain;padding:6px;" alt=""/>`; }
+      return;
+    }
+    const el = document.getElementById(row.key);
+    if (el) {
+      if (el.hasAttribute('contenteditable')) el.innerHTML = row.value || '';
+      else el.value = row.value || '';
+    }
+    if (row.key === 'hero_photo' && row.value) {
+      const prev = document.getElementById('hero_photo_preview');
+      if (prev) { prev.src = row.value; prev.style.display = 'block'; }
+    }
+  });
+}
+
+async function saveSettings(keys) {
+  const upserts = keys.map(k => {
+    const el = document.getElementById(k);
+    const value = el?.hasAttribute('contenteditable') ? (el.innerHTML || '') : (el?.value || '');
+    return { key: k, value, updated_at: new Date().toISOString() };
+  });
+  const { error } = await db.from('settings').upsert(upserts, { onConflict: 'key' });
+  error ? toast('Chyba pri ukladaní', 'error') : toast('✅ Uložené!');
+}
+
+// ===== FORMATTING TOOLBAR =====
+function fmtWrap(btn) {
+  const editor = btn.closest('.fmt-wrap').querySelector('[contenteditable]');
+  if (!editor) return;
+  const action = btn.dataset.action, size = btn.dataset.size;
+  if (action === 'bold') {
+    document.execCommand('bold', false, null);
+  } else if (action === 'italic') {
+    document.execCommand('italic', false, null);
+  } else if (action === 'justifyLeft' || action === 'justifyCenter' || action === 'justifyRight') {
+    editor.focus();
+    document.execCommand(action, false, null);
+  } else if (size) {
+    const sel = window.getSelection();
+    if (!sel || !sel.rangeCount || sel.isCollapsed) return;
+    const range = sel.getRangeAt(0);
+    if (!editor.contains(range.commonAncestorContainer)) return;
+    const frag = range.extractContents();
+    const span = document.createElement('span');
+    span.style.fontSize = size;
+    span.appendChild(frag);
+    range.insertNode(span);
+  }
+}
+
+let _fmtSavedRange = null;
+function saveFmtSel(e, sel) {
+  const selection = window.getSelection();
+  if (selection && selection.rangeCount) {
+    const range = selection.getRangeAt(0);
+    const editor = sel.closest('.fmt-wrap').querySelector('[contenteditable]');
+    if (editor && editor.contains(range.commonAncestorContainer)) {
+      _fmtSavedRange = range.cloneRange();
+      return;
+    }
+  }
+  _fmtSavedRange = null;
+}
+function toggleFmtLh(btn) {
+  const pop = btn.nextElementSibling;
+  const isOpen = pop.classList.contains('open');
+  document.querySelectorAll('.fmt-lh-pop.open').forEach(p => p.classList.remove('open'));
+  if (!isOpen) pop.classList.add('open');
+}
+function applyFmtLh(btn, val) {
+  btn.closest('.fmt-lh-pop').classList.remove('open');
+  if (!_fmtSavedRange || _fmtSavedRange.collapsed) return;
+  const selection = window.getSelection();
+  selection.removeAllRanges();
+  selection.addRange(_fmtSavedRange);
+  const range = _fmtSavedRange.cloneRange();
+  const frag = range.extractContents();
+  const div = document.createElement('div');
+  div.style.lineHeight = val;
+  div.appendChild(frag);
+  range.insertNode(div);
+  _fmtSavedRange = null;
+}
+document.addEventListener('mousedown', function(e) {
+  if (!e.target.closest('.fmt-lh')) {
+    document.querySelectorAll('.fmt-lh-pop.open').forEach(p => p.classList.remove('open'));
+  }
+});
+
+// ===== ACTIVITY DRAG-TO-REORDER =====
+let _dragActId = null;
+function actDragStart(e, id) {
+  _dragActId = id;
+  e.dataTransfer.effectAllowed = 'move';
+  setTimeout(() => { if(e.target) e.target.style.opacity='0.45'; }, 0);
+}
+function actDragEnd(e) {
+  e.currentTarget.style.opacity = '';
+  e.currentTarget.removeAttribute('draggable');
+  document.querySelectorAll('.activity-card').forEach(c => c.classList.remove('drag-over'));
+}
+function actDragOver(e) {
+  e.preventDefault();
+  e.dataTransfer.dropEffect = 'move';
+  e.currentTarget.classList.add('drag-over');
+}
+function actDragLeave(e) {
+  e.currentTarget.classList.remove('drag-over');
+}
+async function actDrop(e, targetId) {
+  e.preventDefault();
+  e.currentTarget.classList.remove('drag-over');
+  if (_dragActId === null || _dragActId === targetId) return;
+  const { data } = await db.from('activities').select('id,sort_order').order('sort_order');
+  if (!data) return;
+  const ids = data.map(a => a.id);
+  const fromIdx = ids.indexOf(_dragActId);
+  const toIdx   = ids.indexOf(targetId);
+  if (fromIdx === -1 || toIdx === -1) return;
+  ids.splice(fromIdx, 1);
+  ids.splice(toIdx, 0, _dragActId);
+  await Promise.all(ids.map((id, i) => db.from('activities').update({ sort_order: i + 1 }).eq('id', id)));
+  _dragActId = null;
+  toast('✅ Poradie uložené!');
+  loadActivities();
+}
+
+// ===== ACTIVITIES =====
+async function loadActivities() {
+  const { data } = await db.from('activities').select('*').order('sort_order');
+  if (!data) return;
+  const grid = document.getElementById('activitiesGrid');
+  grid.innerHTML = data.map(a => `
+    <div class="activity-card"
+      ondragstart="actDragStart(event,${a.id})"
+      ondragend="actDragEnd(event)"
+      ondragover="actDragOver(event)"
+      ondragleave="actDragLeave(event)"
+      ondrop="actDrop(event,${a.id})">
+      <div class="activity-card-header">
+        <span class="drag-handle" title="Presunúť"
+          onmousedown="this.closest('.activity-card').setAttribute('draggable','true')"
+          onmouseup="this.closest('.activity-card').removeAttribute('draggable')">⠿</span>
+        <span class="activity-card-icon">${a.icon && a.icon.startsWith('http') ? `<img src="${a.icon}" style="width:28px;height:28px;object-fit:contain;border-radius:6px;vertical-align:middle;"/>` : a.icon}</span>
+        <button class="btn-danger" style="padding:5px 10px;font-size:11px;" data-tip="Natrvalo odstrániť aktivitu" onclick="deleteActivity(${a.id})">🗑️ Odstrániť</button>
+      </div>
+      ${a.photo_url
+        ? `<img class="activity-photo" src="${a.photo_url}" alt=""/>
+           <div style="display:flex;gap:8px;margin-bottom:8px;">
+             <label style="flex:1;display:flex;align-items:center;justify-content:center;gap:6px;background:#D9EFFF;color:#1A5FA8;font-family:'Quicksand',sans-serif;font-size:12px;font-weight:700;padding:7px 12px;border-radius:50px;cursor:pointer;">
+               <input type="file" accept="image/*" style="display:none;" onchange="uploadActivityPhoto(this,${a.id})"/>
+               📷 Zmeniť foto
+             </label>
+             <button class="btn-danger" style="flex:1;" data-tip="Odstrániť fotografiu aktivity" onclick="removeActivityPhoto(${a.id})">🗑️ Odstrániť foto</button>
+           </div>`
+        : `<label style="display:flex;align-items:center;justify-content:center;gap:8px;background:#E0ECFF;border-radius:10px;height:100px;margin-bottom:10px;cursor:pointer;border:2px dashed #C8E6FA;">
+             <input type="file" accept="image/*" style="display:none;" onchange="uploadActivityPhoto(this,${a.id})"/>
+             📷 Nahrať foto (zobrazí sa v popupe)
+           </label>`
+      }
+      <div class="field"><label>Ikonka aktivity</label>
+        ${a.icon && a.icon.startsWith('http')
+          ? `<div style="display:flex;align-items:center;gap:10px;padding:10px;background:#f0f6ff;border-radius:12px;margin-bottom:8px;">
+               <img src="${a.icon}" style="width:54px;height:54px;object-fit:contain;border-radius:12px;background:#fff;padding:3px;box-shadow:0 2px 8px rgba(0,0,0,.08);"/>
+               <span style="flex:1;font-family:'Quicksand',sans-serif;font-size:12px;font-weight:600;color:#5a8ab0;">Obrázková ikona</span>
+               <button class="btn-danger" style="padding:5px 12px;font-size:11px;" data-tip="Odstrániť obrázkovú ikonu" onclick="removeActivityIcon(${a.id})">🗑️ Odstrániť</button>
+             </div>`
+          : `<input type="text" value="${a.icon}" onchange="updateActivity(${a.id},'icon',this.value)" style="font-size:22px;text-align:center;width:100%;margin-bottom:8px;padding:8px 14px;border:1.5px solid #E0ECFF;border-radius:12px;font-family:'Inter',sans-serif;outline:none;"/>`
+        }
+        <label style="display:flex;align-items:center;justify-content:center;gap:6px;background:#D9EFFF;color:#1A5FA8;font-family:'Quicksand',sans-serif;font-size:12px;font-weight:700;padding:8px 14px;border-radius:50px;cursor:pointer;width:100%;">
+          <input type="file" accept="image/*" style="display:none;" onchange="uploadActivityIcon(this,${a.id})"/>
+          🖼️ Nahrať obrázok ikony
+        </label>
+      </div>
+      <div class="field"><label>Názov</label>
+        <input type="text" value="${a.title}" onchange="updateActivity(${a.id},'title',this.value)"/>
+      </div>
+      <div class="field fmt-wrap"><label>Krátky popis (na karte)</label>
+        <div class="fmt-toolbar">
+          <button class="fmt-btn b" type="button" data-action="bold" onmousedown="event.preventDefault();fmtWrap(this)">B</button>
+          <button class="fmt-btn i" type="button" data-action="italic" onmousedown="event.preventDefault();fmtWrap(this)">I</button>
+          <div class="fmt-sep"></div>
+          <button class="fmt-btn" type="button" data-size="0.82em" onmousedown="event.preventDefault();fmtWrap(this)">S</button>
+          <button class="fmt-btn" type="button" data-size="1em" onmousedown="event.preventDefault();fmtWrap(this)">M</button>
+          <button class="fmt-btn" type="button" data-size="1.2em" onmousedown="event.preventDefault();fmtWrap(this)">L</button>
+          <div class="fmt-sep"></div>
+          <div class="fmt-lh"><button class="fmt-btn" type="button" title="Riadkovanie" onmousedown="event.preventDefault();saveFmtSel(event,this);" onclick="toggleFmtLh(this)" style="padding:3px 7px;"><svg width="13" height="11" viewBox="0 0 13 11" fill="none"><rect x="4" y="0" width="9" height="1.5" rx=".75" fill="currentColor"/><rect x="4" y="4.75" width="9" height="1.5" rx=".75" fill="currentColor"/><rect x="4" y="9.5" width="9" height="1.5" rx=".75" fill="currentColor"/><path d="M1.5 2.5v6" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/><path d="M.5 4L1.5 2.5L2.5 4" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" fill="none"/><path d="M.5 7L1.5 8.5L2.5 7" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg></button><div class="fmt-lh-pop"><button class="fmt-lh-opt" onmousedown="event.preventDefault();applyFmtLh(this,'1.2')">1.2×</button><button class="fmt-lh-opt" onmousedown="event.preventDefault();applyFmtLh(this,'1.5')">1.5×</button><button class="fmt-lh-opt" onmousedown="event.preventDefault();applyFmtLh(this,'1.8')">1.8×</button><button class="fmt-lh-opt" onmousedown="event.preventDefault();applyFmtLh(this,'2.2')">2.2×</button></div></div>
+        </div>
+        <div class="fake-textarea" contenteditable="true" onblur="updateActivity(${a.id},'description',this.innerHTML)">${a.description||''}</div>
+      </div>
+      <div class="field fmt-wrap"><label>Text popupu „Viac" (dlhší popis)</label>
+        <div class="fmt-toolbar">
+          <button class="fmt-btn b" type="button" data-action="bold" onmousedown="event.preventDefault();fmtWrap(this)">B</button>
+          <button class="fmt-btn i" type="button" data-action="italic" onmousedown="event.preventDefault();fmtWrap(this)">I</button>
+          <div class="fmt-sep"></div>
+          <button class="fmt-btn" type="button" data-size="0.82em" onmousedown="event.preventDefault();fmtWrap(this)">S</button>
+          <button class="fmt-btn" type="button" data-size="1em" onmousedown="event.preventDefault();fmtWrap(this)">M</button>
+          <button class="fmt-btn" type="button" data-size="1.2em" onmousedown="event.preventDefault();fmtWrap(this)">L</button>
+          <div class="fmt-sep"></div>
+          <div class="fmt-lh"><button class="fmt-btn" type="button" title="Riadkovanie" onmousedown="event.preventDefault();saveFmtSel(event,this);" onclick="toggleFmtLh(this)" style="padding:3px 7px;"><svg width="13" height="11" viewBox="0 0 13 11" fill="none"><rect x="4" y="0" width="9" height="1.5" rx=".75" fill="currentColor"/><rect x="4" y="4.75" width="9" height="1.5" rx=".75" fill="currentColor"/><rect x="4" y="9.5" width="9" height="1.5" rx=".75" fill="currentColor"/><path d="M1.5 2.5v6" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/><path d="M.5 4L1.5 2.5L2.5 4" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" fill="none"/><path d="M.5 7L1.5 8.5L2.5 7" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg></button><div class="fmt-lh-pop"><button class="fmt-lh-opt" onmousedown="event.preventDefault();applyFmtLh(this,'1.2')">1.2×</button><button class="fmt-lh-opt" onmousedown="event.preventDefault();applyFmtLh(this,'1.5')">1.5×</button><button class="fmt-lh-opt" onmousedown="event.preventDefault();applyFmtLh(this,'1.8')">1.8×</button><button class="fmt-lh-opt" onmousedown="event.preventDefault();applyFmtLh(this,'2.2')">2.2×</button></div></div>
+        </div>
+        <div class="fake-textarea" data-tall contenteditable="true" onblur="updateActivity(${a.id},'popup_text',this.innerHTML)">${a.popup_text||''}</div>
+      </div>
+      <div class="field"><label>Foto do popupu (pod textom)</label>
+        ${a.popup_photo_url
+          ? `<img style="width:100%;height:100px;object-fit:cover;border-radius:10px;margin-bottom:8px;" src="${a.popup_photo_url}" alt=""/>
+             <div style="display:flex;gap:8px;">
+               <label style="flex:1;display:flex;align-items:center;justify-content:center;gap:6px;background:#D9EFFF;color:#1A5FA8;font-family:'Quicksand',sans-serif;font-size:12px;font-weight:700;padding:7px 12px;border-radius:50px;cursor:pointer;">
+                 <input type="file" accept="image/*" style="display:none;" onchange="uploadActivityPopupPhoto(this,${a.id})"/>
+                 📷 Zmeniť foto popupu
+               </label>
+               <button class="btn-danger" style="flex:1;" data-tip="Odstrániť foto z popupu" onclick="removeActivityPopupPhoto(${a.id})">🗑️ Odstrániť</button>
+             </div>`
+          : `<label style="display:flex;align-items:center;justify-content:center;gap:8px;background:#E0ECFF;border-radius:10px;height:80px;cursor:pointer;border:2px dashed #C8E6FA;">
+               <input type="file" accept="image/*" style="display:none;" onchange="uploadActivityPopupPhoto(this,${a.id})"/>
+               📷 Nahrať foto do popupu
+             </label>`
+        }
+      </div>
+      <div class="field"><label>Farba karty</label>
+        <select onchange="updateActivity(${a.id},'color',this.value)">
+          <option value="blue" ${a.color==='blue'?'selected':''}>Modrá</option>
+          <option value="yellow" ${a.color==='yellow'?'selected':''}>Žltá</option>
+          <option value="green" ${a.color==='green'?'selected':''}>Zelená</option>
+          <option value="red" ${a.color==='red'?'selected':''}>Červená</option>
+        </select>
+      </div>
+    </div>
+  `).join('');
+}
+
+async function deleteActivity(id) {
+  if (!confirm('Odstrániť túto aktivitu?')) return;
+  await db.from('activities').delete().eq('id', id);
+  toast('Aktivita odstránená');
+  loadActivities();
+}
+
+async function addActivity() {
+  const maxOrder = await db.from('activities').select('sort_order').order('sort_order', {ascending:false}).limit(1);
+  const nextOrder = (maxOrder.data?.[0]?.sort_order || 0) + 1;
+  await db.from('activities').insert({
+    title: 'Nová aktivita',
+    description: 'Popis aktivity...',
+    icon: '⭐',
+    color: 'blue',
+    sort_order: nextOrder
+  });
+  toast('✅ Aktivita pridaná!');
+  loadActivities();
+}
+
+async function updateActivity(id, field, value) {
+  const { error } = await db.from('activities').update({ [field]: value, updated_at: new Date().toISOString() }).eq('id', id);
+  error ? toast('Chyba', 'error') : toast('✅ Uložené!');
+}
+
+async function uploadActivityPhoto(input, id) {
+  const file = input.files[0]; if (!file) return;
+  const path = `activities/${id}_${Date.now()}.${file.name.split('.').pop()}`;
+  const { error: upErr } = await db.storage.from('vcielka').upload(path, file, { upsert: true });
+  if (upErr) { toast('Chyba nahrávania', 'error'); return; }
+  const { data: { publicUrl } } = db.storage.from('vcielka').getPublicUrl(path);
+  await db.from('activities').update({ photo_url: publicUrl }).eq('id', id);
+  toast('✅ Fotografia nahratá!');
+  loadActivities();
+}
+
+async function removeActivityPhoto(id) {
+  await db.from('activities').update({ photo_url: '' }).eq('id', id);
+  toast('Fotografia odstránená');
+  loadActivities();
+}
+
+async function uploadActivityIcon(input, id) {
+  const file = input.files[0]; if (!file) return;
+  toast('Nahrávam ikonu…');
+  const path = `activities/icon_${id}_${Date.now()}.${file.name.split('.').pop()}`;
+  const { error: upErr } = await db.storage.from('vcielka').upload(path, file, { upsert: true });
+  if (upErr) { toast('Chyba nahrávania ikony', 'error'); return; }
+  const { data: { publicUrl } } = db.storage.from('vcielka').getPublicUrl(path);
+  await db.from('activities').update({ icon: publicUrl, updated_at: new Date().toISOString() }).eq('id', id);
+  toast('✅ Ikona nahratá!');
+  loadActivities();
+}
+
+async function removeActivityIcon(id) {
+  await db.from('activities').update({ icon: '', updated_at: new Date().toISOString() }).eq('id', id);
+  toast('Ikona odstránená');
+  loadActivities();
+}
+
+const _sectionIconDefaults = {
+  icon_adresa:'📍', icon_telefon:'📞', icon_email:'✉️', icon_hodiny:'🕐',
+  icon_social:'🐝', icon_kreativ:'🎨', icon_sport:'🏃', icon_intellect:'🔬'
+};
+
+async function uploadSectionIcon(input, key) {
+  const file = input.files[0]; if (!file) return;
+  toast('Nahrávam ikonu…');
+  const path = `icons/${key}_${Date.now()}.${file.name.split('.').pop()}`;
+  const { error: upErr } = await db.storage.from('vcielka').upload(path, file, { upsert: true });
+  if (upErr) { toast('Chyba nahrávania', 'error'); return; }
+  const { data: { publicUrl } } = db.storage.from('vcielka').getPublicUrl(path);
+  await db.from('settings').upsert({ key, value: publicUrl, updated_at: new Date().toISOString() }, { onConflict: 'key' });
+  const prev = document.getElementById('icon-preview-' + key.replace('icon_',''));
+  if (prev) prev.innerHTML = `<img src="${publicUrl}" style="width:100%;height:100%;object-fit:contain;padding:6px;" alt=""/>`;
+  toast('✅ Ikona nahratá!');
+}
+
+async function removeSectionIcon(key) {
+  await db.from('settings').upsert({ key, value: '', updated_at: new Date().toISOString() }, { onConflict: 'key' });
+  const prev = document.getElementById('icon-preview-' + key.replace('icon_',''));
+  if (prev) { prev.innerHTML = ''; prev.textContent = _sectionIconDefaults[key] || '🔵'; }
+  toast('Ikona odstránená');
+}
+
+async function uploadActivityPopupPhoto(input, id) {
+  const file = input.files[0]; if (!file) return;
+  const path = `activities/popup_${id}_${Date.now()}.${file.name.split('.').pop()}`;
+  const { error: upErr } = await db.storage.from('vcielka').upload(path, file, { upsert: true });
+  if (upErr) { toast('Chyba nahrávania', 'error'); return; }
+  const { data: { publicUrl } } = db.storage.from('vcielka').getPublicUrl(path);
+  await db.from('activities').update({ popup_photo_url: publicUrl }).eq('id', id);
+  toast('✅ Fotografia nahratá!');
+  loadActivities();
+}
+
+async function removeActivityPopupPhoto(id) {
+  await db.from('activities').update({ popup_photo_url: '' }).eq('id', id);
+  toast('Fotografia odstránená');
+  loadActivities();
+}
+
+// ===== NEWS =====
+async function loadNews() {
+  const { data } = await db.from('news').select('id,title,excerpt,content,photo_url,photo2_url,photo3_url,color,published_at,created_at').order('created_at', { ascending: false });
+  const list = document.getElementById('newsList');
+  list.innerHTML = (data||[]).map(n => `
+    <div class="news-item">
+      <div class="news-item-header">
+        <span style="font-family:'Quicksand',sans-serif;font-weight:700;">${n.title}</span>
+        <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+          <button 
+            data-tip="Zobraziť / skryť na hlavnej stránke" onclick="setFeaturedNews(${n.id}, ${!n.featured})"
+            style="background:${n.featured ? '#F9C832' : '#EEF7FF'};color:${n.featured ? '#1a1a1a' : '#5590C4'};font-family:'Quicksand',sans-serif;font-size:12px;font-weight:700;padding:7px 14px;border:none;border-radius:50px;cursor:pointer;">
+            ${n.featured ? '⭐ Na hlavnej stránke' : '☆ Zobraziť na hlavnej'}
+          </button>
+          <button class="btn-danger" data-tip="Natrvalo vymazať novinku" onclick="deleteNews(${n.id})">🗑️ Vymazať</button>
+        </div>
+      </div>
+      ${n.photo_url ? `<img class="news-photo" src="${n.photo_url}" alt=""/>` : ''}
+      <div class="field"><label>Titulok</label><input type="text" value="${n.title}" onchange="updateNews(${n.id},'title',this.value)"/></div>
+      <div class="field"><label>Krátky popis</label><input type="text" value="${n.excerpt||''}" onchange="updateNews(${n.id},'excerpt',this.value)"/></div>
+      <div class="field"><label>Celý článok (text popupu)</label><textarea style="min-height:120px;" onchange="updateNews(${n.id},'content',this.value)">${n.content||''}</textarea></div>
+      <div class="field"><label>📸 Hlavná fotografia</label>
+        ${n.photo_url ? `<div style="display:flex;align-items:center;gap:12px;margin-bottom:8px;">
+          <img src="${n.photo_url}" style="height:70px;border-radius:8px;object-fit:cover;"/>
+          <button class="btn-danger" data-tip="Odstrániť hlavnú fotografiu" onclick="deleteNewsPhoto(${n.id},'photo_url')">🗑️ Odstrániť</button>
+        </div>` : ''}
+        <div class="img-upload" style="padding:14px;">
+          <input type="file" accept="image/*" onchange="uploadNewsPhoto(this,${n.id},'photo_url')"/>
+          <div>📸 ${n.photo_url ? 'Zmeniť fotografiu' : 'Nahrať hlavnú fotografiu'}</div>
+        </div>
+      </div>
+      <div class="field"><label>📸 Fotografia 2 (voliteľná)</label>
+        ${n.photo2_url ? `<div style="display:flex;align-items:center;gap:12px;margin-bottom:8px;">
+          <img src="${n.photo2_url}" style="height:70px;border-radius:8px;object-fit:cover;"/>
+          <button class="btn-danger" data-tip="Odstrániť fotografiu 2" onclick="deleteNewsPhoto(${n.id},'photo2_url')">🗑️ Odstrániť</button>
+        </div>` : ''}
+        <div class="img-upload" style="padding:14px;">
+          <input type="file" accept="image/*" onchange="uploadNewsPhoto(this,${n.id},'photo2_url')"/>
+          <div>📸 ${n.photo2_url ? 'Zmeniť fotografiu 2' : 'Nahrať fotografiu 2'}</div>
+        </div>
+      </div>
+      <div class="field"><label>📸 Fotografia 3 (voliteľná)</label>
+        ${n.photo3_url ? `<div style="display:flex;align-items:center;gap:12px;margin-bottom:8px;">
+          <img src="${n.photo3_url}" style="height:70px;border-radius:8px;object-fit:cover;"/>
+          <button class="btn-danger" data-tip="Odstrániť fotografiu 3" onclick="deleteNewsPhoto(${n.id},'photo3_url')">🗑️ Odstrániť</button>
+        </div>` : ''}
+        <div class="img-upload" style="padding:14px;">
+          <input type="file" accept="image/*" onchange="uploadNewsPhoto(this,${n.id},'photo3_url')"/>
+          <div>📸 ${n.photo3_url ? 'Zmeniť fotografiu 3' : 'Nahrať fotografiu 3'}</div>
+        </div>
+      </div>
+      <div class="field"><label>Farba karty</label>
+        <select onchange="updateNews(${n.id},'color',this.value)">
+          <option value="blue" ${n.color==='blue'?'selected':''}>Modrá</option>
+          <option value="yellow" ${n.color==='yellow'?'selected':''}>Žltá</option>
+          <option value="green" ${n.color==='green'?'selected':''}>Zelená</option>
+          <option value="red" ${n.color==='red'?'selected':''}>Červená</option>
+        </select>
+      </div>
+    </div>
+  `).join('') || '<div style="color:#888;padding:20px;">Žiadne novinky. Kliknite + Pridať novinku.</div>';
+}
+
+async function setFeaturedNews(id, featured) {
+  // first unfeatured all
+  await db.from('news').update({ featured: false }).neq('id', 0);
+  // then set this one if featured=true
+  if (featured) {
+    await db.from('news').update({ featured: true }).eq('id', id);
+    toast('⭐ Novinka zobrazená na hlavnej stránke!');
+  } else {
+    toast('Novinka skrytá z hlavnej stránky');
+  }
+  loadNews();
+}
+
+async function setFeaturedNews(id, featured) {
+  // First unfeature all
+  await db.from('news').update({ featured: false }).neq('id', 0);
+  // Then feature this one if true
+  if (featured) {
+    await db.from('news').update({ featured: true }).eq('id', id);
+    toast('⭐ Zobrazené na hlavnej stránke!');
+  } else {
+    toast('Odstránené z hlavnej stránky');
+  }
+  loadNews();
+}
+
+async function addNews() {
+  const { error } = await db.from('news').insert({ title: 'Nová novinka', excerpt: 'Krátky popis...', color: 'blue' });
+  error ? toast('Chyba', 'error') : (toast('✅ Novinka pridaná!'), loadNews());
+}
+
+async function updateNews(id, field, value) {
+  await db.from('news').update({ [field]: value }).eq('id', id);
+  toast('✅ Uložené!');
+}
+
+async function deleteNewsPhoto(id, field) {
+  if (!confirm('Odstrániť túto fotografiu?')) return;
+  await db.from('news').update({ [field]: '' }).eq('id', id);
+  toast('Fotografia odstránená');
+  loadNews();
+}
+
+async function deleteNews(id) {
+  if (!confirm('Vymazať túto novinku?')) return;
+  await db.from('news').delete().eq('id', id);
+  toast('Novinka vymazaná');
+  loadNews();
+}
+
+async function uploadNewsPhoto(input, id, field) {
+  if(!field) field = "photo_url";
+  const file = input.files[0]; if (!file) return;
+  const path = `news/${id}_${Date.now()}.${file.name.split('.').pop()}`;
+  const { error } = await db.storage.from('vcielka').upload(path, file, { upsert: true });
+  if (error) { toast('Chyba nahrávania', 'error'); return; }
+  const { data: { publicUrl } } = db.storage.from('vcielka').getPublicUrl(path);
+  await db.from('news').update({ [field]: publicUrl }).eq('id', id);
+  toast('✅ Fotografia nahratá!');
+  loadNews();
+}
+
+// ===== GALLERY =====
+async function loadGallery() {
+  const grid = document.getElementById('galleryItemsGrid');
+  if (!grid) return;
+  grid.innerHTML = '<div style="color:#888;font-size:13px;">Načítavam...</div>';
+
+  const { data, error } = await db.from('gallery').select('*').order('sort_order', { ascending: true });
+
+  if (error) {
+    grid.innerHTML = `<div style="color:red;font-size:13px;">Chyba: ${error.message}</div>`;
+    console.error('Gallery error:', error);
+    return;
+  }
+
+  if (!data || data.length === 0) {
+    grid.innerHTML = '<div style="color:#888;font-size:13px;padding:16px 0;">Zatiaľ žiadne fotografie.</div>';
+    return;
+  }
+
+  grid.style.display = 'grid';
+  grid.innerHTML = data.map(g => `
+    <div class="gallery-item" id="gitem-${g.id}" data-id="${g.id}" draggable="true"
+         ondragstart="galleryDragStart(event)" ondragover="galleryDragOver(event)"
+         ondrop="galleryDrop(event)" ondragend="galleryDragEnd(event)">
+      <img src="${g.photo_url}" alt="foto" loading="lazy" onerror="this.parentElement.style.background='#fee'"/>
+      <button class="gallery-item-del" data-tip="Odstrániť z galérie" onclick="deleteGalleryItem(${g.id})">✕</button>
+    </div>
+  `).join('');
+}
+
+async function uploadGalleryPhotos(input) {
+  const files = Array.from(input.files);
+  if (!files.length) return;
+  const lbl = document.getElementById('galleryUploadBtn');
+  if (lbl) lbl.textContent = `Nahrávam 0/${files.length}...`;
+  let done = 0;
+  for (const file of files) {
+    const ext = file.name.split('.').pop().toLowerCase();
+    const path = `gallery/${Date.now()}_${Math.random().toString(36).slice(2)}.${ext}`;
+    const { error: upErr } = await db.storage.from('vcielka').upload(path, file, { upsert: true });
+    if (upErr) { console.error('Upload error:', upErr); toast(`Chyba: ${file.name}`, 'error'); continue; }
+    const { data: urlData } = db.storage.from('vcielka').getPublicUrl(path);
+    const publicUrl = urlData.publicUrl;
+    const { error: dbErr } = await db.from('gallery').insert({ photo_url: publicUrl, sort_order: Math.floor(Date.now()/1000) % 2147483647 });
+    if (dbErr) { console.error('DB error:', dbErr); toast('Chyba ukladania do DB', 'error'); continue; }
+    done++;
+    if (lbl) lbl.textContent = `Nahrávam ${done}/${files.length}...`;
+  }
+  if (lbl) lbl.textContent = '📷 + Nahrať fotografie';
+  input.value = '';
+  toast(`✅ ${done} foto nahraté!`);
+  await loadGallery();
+}
+
+async function deleteGalleryItem(id) {
+  if (!confirm('Odstrániť túto fotografiu?')) return;
+  const { error } = await db.from('gallery').delete().eq('id', id);
+  if (error) { toast('Chyba pri mazaní', 'error'); return; }
+  const el = document.getElementById('gitem-'+id);
+  if (el) el.remove();
+  toast('Fotografia odstránená');
+  const grid = document.getElementById('galleryItemsGrid');
+  if (grid && grid.children.length === 0) {
+    grid.innerHTML = '<div style="color:#888;font-size:13px;padding:16px 0;">Zatiaľ žiadne fotografie.</div>';
+  }
+}
+
+// ===== TESTIMONIALS =====
+async function loadTestimonials() {
+  const { data } = await db.from('testimonials').select('*').order('sort_order');
+  const list = document.getElementById('testimonialsList');
+  list.innerHTML = (data||[]).map(t => `
+    <div class="card">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;">
+        <strong style="font-family:'Quicksand',sans-serif;">${t.author}</strong>
+        <button class="btn-danger" data-tip="Natrvalo vymazať hodnotenie" onclick="deleteTestimonial(${t.id})">🗑️ Vymazať</button>
+      </div>
+      <div class="field"><label>Text hodnotenia</label>
+        <textarea onchange="updateTestimonial(${t.id},'text',this.value)">${t.text}</textarea>
+      </div>
+      <div class="field"><label>Meno rodiča</label>
+        <input type="text" value="${t.author}" onchange="updateTestimonial(${t.id},'author',this.value)"/>
+      </div>
+    </div>
+  `).join('') || '<div style="color:#888;padding:20px;">Žiadne referencie.</div>';
+}
+
+async function addTestimonial() {
+  await db.from('testimonials').insert({ text: 'Napíšte hodnotenie...', author: 'Meno, mama/otec', sort_order: 0 });
+  toast('✅ Referencia pridaná!');
+  loadTestimonials();
+}
+
+async function updateTestimonial(id, field, value) {
+  await db.from('testimonials').update({ [field]: value }).eq('id', id);
+  toast('✅ Uložené!');
+}
+
+async function deleteTestimonial(id) {
+  if (!confirm('Vymazať túto referenciu?')) return;
+  await db.from('testimonials').delete().eq('id', id);
+  toast('Referencia vymazaná');
+  loadTestimonials();
+}
+
+// ===== HERO PHOTO =====
+async function uploadHeroPhoto(input) {
+  const file = input.files[0]; if (!file) return;
+  const path = `hero/hero_${Date.now()}.${file.name.split('.').pop()}`;
+  const { error } = await db.storage.from('vcielka').upload(path, file, { upsert: true });
+  if (error) { toast('Chyba nahrávania', 'error'); return; }
+  const { data: { publicUrl } } = db.storage.from('vcielka').getPublicUrl(path);
+  await db.from('settings').upsert({ key: 'hero_photo', value: publicUrl }, { onConflict: 'key' });
+  const prev = document.getElementById('hero_photo_preview');
+  prev.src = publicUrl; prev.style.display = 'block';
+  toast('✅ Fotografia nahratá!');
+}
+
+// ===== LOGO =====
+async function uploadLogo(input) {
+  const file = input.files[0]; if (!file) return;
+  const path = `logo/logo_${Date.now()}.${file.name.split('.').pop()}`;
+  const { error } = await db.storage.from('vcielka').upload(path, file, { upsert: true });
+  if (error) { toast('Chyba nahrávania', 'error'); return; }
+  const { data: { publicUrl } } = db.storage.from('vcielka').getPublicUrl(path);
+  await db.from('settings').upsert({ key: 'logo_url', value: publicUrl }, { onConflict: 'key' });
+  document.getElementById('logo_preview').src = publicUrl;
+  toast('✅ Logo nahraté!');
+}
+
+
+// ===== DOCUMENTS =====
+async function loadDocuments() {
+  const { data, error } = await db.from('documents').select('*').order('sort_order');
+  const list = document.getElementById('documentsList');
+  if (!list) return;
+  if (!data || data.length === 0) {
+    list.innerHTML = '<div style="color:#888;font-size:13px;padding:16px 0;">Žiadne dokumenty. Pridajte prvý dokument vyššie.</div>';
+    return;
+  }
+  list.innerHTML = data.map(d => `
+    <div class="card" style="margin-bottom:14px;">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap;gap:8px;">
+        <div style="display:flex;align-items:center;gap:10px;">
+          <span style="font-size:24px;">📄</span>
+          <div>
+            <div style="font-family:'Quicksand',sans-serif;font-weight:700;font-size:14px;">${d.title}</div>
+            <a href="${d.file_url}" target="_blank" style="font-size:11px;color:#4A9FD4;">Otvoriť PDF →</a>
+          </div>
+        </div>
+        <button class="btn-danger" data-tip="Natrvalo vymazať dokument" onclick="deleteDocument(${d.id}, '${d.file_url}')">🗑️ Vymazať</button>
+      </div>
+      <div class="two-col">
+        <div class="field"><label>Názov dokumentu</label>
+          <input type="text" value="${d.title}" onchange="updateDocument(${d.id},'title',this.value)"/>
+        </div>
+        <div class="field"><label>Text tlačidla na webe</label>
+          <input type="text" value="${d.button_text}" onchange="updateDocument(${d.id},'button_text',this.value)"/>
+        </div>
+      </div>
+    </div>
+  `).join('');
+}
+
+function showDocFileName(input) {
+  const span = document.getElementById('docFileName');
+  if (span) span.textContent = input.files[0] ? input.files[0].name : 'Žiadny súbor';
+}
+
+async function uploadDocument() {
+  const title = document.getElementById('new_doc_title').value.trim();
+  const btnText = document.getElementById('new_doc_btn').value.trim();
+  const fileInput = document.getElementById('new_doc_file');
+  const file = fileInput.files[0];
+
+  if (!title) { toast('Zadajte názov dokumentu', 'error'); return; }
+  if (!file) { toast('Vyberte PDF súbor', 'error'); return; }
+
+  toast('Nahrávam...');
+  const path = `documents/${Date.now()}_${file.name.replace(/[^a-zA-Z0-9._-]/g,'_')}`;
+  const { error: upErr } = await db.storage.from('vcielka').upload(path, file, { upsert: true });
+  if (upErr) { toast('Chyba nahrávania: ' + upErr.message, 'error'); return; }
+
+  const { data: { publicUrl } } = db.storage.from('vcielka').getPublicUrl(path);
+  const { error: dbErr } = await db.from('documents').insert({
+    title,
+    file_url: publicUrl,
+    button_text: btnText || 'Stiahnuť ' + title,
+    sort_order: Date.now() % 2147483647
+  });
+  if (dbErr) { toast('Chyba ukladania', 'error'); return; }
+
+  document.getElementById('new_doc_title').value = '';
+  document.getElementById('new_doc_btn').value = '';
+  fileInput.value = '';
+  toast('✅ Dokument nahratý!');
+  loadDocuments();
+}
+
+async function updateDocument(id, field, value) {
+  await db.from('documents').update({ [field]: value }).eq('id', id);
+  toast('✅ Uložené!');
+}
+
+async function deleteDocument(id, url) {
+  if (!confirm('Vymazať tento dokument?')) return;
+  await db.from('documents').delete().eq('id', id);
+  toast('Dokument vymazaný');
+  loadDocuments();
+}
+
+
+// ===== VIRTUÁLNA ŠKOLKA =====
+let currentSkolkaFolderId = null;
+
+async function loadSkolka() {
+  const list = document.getElementById('skolka_folders_list');
+  list.innerHTML = '<div style="color:#888;font-size:13px;padding:20px;">Načítavam…</div>';
+  const { data: folders, error } = await db.from('skolka_folders').select('*').order('created_at', { ascending: false });
+  if (error || !folders?.length) {
+    list.innerHTML = '<div style="color:#888;font-size:13px;padding:20px;">Žiadne priečinky. Vytvorte prvý priečinok vyššie.</div>';
+    updateSkolkaStorageBar(0);
+    return;
+  }
+  list.innerHTML = '';
+  let totalBytes = 0;
+  for (const f of folders) {
+    const { data: files } = await db.storage.from('vcielka').list('skolka/' + f.id, { limit: 1000 });
+    const photos = (files || []).filter(x => x.name !== '.keep');
+    const count = photos.length;
+    const folderBytes = photos.reduce((s, x) => s + (x.metadata?.size || 0), 0);
+    totalBytes += folderBytes;
+    const folderMB = (folderBytes / 1048576).toFixed(1);
+    const card = document.createElement('div');
+    card.className = 'card';
+    card.style.marginBottom = '16px';
+    card.dataset.folderName = f.name;
+    card.innerHTML = `
+      <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-bottom:14px;">
+        <div>
+          <div style="font-family:'Quicksand',sans-serif;font-weight:700;font-size:15px;">📁 ${f.name}</div>
+          <div style="font-size:12px;color:#888;margin-top:2px;">${count} fotografi${count===1?'a':'í'} · <span class="folder-size-tag">${folderMB} MB</span></div>
+        </div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;">
+          <button class="btn-add" data-tip="Nahrať fotografie do priečinka" onclick="openSkolkaFolder('${f.id}','${f.name.replace(/'/g,"\'")}')">📷 Nahrať fotografie</button>
+          <button class="btn-danger" data-tip="Vymazať priečinok so všetkými fotkamy" onclick="deleteSkolkaFolder('${f.id}','${f.name.replace(/'/g,"\'")}')">🗑️ Vymazať priečinok</button>
+        </div>
+      </div>
+      <div class="gallery-grid" id="skolka_grid_${f.id}" style="margin-top:4px;"></div>
+      <div class="sk-sel-bar" id="sk_selbar_${f.id}">
+        <span class="sk-sel-count" id="sk_selcount_${f.id}"></span>
+        <button class="sk-dl-btn" id="sk_dlbtn_${f.id}" data-tip="Stiahnuť vybrané fotografie" onclick="downloadSkolkaSelected('${f.id}')">⬇ Stiahnuť fotky</button>
+        <button class="sk-dl-btn" id="sk_zipbtn_${f.id}" data-tip="Stiahnuť vybrané ako ZIP archív" onclick="downloadSkolkaZip('${f.id}','${f.name.replace(/'/g,"\'")}')">📦 Stiahnuť ako ZIP</button>
+        <button class="sk-sel-action" data-tip="Vybrať všetky fotografie v priečinku" onclick="selectAllSkolka('${f.id}')">Vybrať všetky</button>
+        <button class="sk-sel-action" data-tip="Zrušiť výber fotografií" onclick="clearSkolkaSelection('${f.id}')">Zrušiť výber</button>
+      </div>
+    `;
+    list.appendChild(card);
+    renderSkolkaGrid(f.id, photos);
+  }
+  updateSkolkaStorageBar(totalBytes);
+}
+
+function updateSkolkaStorageBar(totalBytes) {
+  const LIMIT_BYTES = 1024 * 1048576;
+  const usedMB = (totalBytes / 1048576).toFixed(1);
+  const pct = Math.min((totalBytes / LIMIT_BYTES) * 100, 100);
+  const bar = document.getElementById('sk_storage_bar');
+  const pctEl = document.getElementById('sk_storage_pct');
+  const usedEl = document.getElementById('sk_storage_used');
+  if (!bar) return;
+  bar.style.width = pct.toFixed(1) + '%';
+  bar.className = 'storage-bar-fill' + (pct > 85 ? ' danger' : pct > 60 ? ' warn' : '');
+  pctEl.textContent = pct.toFixed(1) + '%';
+  usedEl.textContent = usedMB + ' MB využito';
+}
+
+function renderSkolkaGrid(folderId, files) {
+  const grid = document.getElementById('skolka_grid_' + folderId);
+  if (!grid) return;
+  const photos = files.filter(x => x.name !== '.keep');
+  if (!photos.length) {
+    grid.innerHTML = '<div style="color:#aaa;font-size:12px;padding:8px 0;">Žiadne fotografie</div>';
+    return;
+  }
+  grid.innerHTML = photos.map(p => {
+    const { data: { publicUrl } } = db.storage.from('vcielka').getPublicUrl('skolka/' + folderId + '/' + p.name);
+    const safeName = p.name.replace(/'/g, "\\'");
+    const safeUrl = publicUrl.replace(/'/g, "\\'");
+    return `
+      <div class="gallery-item" data-name="${p.name}" data-url="${publicUrl}" onclick="toggleSkolkaSelect('${folderId}','${safeName}','${safeUrl}',this)">
+        <div class="sk-check">✓</div>
+        <img src="${publicUrl}" alt="${p.name}" loading="lazy"/>
+        <button class="gallery-item-del" data-tip="Odstrániť fotografiu" onclick="event.stopPropagation();deleteSkolkaPhoto('${folderId}','${safeName}')">✕</button>
+      </div>`;
+  }).join('');
+}
+
+async function createSkolkaFolder() {
+  const name = document.getElementById('skolka_new_folder').value.trim();
+  if (!name) { toast('Zadajte názov priečinka', 'error'); return; }
+  const { data, error } = await db.from('skolka_folders').insert({ name }).select().single();
+  if (error) { toast('Chyba: ' + error.message, 'error'); return; }
+  // create .keep placeholder so folder "exists" in storage
+  await db.storage.from('vcielka').upload('skolka/' + data.id + '/.keep', new Blob(['']));
+  document.getElementById('skolka_new_folder').value = '';
+  toast('✅ Priečinok vytvorený!');
+  loadSkolka();
+}
+
+function openSkolkaFolder(folderId, folderName) {
+  currentSkolkaFolderId = folderId;
+  document.getElementById('skolka_modal_title').textContent = '📁 ' + folderName + ' — nahrať fotografie';
+  document.getElementById('skolka_modal_grid').innerHTML = '';
+  const modal = document.getElementById('skolka_upload_modal');
+  modal.style.display = 'flex';
+}
+
+function closeSkolkaModal() {
+  document.getElementById('skolka_upload_modal').style.display = 'none';
+  currentSkolkaFolderId = null;
+  loadSkolka();
+}
+
+async function uploadSkolkaPhotos(input) {
+  if (!currentSkolkaFolderId) return;
+  const files = Array.from(input.files);
+  if (!files.length) return;
+  toast('Nahrávam ' + files.length + ' fotografi…');
+  let ok = 0;
+  for (const file of files) {
+    const path = 'skolka/' + currentSkolkaFolderId + '/' + Date.now() + '_' + file.name.replace(/[^a-zA-Z0-9._-]/g,'_');
+    const { error } = await db.storage.from('vcielka').upload(path, file, { upsert: true });
+    if (!error) ok++;
+  }
+  input.value = '';
+  toast('✅ ' + ok + ' fotografi nahratých!');
+  // refresh modal grid
+  const { data: files2 } = await db.storage.from('vcielka').list('skolka/' + currentSkolkaFolderId, { limit: 200 });
+  const grid = document.getElementById('skolka_modal_grid');
+  const photos = (files2 || []).filter(x => x.name !== '.keep');
+  grid.innerHTML = photos.map(p => {
+    const { data: { publicUrl } } = db.storage.from('vcielka').getPublicUrl('skolka/' + currentSkolkaFolderId + '/' + p.name);
+    return `<div class="gallery-item"><img src="${publicUrl}" alt="${p.name}" loading="lazy"/><button class="gallery-item-del" data-tip="Odstrániť fotografiu" onclick="deleteSkolkaPhotoModal('${p.name}')">✕</button></div>`;
+  }).join('');
+}
+
+async function deleteSkolkaPhoto(folderId, fileName) {
+  if (!confirm('Vymazať fotografiu?')) return;
+  await db.storage.from('vcielka').remove(['skolka/' + folderId + '/' + fileName]);
+  toast('Fotografia vymazaná');
+  loadSkolka();
+}
+
+async function deleteSkolkaPhotoModal(fileName) {
+  if (!currentSkolkaFolderId) return;
+  await db.storage.from('vcielka').remove(['skolka/' + currentSkolkaFolderId + '/' + fileName]);
+  toast('Fotografia vymazaná');
+  const { data: files } = await db.storage.from('vcielka').list('skolka/' + currentSkolkaFolderId, { limit: 200 });
+  const grid = document.getElementById('skolka_modal_grid');
+  const photos = (files || []).filter(x => x.name !== '.keep');
+  grid.innerHTML = photos.map(p => {
+    const { data: { publicUrl } } = db.storage.from('vcielka').getPublicUrl('skolka/' + currentSkolkaFolderId + '/' + p.name);
+    return `<div class="gallery-item"><img src="${publicUrl}" alt="${p.name}" loading="lazy"/><button class="gallery-item-del" data-tip="Odstrániť fotografiu" onclick="deleteSkolkaPhotoModal('${p.name}')">✕</button></div>`;
+  }).join('');
+}
+
+async function deleteSkolkaFolder(folderId, folderName) {
+  if (!confirm('Vymazať celý priečinok "' + folderName + '" aj so všetkými fotografiami?')) return;
+  // list and delete all files
+  const { data: files } = await db.storage.from('vcielka').list('skolka/' + folderId, { limit: 500 });
+  if (files?.length) {
+    const paths = files.map(f => 'skolka/' + folderId + '/' + f.name);
+    await db.storage.from('vcielka').remove(paths);
+  }
+  await db.from('skolka_folders').delete().eq('id', folderId);
+  toast('Priečinok vymazaný');
+  loadSkolka();
+}
+
+
+// ===== JEDÁLNY LÍSTOK =====
+const JL_DAYS = [
+  {key:'pondelok', label:'Pondelok', color:'#E8B84B', icon:'☀'},
+  {key:'utorok',   label:'Utorok',   color:'#7BBF72', icon:'✿'},
+  {key:'streda',   label:'Streda',   color:'#9B87C4', icon:'★'},
+  {key:'stvrtok',  label:'Štvrtok',  color:'#F0A056', icon:'✦'},
+  {key:'piatok',   label:'Piatok',   color:'#6BB0D9', icon:'♥'},
+];
+
+function getJLData(){
+  const d={};
+  d.ovocie  = document.getElementById('jl-ovocie').value;
+  d.mliecny = document.getElementById('jl-mliecny').value;
+  d.eu_text = document.getElementById('jl-eu').value;
+  d.alergeny= document.getElementById('jl-alergeny').value;
+  d.week    = document.getElementById('jl-week').value;
+  JL_DAYS.forEach(day=>{
+    d[day.key+'_desiata'] = document.getElementById('jl-'+day.key+'-desiata').value;
+    d[day.key+'_obed']    = document.getElementById('jl-'+day.key+'-obed').value;
+    d[day.key+'_olovrant']= document.getElementById('jl-'+day.key+'-olovrant').value;
+  });
+  return d;
+}
+
+function loadJLLocal(){
+  const raw=localStorage.getItem('jl_data');
+  if(!raw) return;
+  try{
+    const d=JSON.parse(raw);
+    const set=(id,v)=>{const el=document.getElementById(id);if(el&&v!==undefined)el.value=v;};
+    set('jl-ovocie',d.ovocie); set('jl-mliecny',d.mliecny);
+    set('jl-eu',d.eu_text); set('jl-alergeny',d.alergeny);
+    set('jl-week',d.week);
+    JL_DAYS.forEach(day=>{
+      const k=day.key;
+      set('jl-'+k+'-desiata',d[k+'_desiata']);
+      set('jl-'+k+'-obed',d[k+'_obed']);
+      set('jl-'+k+'-olovrant',d[k+'_olovrant']);
+    });
+  }catch(e){}
+  updateJLPreview();
+  requestAnimationFrame(jlInitZoom);
+}
+
+let jlZoom = 1.0;
+let jlBaseScale = 0.529;
+const JL_CONTENT_W = 794;
+const JL_CONTENT_H = 1123;
+const JL_ZOOM_MIN  = 0.25;
+const JL_ZOOM_MAX  = 3.0;
+const JL_ZOOM_STEP = 0.1;
+
+function jlCalcBaseScale(){
+  const wrap  = document.getElementById('jl-preview-wrap');
+  const panel = document.getElementById('jl-preview-panel');
+  if(!wrap || !panel) return;
+  /* Collapse sizer so it doesn't inflate clientHeight */
+  const sizer = document.getElementById('jl-preview-sizer');
+  if(sizer){ sizer.style.width='0'; sizer.style.height='0'; }
+  /* Scale by available height so the A4 fills the panel vertically */
+  const h = wrap.clientHeight || 594;
+  jlBaseScale = h / JL_CONTENT_H;
+  /* Widen the panel to match the A4 aspect ratio at this scale */
+  panel.style.width = Math.round(JL_CONTENT_W * jlBaseScale) + 'px';
+}
+
+function jlApplyZoom(){
+  const scale  = jlBaseScale * jlZoom;
+  const sizer  = document.getElementById('jl-preview-sizer');
+  const scaler = document.getElementById('jl-preview-scaler');
+  const pct    = document.getElementById('jl-zoom-pct');
+  if(!sizer || !scaler) return;
+  sizer.style.width  = Math.round(JL_CONTENT_W * scale) + 'px';
+  sizer.style.height = Math.round(JL_CONTENT_H * scale) + 'px';
+  scaler.style.transform = `scale(${scale})`;
+  if(pct) pct.textContent = Math.round(jlZoom * 100) + '%';
+}
+
+function jlInitZoom(){
+  jlZoom = 1.0;
+  jlCalcBaseScale();
+  jlApplyZoom();
+}
+
+function jlZoomStep(delta){
+  jlZoom = Math.round(Math.min(JL_ZOOM_MAX, Math.max(JL_ZOOM_MIN, jlZoom + delta)) * 100) / 100;
+  jlApplyZoom();
+}
+
+window.addEventListener('resize', ()=>{
+  if(document.getElementById('page-jedalny')?.classList.contains('active')){
+    jlCalcBaseScale();
+    jlApplyZoom();
+  }
+});
+
+function _jlEsc(s){return(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\n/g,'<br>');}
+
+/* ── INLINE LIVE PREVIEW ── */
+function updateJLPreview(){
+  const ov=document.getElementById('jl-preview-overlay');
+  if(!ov) return;
+  const data=getJLData();
+  localStorage.setItem('jl_data',JSON.stringify(data));
+
+  const rows=JL_DAYS.map(d=>`
+    <div style="display:flex;border-radius:9px;overflow:hidden;box-shadow:0 2px 10px rgba(0,0,0,.10);margin-bottom:3px;">
+      <div style="width:122px;flex-shrink:0;background:${d.color};display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;padding:8px 5px;">
+        <div style="font-family:'Quicksand',sans-serif;font-size:19px;font-weight:800;color:#fff;text-align:center;line-height:1.05;">${d.label}</div>
+        <div style="font-size:20px;color:#fff;line-height:1;">${d.icon}</div>
+      </div>
+      <div style="flex:1;padding:7px 11px;background:#fff;display:flex;flex-direction:column;justify-content:center;gap:2px;">
+        <div style="font-size:12.5px;line-height:1.38;color:#222;font-family:'Inter',sans-serif;"><span style="font-weight:700;color:#C89010;margin-right:4px;">Desiata:</span>${_jlEsc(data[d.key+'_desiata'])}</div>
+        <div style="font-size:12.5px;line-height:1.38;color:#222;font-family:'Inter',sans-serif;"><span style="font-weight:700;color:#1a2a4a;margin-right:4px;">Obed:</span>${_jlEsc(data[d.key+'_obed'])}</div>
+        <div style="font-size:12.5px;line-height:1.38;color:#222;font-family:'Inter',sans-serif;"><span style="font-weight:700;color:#3A7A3A;margin-right:4px;">Olovrant:</span>${_jlEsc(data[d.key+'_olovrant'])}</div>
+      </div>
+    </div>`).join('');
+
+  // allergens: split into 2 columns to save vertical space
+  const alLines=(data.alergeny||'').split('\n');
+  const alHeader=_jlEsc(alLines[0]||'');
+  const alItems=alLines.slice(1);
+  const mid=Math.ceil(alItems.length/2);
+  const alCol1=alItems.slice(0,mid).map(l=>`<div>${_jlEsc(l)}</div>`).join('');
+  const alCol2=alItems.slice(mid).map(l=>`<div>${_jlEsc(l)}</div>`).join('');
+
+  ov.innerHTML=`
+    <div style="display:flex;gap:14px;justify-content:center;align-items:center;padding:5px 0 7px;border-bottom:1px solid #d8d0c0;margin-bottom:7px;">
+      <div style="display:flex;align-items:center;gap:5px;font-size:11.5px;color:#333;font-family:'Inter',sans-serif;">
+        <span style="font-size:13px;">🍎</span>
+        <span>Ovocie týždňa: <strong>${_jlEsc(data.ovocie)||'—'}</strong></span>
+      </div>
+      <div style="display:flex;align-items:center;gap:5px;font-size:11.5px;color:#333;font-family:'Inter',sans-serif;">
+        <span style="font-size:13px;">🥛</span>
+        <span>Mliečny program: <strong>${_jlEsc(data.mliecny)||'—'}</strong></span>
+      </div>
+    </div>
+    ${rows}
+    <div style="display:flex;align-items:center;gap:8px;background:#E2EAD4;border-radius:8px;padding:7px 14px;margin-top:5px;">
+      <span style="font-size:12px;">🌿</span>
+      <span style="flex:1;font-size:9.5px;color:#444;text-align:center;font-style:italic;font-family:'Inter',sans-serif;">${_jlEsc(data.eu_text)}</span>
+      <img src="https://emojiguide.org/images/emoji/9/14k7e3jnewfv9.png" style="height:22px;width:auto;object-fit:contain;flex-shrink:0;" alt="SK flag"/>
+    </div>
+    <div style="border-radius:8px;padding:6px 11px;margin-top:4px;background:#fff;font-family:'Inter',sans-serif;box-shadow:0 1px 6px rgba(0,0,0,.07);">
+      <div style="font-size:7.5px;font-weight:600;color:#444;margin-bottom:3px;">${alHeader}</div>
+      <div style="display:flex;gap:10px;">
+        <div style="flex:1;font-size:7px;color:#555;line-height:1.32;">${alCol1}</div>
+        <div style="flex:1;font-size:7px;color:#555;line-height:1.32;">${alCol2}</div>
+      </div>
+    </div>`;
+}
+
+/* ── PRINT / PDF WINDOW — identical markup to live preview ── */
+function generateJLHTML(data){
+  const base=window.location.href.replace(/[^/\\]*$/,'');
+  const bgUrl=base+'jedalny-bg.png';
+  const flagUrl='https://emojiguide.org/images/emoji/9/14k7e3jnewfv9.png';
+  const e=s=>(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\n/g,'<br>');
+
+  const rows=JL_DAYS.map(d=>`
+    <div style="display:flex;border-radius:9px;overflow:hidden;box-shadow:0 2px 10px rgba(0,0,0,.10);margin-bottom:3px;">
+      <div style="width:122px;flex-shrink:0;background:${d.color};display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;padding:8px 5px;">
+        <div style="font-family:'Quicksand',sans-serif;font-size:19px;font-weight:800;color:#fff;text-align:center;line-height:1.05;">${d.label}</div>
+        <div style="font-size:20px;color:#fff;line-height:1;">${d.icon}</div>
+      </div>
+      <div style="flex:1;padding:7px 11px;background:#fff;display:flex;flex-direction:column;justify-content:center;gap:2px;">
+        <div style="font-size:12.5px;line-height:1.38;color:#222;font-family:'Inter',sans-serif;"><span style="font-weight:700;color:#C89010;margin-right:4px;">Desiata:</span>${e(data[d.key+'_desiata'])}</div>
+        <div style="font-size:12.5px;line-height:1.38;color:#222;font-family:'Inter',sans-serif;"><span style="font-weight:700;color:#1a2a4a;margin-right:4px;">Obed:</span>${e(data[d.key+'_obed'])}</div>
+        <div style="font-size:12.5px;line-height:1.38;color:#222;font-family:'Inter',sans-serif;"><span style="font-weight:700;color:#3A7A3A;margin-right:4px;">Olovrant:</span>${e(data[d.key+'_olovrant'])}</div>
+      </div>
+    </div>`).join('');
+
+  const alLines=(data.alergeny||'').split('\n');
+  const alHeader=e(alLines[0]||'');
+  const alItems=alLines.slice(1);
+  const mid=Math.ceil(alItems.length/2);
+  const alCol1=alItems.slice(0,mid).map(l=>`<div>${e(l)}</div>`).join('');
+  const alCol2=alItems.slice(mid).map(l=>`<div>${e(l)}</div>`).join('');
+
+  return`<!DOCTYPE html><html><head><meta charset="UTF-8"/>
+<link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"/>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+html{background:#777;}
+body{display:flex;justify-content:center;padding:24px;font-family:'Inter',sans-serif;}
+@media print{html,body{background:#fff;padding:0;display:block;}@page{size:A4 portrait;margin:0;}.no-print{display:none!important;}.page{box-shadow:none!important;}}
+.page{width:794px;height:1123px;background:#F8F4ED url('${bgUrl}') center top/cover no-repeat;position:relative;overflow:hidden;box-shadow:0 4px 32px rgba(0,0,0,.3);}
+.overlay{position:absolute;top:248px;left:72px;right:62px;}
+.no-print{position:fixed;top:12px;right:12px;background:#1a2a4a;color:#fff;border:none;border-radius:8px;padding:9px 20px;font-size:13px;cursor:pointer;font-family:'Inter',sans-serif;z-index:99;}
+</style></head>
+<body>
+<button class="no-print" onclick="window.print()">⬇️ Vytlačiť / Uložiť PDF</button>
+<div class="page"><div class="overlay">
+  <div style="display:flex;gap:14px;justify-content:center;align-items:center;padding:5px 0 7px;border-bottom:1px solid #d8d0c0;margin-bottom:7px;">
+    <div style="display:flex;align-items:center;gap:5px;font-size:11.5px;color:#333;font-family:'Inter',sans-serif;"><span style="font-size:13px;">🍎</span><span>Ovocie týždňa: <strong>${e(data.ovocie)||'—'}</strong></span></div>
+    <div style="display:flex;align-items:center;gap:5px;font-size:11.5px;color:#333;font-family:'Inter',sans-serif;"><span style="font-size:13px;">🥛</span><span>Mliečny program: <strong>${e(data.mliecny)||'—'}</strong></span></div>
+  </div>
+  ${rows}
+  <div style="display:flex;align-items:center;gap:8px;background:#E2EAD4;border-radius:8px;padding:7px 14px;margin-top:5px;">
+    <span style="font-size:12px;">🌿</span>
+    <span style="flex:1;font-size:9.5px;color:#444;text-align:center;font-style:italic;font-family:'Inter',sans-serif;">${e(data.eu_text)}</span>
+    <img src="${flagUrl}" style="height:22px;width:auto;object-fit:contain;flex-shrink:0;" alt="SK flag"/>
+  </div>
+  <div style="border-radius:8px;padding:6px 11px;margin-top:4px;background:#fff;font-family:'Inter',sans-serif;box-shadow:0 1px 6px rgba(0,0,0,.07);">
+    <div style="font-size:7.5px;font-weight:600;color:#444;margin-bottom:3px;">${alHeader}</div>
+    <div style="display:flex;gap:10px;">
+      <div style="flex:1;font-size:7px;color:#555;line-height:1.32;">${alCol1}</div>
+      <div style="flex:1;font-size:7px;color:#555;line-height:1.32;">${alCol2}</div>
+    </div>
+  </div>
+</div></div>
+</body></html>`;
+}
+
+function printJL(){
+  const data=getJLData();
+  localStorage.setItem('jl_data',JSON.stringify(data));
+  const w=window.open('','_blank','width=960,height=1060,scrollbars=yes');
+  w.document.open();w.document.write(generateJLHTML(data));w.document.close();
+  setTimeout(()=>w.print(),1000);
+}
+
+async function publishJL(){
+  const data=getJLData();
+  localStorage.setItem('jl_data',JSON.stringify(data));
+  toast('Generujem PDF, prosím čakajte…');
+
+  const frame=document.createElement('iframe');
+  frame.style.cssText='position:fixed;left:-9999px;top:0;width:794px;height:1123px;border:0;opacity:0;pointer-events:none;';
+  document.body.appendChild(frame);
+  frame.contentDocument.open();
+  frame.contentDocument.write(generateJLHTML(data));
+  frame.contentDocument.close();
+  await new Promise(r=>setTimeout(r,2200));
+
+  try{
+    const canvas=await html2canvas(frame.contentDocument.documentElement,{
+      scale:1.5,useCORS:true,allowTaint:true,
+      width:794,height:1123,windowWidth:794,windowHeight:1123
+    });
+    const{jsPDF}=window.jspdf;
+    const pdf=new jsPDF({orientation:'portrait',unit:'mm',format:'a4'});
+    pdf.addImage(canvas.toDataURL('image/jpeg',.93),'JPEG',0,0,210,297);
+    const blob=pdf.output('blob');
+    document.body.removeChild(frame);
+
+    const weekVal=data.week||new Date().toISOString().slice(0,10);
+    const path=`documents/jedalny-listok-${weekVal}.pdf`;
+    const{error:upErr}=await db.storage.from('vcielka').upload(path,blob,{upsert:true,contentType:'application/pdf'});
+    if(upErr){toast('Chyba nahrávania: '+upErr.message,'error');return;}
+    const{data:{publicUrl}}=db.storage.from('vcielka').getPublicUrl(path);
+    const weekFmt=weekVal?` (${weekVal})`:'';
+    const{error:dbErr}=await db.from('documents').insert({
+      title:`Jedálny lístok${weekFmt}`,file_url:publicUrl,
+      button_text:'Stiahnuť jedálny lístok',sort_order:Date.now()%2147483647
+    });
+    if(dbErr){toast('Chyba ukladania: '+dbErr.message,'error');return;}
+    toast('✅ Jedálny lístok bol pridaný na web!');
+  }catch(e){
+    if(document.body.contains(frame))document.body.removeChild(frame);
+    toast('Chyba generovania: '+e.message,'error');
+  }
+}
+
+// ===== SKOLKA SELECTION & DOWNLOAD =====
+const skolkaSelection = new Map(); // folderId -> Map<name, url>
+
+function toggleSkolkaSelect(folderId, name, url, el) {
+  if (!skolkaSelection.has(folderId)) skolkaSelection.set(folderId, new Map());
+  const sel = skolkaSelection.get(folderId);
+  if (sel.has(name)) { sel.delete(name); el.classList.remove('sk-selected'); }
+  else { sel.set(name, url); el.classList.add('sk-selected'); }
+  updateSelectionBar(folderId);
+}
+
+function selectAllSkolka(folderId) {
+  if (!skolkaSelection.has(folderId)) skolkaSelection.set(folderId, new Map());
+  const sel = skolkaSelection.get(folderId);
+  document.getElementById('skolka_grid_' + folderId)?.querySelectorAll('.gallery-item').forEach(el => {
+    sel.set(el.dataset.name, el.dataset.url);
+    el.classList.add('sk-selected');
+  });
+  updateSelectionBar(folderId);
+}
+
+function clearSkolkaSelection(folderId) {
+  skolkaSelection.set(folderId, new Map());
+  document.getElementById('skolka_grid_' + folderId)?.querySelectorAll('.gallery-item').forEach(el => el.classList.remove('sk-selected'));
+  updateSelectionBar(folderId);
+}
+
+function updateSelectionBar(folderId) {
+  const count = skolkaSelection.get(folderId)?.size || 0;
+  const countEl = document.getElementById('sk_selcount_' + folderId);
+  const dlBtn = document.getElementById('sk_dlbtn_' + folderId);
+  const zipBtn = document.getElementById('sk_zipbtn_' + folderId);
+  if (countEl) countEl.textContent = count > 0 ? count + (count === 1 ? ' vybraná' : count < 5 ? ' vybrané' : ' vybraných') : '';
+  dlBtn?.classList.toggle('active', count > 0);
+  zipBtn?.classList.toggle('active', count > 0);
+}
+
+async function downloadSkolkaSelected(folderId) {
+  const sel = skolkaSelection.get(folderId);
+  if (!sel?.size) return;
+  toast('Sťahujem ' + sel.size + ' fotografi…');
+  for (const [name, url] of sel) {
+    try {
+      const blob = await fetch(url).then(r => r.blob());
+      const a = Object.assign(document.createElement('a'), { href: URL.createObjectURL(blob), download: name });
+      a.click();
+      URL.revokeObjectURL(a.href);
+      await new Promise(r => setTimeout(r, 300));
+    } catch(e) { console.error('Download failed:', name, e); }
+  }
+  toast('✅ Hotovo!');
+}
+
+async function downloadSkolkaZip(folderId, folderName) {
+  const sel = skolkaSelection.get(folderId);
+  if (!sel?.size) return;
+  toast('Pripravujem ZIP…');
+  const zip = new JSZip();
+  for (const [name, url] of sel) {
+    try { zip.file(name, await fetch(url).then(r => r.blob())); }
+    catch(e) { console.error('ZIP: skipping', name, e); }
+  }
+  const blob = await zip.generateAsync({ type: 'blob' });
+  const a = Object.assign(document.createElement('a'), { href: URL.createObjectURL(blob), download: (folderName || 'fotky') + '.zip' });
+  a.click();
+  URL.revokeObjectURL(a.href);
+  toast('✅ ZIP stiahnutý!');
+}
+
+// ===== VS HESLO =====
+async function loadSkolkaPw() {
+  const { data: eu } = await db.from('settings').select('value').eq('key','editor_url').single();
+  const euel = document.getElementById('editor_url_current');
+  if (euel) euel.value = eu?.value || 'vcielka_editor.html';
+}
+
+async function saveEditorUrl() {
+  const url = document.getElementById('editor_url_new').value.trim();
+  if (!url) { toast('Zadajte URL', 'error'); return; }
+  await db.from('settings').upsert({ key: 'editor_url', value: url }, { onConflict: 'key' });
+  document.getElementById('editor_url_current').value = url;
+  document.getElementById('editor_url_new').value = '';
+  toast('✅ URL uložená!');
+}
+
+async function saveSkolkaPw() {
+  const oldPw = document.getElementById('vs_pw_current').value.trim();
+  const newPw = document.getElementById('vs_pw_new').value.trim();
+  if (!oldPw) { toast('Zadajte aktuálne heslo', 'error'); return; }
+  if (!newPw) { toast('Zadajte nové heslo', 'error'); return; }
+  const { error } = await db.rpc('skolka_set_password', { old_pw: oldPw, new_pw: newPw });
+  if (error) { toast('❌ Nesprávne aktuálne heslo', 'error'); return; }
+  document.getElementById('vs_pw_current').value = '';
+  document.getElementById('vs_pw_new').value = '';
+  toast('✅ Heslo uložené!');
+}
+
+// ===== ADMIN HESLO =====
+async function saveAdminPw() {
+  const oldPw = document.getElementById('admin_pw_current').value.trim();
+  const newPw = document.getElementById('admin_pw_new').value.trim();
+  const confirmPw = document.getElementById('admin_pw_confirm').value.trim();
+  if (!oldPw) { toast('Zadajte aktuálne heslo', 'error'); return; }
+  if (!newPw) { toast('Zadajte nové heslo', 'error'); return; }
+  if (newPw !== confirmPw) { toast('❌ Nové heslá sa nezhodujú', 'error'); return; }
+  const { error } = await db.rpc('admin_set_password', { old_pw: oldPw, new_pw: newPw });
+  if (error) { toast('❌ Nesprávne aktuálne heslo', 'error'); return; }
+  document.getElementById('admin_pw_current').value = '';
+  document.getElementById('admin_pw_new').value = '';
+  document.getElementById('admin_pw_confirm').value = '';
+  toast('✅ Admin heslo zmenené!');
+}
+
+// ===== GALLERY DRAG TO REORDER =====
+let _galleryDragSrc = null;
+
+function galleryDragStart(e) {
+  _galleryDragSrc = e.currentTarget;
+  e.dataTransfer.effectAllowed = 'move';
+  setTimeout(() => e.currentTarget.classList.add('dragging'), 0);
+}
+
+function galleryDragOver(e) {
+  e.preventDefault();
+  e.dataTransfer.dropEffect = 'move';
+  document.querySelectorAll('#galleryItemsGrid .gallery-item').forEach(el => el.classList.remove('drag-over'));
+  if (e.currentTarget !== _galleryDragSrc) e.currentTarget.classList.add('drag-over');
+}
+
+function galleryDrop(e) {
+  e.preventDefault();
+  if (!_galleryDragSrc || _galleryDragSrc === e.currentTarget) return;
+  const grid = document.getElementById('galleryItemsGrid');
+  const items = [...grid.querySelectorAll('.gallery-item')];
+  const srcIdx = items.indexOf(_galleryDragSrc);
+  const tgtIdx = items.indexOf(e.currentTarget);
+  if (srcIdx < tgtIdx) {
+    grid.insertBefore(_galleryDragSrc, e.currentTarget.nextSibling);
+  } else {
+    grid.insertBefore(_galleryDragSrc, e.currentTarget);
+  }
+  document.querySelectorAll('#galleryItemsGrid .gallery-item').forEach(el => el.classList.remove('drag-over'));
+}
+
+async function galleryDragEnd(e) {
+  e.currentTarget.classList.remove('dragging');
+  document.querySelectorAll('#galleryItemsGrid .gallery-item').forEach(el => el.classList.remove('drag-over'));
+  _galleryDragSrc = null;
+  await saveGalleryOrder();
+}
+
+async function saveGalleryOrder() {
+  const items = [...document.querySelectorAll('#galleryItemsGrid .gallery-item')];
+  for (let i = 0; i < items.length; i++) {
+    const id = parseInt(items[i].dataset.id);
+    await db.from('gallery').update({ sort_order: i }).eq('id', id);
+  }
+  toast('✅ Poradie uložené!');
+}
+
+// ===== BOOT =====
+if (sessionStorage.getItem('admin_auth') === '1') {
+  document.getElementById('loginWrap').style.display = 'none';
+  document.getElementById('app').style.display = 'flex';
+  initApp();
+}
+
+// ── TOOLTIP INIT ──
+function initTooltips(){
+  const fa={'bold':'Tučné písmo','italic':'Kurzíva','justifyLeft':'Zarovnať vľavo','justifyCenter':'Zarovnať na stred','justifyRight':'Zarovnať vpravo'};
+  const fs={'0.82em':'Malý text','1em':'Stredný text','1.2em':'Veľký text'};
+  document.querySelectorAll('[data-action]').forEach(el=>{if(!el.dataset.tip&&fa[el.dataset.action])el.dataset.tip=fa[el.dataset.action];});
+  document.querySelectorAll('[data-size]').forEach(el=>{if(!el.dataset.tip&&fs[el.dataset.size])el.dataset.tip=fs[el.dataset.size];});
+}
+document.addEventListener('DOMContentLoaded', initTooltips);
+</script>
+
+<!-- cookie notice -->
+<div id="cookie-banner" style="display:none;position:fixed;bottom:0;left:0;right:0;background:#F9C832;color:#0D3D6E;padding:14px 20px;z-index:9999;align-items:center;justify-content:center;gap:14px;font-family:'Quicksand',sans-serif;font-size:14px;font-weight:600;box-shadow:0 -2px 20px rgba(0,0,0,.15);flex-wrap:wrap;text-align:center;">
+  <span>Táto stránka používa nevyhnutné cookies pre prihlásenie a bezpečnosť. Prehliadaním súhlasíte. <a href="privacy.html" style="color:#1A5FA8;text-decoration:underline;">Zásady ochrany súkromia</a></span>
+  <button onclick="document.getElementById('cookie-banner').style.display='none';localStorage.setItem('cookie_ok','1');" style="background:#1A5FA8;color:#fff;border:none;border-radius:50px;padding:8px 22px;font-family:'Quicksand',sans-serif;font-weight:700;font-size:13px;cursor:pointer;white-space:nowrap;flex-shrink:0;">Rozumiem</button>
+</div>
+<script>if(!localStorage.getItem('cookie_ok')){var b=document.getElementById('cookie-banner');b.style.display='flex';}</script>
+</body>
+</html>

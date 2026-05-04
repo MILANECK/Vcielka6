@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="sk">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Virtuálna Škôlka — Včielka</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@500;600;700&family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet"/>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Plus Jakarta Sans',sans-serif;background:#dce8f4;min-height:100vh;color:#1a2a3a;overflow-wrap:break-word;word-break:normal;hyphens:none;}
+
+/* ── LOGIN ── */
+#login-wrap{display:flex;align-items:center;justify-content:center;min-height:100vh;padding:20px}
+.login-box{background:#fff;border-radius:28px;padding:48px 40px;width:100%;max-width:400px;box-shadow:0 8px 40px rgba(26,95,168,.13);text-align:center}
+.login-logo{width:96px;height:96px;border-radius:50%;background:#fdc003;display:flex;align-items:center;justify-content:center;padding:12px;margin:0 auto 24px;box-shadow:0 4px 20px rgba(253,192,3,.4)}
+.login-logo img{width:100%;height:auto}
+.login-box h1{font-family:'Quicksand',sans-serif;font-size:22px;font-weight:700;color:#1A5FA8;margin-bottom:6px}
+.login-box p{font-size:13px;color:#888;margin-bottom:28px}
+.login-box input{width:100%;padding:14px 18px;border:2px solid #E0ECFF;border-radius:14px;font-size:16px;font-family:'Plus Jakarta Sans',sans-serif;outline:none;transition:.2s;text-align:center;letter-spacing:4px}
+.login-box input:focus{border-color:#fdc003}
+.login-btn{width:100%;background:#fdc003;color:#1a2a3a;font-family:'Quicksand',sans-serif;font-size:16px;font-weight:700;padding:15px;border:none;border-radius:50px;cursor:pointer;margin-top:18px;transition:.2s;box-shadow:0 4px 16px rgba(253,192,3,.35)}
+.login-btn:hover{opacity:.88;transform:scale(1.02)}
+.login-error{color:#e74c3c;font-size:13px;margin-top:14px;display:none}
+
+/* ── APP ── */
+#app{display:none;min-height:100vh;padding:0 0 60px}
+
+/* Header */
+.vs-header{background:rgba(255,255,255,.88);backdrop-filter:blur(14px);padding:14px 28px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;box-shadow:0 2px 14px rgba(0,0,0,.08)}
+.vs-header-logo{display:flex;align-items:center;gap:12px}
+.vs-logo-circle{width:52px;height:52px;min-width:52px;aspect-ratio:1;border-radius:50%;background:#fdc003;display:flex;align-items:center;justify-content:center;padding:7px;box-shadow:0 3px 12px rgba(253,192,3,.38);overflow:hidden;flex-shrink:0}
+.vs-logo-circle img{width:100%;height:100%;object-fit:contain}
+.vs-header-title{font-family:'Quicksand',sans-serif;font-weight:700;font-size:18px;color:#1A5FA8}
+.vs-header-title span{display:block;font-size:11px;color:#888;font-weight:500}
+.vs-header-actions{display:flex;align-items:center;gap:10px}
+.btn-editor{background:#ff00aa;color:#fff;border:none;border-radius:50px;padding:12px 22px;font-family:'Quicksand',sans-serif;font-size:13px;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:7px;transition:.2s;box-shadow:0 3px 14px rgba(255,0,170,.3);text-decoration:none}
+.btn-editor:hover{opacity:.88;transform:scale(1.04)}
+.btn-logout{background:rgba(0,0,0,.06);color:#555;border:none;border-radius:50px;padding:10px 18px;font-family:'Quicksand',sans-serif;font-size:12px;font-weight:600;cursor:pointer}
+.btn-logout:hover{background:rgba(0,0,0,.1)}
+
+/* ── EDITOR HINT POPUP ── */
+#editor-hint-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:9000;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(4px)}
+#editor-hint-overlay.open{display:flex}
+.editor-hint-box{background:#fff;border-radius:24px;padding:36px 32px 28px;max-width:400px;width:100%;text-align:center;box-shadow:0 12px 48px rgba(0,0,0,.18);animation:hintPop .25s cubic-bezier(.4,0,.2,1)}
+@keyframes hintPop{from{transform:scale(.92) translateY(12px);opacity:0}to{transform:scale(1) translateY(0);opacity:1}}
+.editor-hint-icon{font-size:36px;margin-bottom:16px}
+.editor-hint-box p{font-family:'Quicksand',sans-serif;font-size:15px;font-weight:600;color:#2a3a4a;line-height:1.6;margin-bottom:24px}
+.editor-hint-ok{background:#ff00aa;color:#fff;border:none;border-radius:50px;padding:13px 40px;font-family:'Quicksand',sans-serif;font-size:15px;font-weight:700;cursor:pointer;transition:.2s;box-shadow:0 4px 16px rgba(255,0,170,.3)}
+.editor-hint-ok:hover{opacity:.88;transform:scale(1.04)}
+
+/* Content */
+.vs-content{max-width:1100px;margin:0 auto;padding:36px 24px}
+.vs-page-title{font-family:'Quicksand',sans-serif;font-size:26px;font-weight:700;color:#1A5FA8;margin-bottom:6px}
+.vs-page-sub{font-size:13px;color:#888;margin-bottom:32px}
+
+/* Folders grid */
+.folders-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:20px}
+.folder-card{background:#fff;border-radius:20px;overflow:hidden;box-shadow:0 3px 16px rgba(0,0,0,.08);cursor:pointer;transition:transform .15s,box-shadow .15s;border:2px solid transparent}
+.folder-card:hover{transform:translateY(-3px);box-shadow:0 8px 28px rgba(0,0,0,.13);border-color:#fdc003}
+.folder-thumb{width:100%;height:150px;object-fit:cover;display:block;background:#f0f6ff}
+.folder-thumb-placeholder{width:100%;height:150px;background:linear-gradient(135deg,#e8f4ff,#d0e8ff);display:flex;align-items:center;justify-content:center;font-size:40px}
+.folder-info{padding:16px}
+.folder-name{font-family:'Quicksand',sans-serif;font-weight:700;font-size:15px;color:#1a2a3a;margin-bottom:4px}
+.folder-count{font-size:12px;color:#7a9ab0}
+
+/* Fullscreen gallery */
+#gallery-overlay{display:none;position:fixed;inset:0;background:rgba(0,8,20,.92);z-index:500;flex-direction:column}
+#gallery-overlay.open{display:flex}
+.gallery-header{padding:18px 24px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;background:rgba(0,0,0,.3)}
+.gallery-header-title{font-family:'Quicksand',sans-serif;font-weight:700;font-size:18px;color:#fff}
+.gallery-close{background:rgba(255,255,255,.12);color:#fff;border:none;border-radius:50px;padding:10px 20px;font-family:'Quicksand',sans-serif;font-size:13px;font-weight:600;cursor:pointer}
+.gallery-close:hover{background:rgba(255,255,255,.22)}
+.gallery-grid-fs{flex:1;min-height:0;overflow-y:auto;-webkit-overflow-scrolling:touch;display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:10px;padding:16px 24px;align-content:start}
+.gallery-photo{position:relative;border-radius:12px;overflow:hidden;aspect-ratio:1;cursor:pointer;min-width:0;min-height:0}
+.gallery-photo img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block;transition:transform .2s}
+.gallery-photo:hover img{transform:scale(1.04)}
+@media(max-width:600px){
+  .vs-header{padding:10px 14px;gap:8px}
+  .vs-logo-circle{width:40px;height:40px;min-width:40px;padding:5px}
+  .vs-header-title{font-size:14px}
+  .vs-header-title span{font-size:10px}
+  .btn-editor{padding:9px 14px;font-size:12px;gap:5px}
+  .btn-logout{padding:8px 12px;font-size:11px}
+  .gallery-grid-fs{grid-template-columns:repeat(2,1fr);gap:6px;padding:10px 12px}
+  .gallery-header{padding:12px 14px}
+  .gallery-header-title{font-size:15px}
+  .gallery-close{padding:8px 14px;font-size:12px}
+}
+
+/* Lightbox */
+#lightbox{display:none;position:fixed;inset:0;background:rgba(0,0,0,.95);z-index:900;align-items:center;justify-content:center;flex-direction:column;gap:14px}
+#lightbox.open{display:flex}
+#lightbox img{max-width:90vw;max-height:82vh;border-radius:14px;object-fit:contain}
+.lb-close{background:rgba(255,255,255,.15);color:#fff;border:none;border-radius:50px;padding:10px 24px;font-family:'Quicksand',sans-serif;font-size:14px;font-weight:600;cursor:pointer}
+.lb-nav{display:flex;gap:12px}
+.lb-nav button{background:rgba(255,255,255,.15);color:#fff;border:none;border-radius:50px;padding:10px 20px;font-family:'Quicksand',sans-serif;font-weight:700;cursor:pointer;font-size:14px}
+.lb-nav button:hover{background:rgba(255,255,255,.25)}
+
+/* Loading */
+.vs-loading{text-align:center;padding:60px 20px;color:#7a9ab0;font-size:15px}
+.vs-empty{text-align:center;padding:60px 20px;color:#aab8c8;font-family:'Quicksand',sans-serif;font-size:16px}
+
+/* Select & download */
+.gallery-photo.sk-selected{outline:3px solid #fdc003;outline-offset:-3px;}
+.gallery-photo.sk-selected .sk-check{background:#fdc003;border-color:#fdc003;color:#1a2a3a;}
+.sk-check{position:absolute;top:8px;left:8px;width:26px;height:26px;border-radius:50%;border:2px solid rgba(255,255,255,.85);background:rgba(0,0,0,.35);display:flex;align-items:center;justify-content:center;font-size:12px;color:transparent;cursor:pointer;transition:.15s;z-index:2;}
+.sk-sel-bar{display:flex;align-items:center;gap:8px;flex-wrap:wrap;padding:14px 24px;background:rgba(0,0,0,.4);flex-shrink:0;}
+.sk-dl-btn{display:inline-flex;align-items:center;gap:6px;background:#fdc003;color:#1a2a3a;font-family:'Quicksand',sans-serif;font-size:13px;font-weight:700;padding:10px 18px;border-radius:50px;border:none;cursor:pointer;opacity:.35;pointer-events:none;transition:.2s;}
+.sk-dl-btn.active{opacity:1;pointer-events:auto;}
+.sk-dl-btn.active:hover{background:#e6b002;}
+.sk-sel-count{font-family:'Quicksand',sans-serif;font-size:13px;color:rgba(255,255,255,.75);font-weight:600;min-width:100px;}
+.sk-sel-action{background:rgba(255,255,255,.15);color:#fff;font-family:'Quicksand',sans-serif;font-size:12px;font-weight:600;padding:8px 14px;border:none;border-radius:50px;cursor:pointer;}
+.sk-sel-action:hover{background:rgba(255,255,255,.25);}
+@media(max-width:600px){
+  .sk-sel-bar{padding:10px 12px;gap:6px;}
+  .sk-dl-btn{font-size:12px;padding:8px 14px;}
+  .sk-sel-count{font-size:12px;}
+}
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div id="login-wrap">
+  <div class="login-box">
+    <div class="login-logo"><img src="VCIELKA_LOGO.png" alt="Včielka"/></div>
+    <h1>Virtuálna Škôlka</h1>
+    <p>Materská škola Včielka · Prihlásenie pre rodičov</p>
+    <input type="password" id="pw-input" placeholder="••••••••" onkeydown="if(event.key==='Enter')doLogin()"/>
+    <button class="login-btn" onclick="doLogin()">🔐 Vstúpiť</button>
+    <div class="login-error" id="login-error">Nesprávne heslo. Skúste znova.</div>
+  </div>
+</div>
+
+<!-- APP -->
+<div id="app">
+  <div class="vs-header">
+    <div class="vs-header-logo">
+      <div class="vs-logo-circle"><img src="VCIELKA_LOGO.png" alt="Včielka"/></div>
+      <div class="vs-header-title">
+        Virtuálna Škôlka
+        <span>Materská škola Včielka</span>
+      </div>
+    </div>
+    <div class="vs-header-actions">
+      <a href="#" id="editor-link-header" class="btn-editor" target="_blank">Vytvor si rámik</a>
+      <button class="btn-logout" onclick="doLogout()">Odhlásiť</button>
+    </div>
+  </div>
+
+  <div class="vs-content">
+    <div class="vs-page-title">📁 Fotografie</div>
+    <div class="vs-page-sub">Vyberte triedu alebo udalosť pre zobrazenie fotografií</div>
+    <div id="folders-grid" class="folders-grid">
+      <div class="vs-loading">Načítavam priečinky…</div>
+    </div>
+  </div>
+</div>
+
+<!-- Editor hint popup -->
+<div id="editor-hint-overlay">
+  <div class="editor-hint-box">
+    <div class="editor-hint-icon">🖥️</div>
+    <p>Pre pohodlnejšiu prácu s naším obrázkovým pomocníkom odporúčame použiť počítač</p>
+    <button class="editor-hint-ok" onclick="editorHintOk()">OK</button>
+  </div>
+</div>
+
+<!-- Fullscreen gallery -->
+<div id="gallery-overlay">
+  <div class="gallery-header">
+    <div style="display:flex;align-items:center;gap:12px">
+      <button class="gallery-close" onclick="closeGallery()">← Späť</button>
+      <span class="gallery-header-title" id="gallery-title">Fotografie</span>
+    </div>
+    <a href="#" id="editor-link-gallery" class="btn-editor" target="_blank">Vytvor si rámik</a>
+  </div>
+  <div id="gallery-grid-fs" class="gallery-grid-fs"></div>
+  <div class="sk-sel-bar">
+    <span class="sk-sel-count" id="sk-sel-count"></span>
+    <button class="sk-dl-btn" id="sk-dl-btn" onclick="downloadSkolkaSelected()">⬇ Stiahnuť fotky</button>
+    <button class="sk-dl-btn" id="sk-zip-btn" onclick="downloadSkolkaZip()">📦 Stiahnuť ako ZIP</button>
+    <button class="sk-sel-action" onclick="selectAllSkolka()">Vybrať všetky</button>
+    <button class="sk-sel-action" onclick="clearSkolkaSelection()">Zrušiť výber</button>
+  </div>
+</div>
+
+<!-- Lightbox -->
+<div id="lightbox">
+  <img id="lb-img" src="" alt=""/>
+  <div class="lb-nav">
+    <button onclick="lbPrev()">← Predošlá</button>
+    <button class="lb-close" onclick="closeLb()">✕ Zatvoriť</button>
+    <button onclick="lbNext()">Ďalšia →</button>
+  </div>
+</div>
+
+<script>
+const SUPABASE_URL = 'https://fmjtzuligqsugsauqkgz.supabase.co';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZtanR6dWxpZ3FzdWdzYXVxa2d6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU0MTQyMTUsImV4cCI6MjA5MDk5MDIxNX0.gRF-roExLgnVDG4bSNt7EzX6c1v-JtM5v6ZcX8dY934';
+const { createClient } = supabase;
+const db = createClient(SUPABASE_URL, SUPABASE_KEY);
+
+let lbPhotos = [], lbIdx = 0;
+let currentGalleryFolderName = '';
+const gallerySelection = new Map();
+
+// ── AUTH ──
+async function doLogin() {
+  const pw = document.getElementById('pw-input').value.trim();
+  if (!pw) return;
+  const { data: folders, error } = await db.rpc('skolka_get_folders', { pw });
+  if (error) {
+    document.getElementById('login-error').style.display='block';
+    setTimeout(()=>document.getElementById('login-error').style.display='none',3000);
+    return;
+  }
+  sessionStorage.setItem('vs_auth','1');
+  sessionStorage.setItem('vs_pw', pw);
+  document.getElementById('login-wrap').style.display='none';
+  document.getElementById('app').style.display='block';
+  renderFolders(folders);
+  loadEditorUrl();
+}
+function doLogout() {
+  sessionStorage.removeItem('vs_auth');
+  sessionStorage.removeItem('vs_pw');
+  location.reload();
+}
+
+// ── FOLDERS ──
+async function loadFolders() {
+  const pw = sessionStorage.getItem('vs_pw') || '';
+  const { data: folders } = await db.rpc('skolka_get_folders', { pw });
+  renderFolders(folders);
+}
+
+async function renderFolders(folders) {
+  const grid = document.getElementById('folders-grid');
+  if (!folders?.length) {
+    grid.innerHTML = '<div class="vs-empty">📭 Zatiaľ žiadne fotografie.<br><small>Administrátor pridá priečinky čoskoro.</small></div>';
+    return;
+  }
+  grid.innerHTML = '';
+  for (const f of folders) {
+    const { data: files } = await db.storage.from('vcielka').list('skolka/'+f.id,{limit:200});
+    const photos = (files||[]).filter(x=>x.name!=='.keep');
+    const count = photos.length;
+    let thumbHtml = '<div class="folder-thumb-placeholder">📷</div>';
+    if (photos.length) {
+      const { data:{publicUrl} } = db.storage.from('vcielka').getPublicUrl('skolka/'+f.id+'/'+photos[0].name);
+      thumbHtml = `<img class="folder-thumb" src="${publicUrl}" alt="${f.name}" loading="lazy"/>`;
+    }
+    const card = document.createElement('div');
+    card.className = 'folder-card';
+    card.innerHTML = `
+      ${thumbHtml}
+      <div class="folder-info">
+        <div class="folder-name">📁 ${f.name}</div>
+        <div class="folder-count">${count} fotografi${count===1?'a':'í'}</div>
+      </div>`;
+    card.onclick = () => openGallery(f.id, f.name, photos);
+    grid.appendChild(card);
+  }
+}
+
+// ── GALLERY ──
+function openGallery(folderId, folderName, photos) {
+  currentGalleryFolderName = folderName;
+  document.getElementById('gallery-title').textContent = folderName;
+  const grid = document.getElementById('gallery-grid-fs');
+  lbPhotos = [];
+  gallerySelection.clear();
+  updateGallerySelBar();
+  grid.innerHTML = '';
+  photos.forEach((p, idx) => {
+    const { data:{publicUrl} } = db.storage.from('vcielka').getPublicUrl('skolka/'+folderId+'/'+p.name);
+    lbPhotos.push(publicUrl);
+    const div = document.createElement('div');
+    div.className = 'gallery-photo';
+    div.dataset.name = p.name;
+    div.dataset.url = publicUrl;
+    const check = document.createElement('div');
+    check.className = 'sk-check';
+    check.textContent = '✓';
+    check.addEventListener('click', e => {
+      e.stopPropagation();
+      toggleSkolkaSelect(p.name, publicUrl, div);
+    });
+    div.appendChild(check);
+    const img = document.createElement('img');
+    img.src = publicUrl;
+    img.alt = p.name;
+    img.loading = 'lazy';
+    div.appendChild(img);
+    div.addEventListener('click', () => openLb(idx));
+    grid.appendChild(div);
+  });
+  document.getElementById('gallery-overlay').classList.add('open');
+}
+function closeGallery() {
+  document.getElementById('gallery-overlay').classList.remove('open');
+  gallerySelection.clear();
+  updateGallerySelBar();
+}
+
+// ── LIGHTBOX ──
+function openLb(idx) {
+  lbIdx = idx;
+  document.getElementById('lb-img').src = lbPhotos[idx];
+  document.getElementById('lightbox').classList.add('open');
+}
+function closeLb() { document.getElementById('lightbox').classList.remove('open'); }
+function lbNext() { lbIdx=(lbIdx+1)%lbPhotos.length; document.getElementById('lb-img').src=lbPhotos[lbIdx]; }
+function lbPrev() { lbIdx=(lbIdx-1+lbPhotos.length)%lbPhotos.length; document.getElementById('lb-img').src=lbPhotos[lbIdx]; }
+
+document.addEventListener('keydown', e => {
+  if (e.key==='Escape') { closeLb(); closeGallery(); }
+  if (e.key==='ArrowRight') lbNext();
+  if (e.key==='ArrowLeft') lbPrev();
+});
+
+// ── LOAD EDITOR URL ──
+let _editorUrl = 'vcielka_editor.html';
+async function loadEditorUrl() {
+  const { data } = await db.from('settings').select('value').eq('key','editor_url').single();
+  _editorUrl = data?.value || 'vcielka_editor.html';
+  [document.getElementById('editor-link-header'), document.getElementById('editor-link-gallery')]
+    .forEach(el => { if(el) el.addEventListener('click', e => { e.preventDefault(); if(window.innerWidth < 768) { openEditorHint(); } else { window.open(_editorUrl, '_blank'); } }); });
+}
+function openEditorHint() {
+  document.getElementById('editor-hint-overlay').classList.add('open');
+}
+function editorHintOk() {
+  document.getElementById('editor-hint-overlay').classList.remove('open');
+  window.open(_editorUrl, '_blank');
+}
+
+// ── SELECT & DOWNLOAD ──
+function toggleSkolkaSelect(name, url, el) {
+  if (gallerySelection.has(name)) { gallerySelection.delete(name); el.classList.remove('sk-selected'); }
+  else { gallerySelection.set(name, url); el.classList.add('sk-selected'); }
+  updateGallerySelBar();
+}
+
+function selectAllSkolka() {
+  document.querySelectorAll('#gallery-grid-fs .gallery-photo').forEach(el => {
+    gallerySelection.set(el.dataset.name, el.dataset.url);
+    el.classList.add('sk-selected');
+  });
+  updateGallerySelBar();
+}
+
+function clearSkolkaSelection() {
+  gallerySelection.clear();
+  document.querySelectorAll('#gallery-grid-fs .gallery-photo').forEach(el => el.classList.remove('sk-selected'));
+  updateGallerySelBar();
+}
+
+function updateGallerySelBar() {
+  const count = gallerySelection.size;
+  const countEl = document.getElementById('sk-sel-count');
+  const dlBtn = document.getElementById('sk-dl-btn');
+  const zipBtn = document.getElementById('sk-zip-btn');
+  if (countEl) countEl.textContent = count > 0 ? count + (count===1 ? ' vybraná' : count<5 ? ' vybrané' : ' vybraných') : '';
+  dlBtn?.classList.toggle('active', count > 0);
+  zipBtn?.classList.toggle('active', count > 0);
+}
+
+async function downloadSkolkaSelected() {
+  if (!gallerySelection.size) return;
+  for (const [name, url] of gallerySelection) {
+    try {
+      const blob = await fetch(url).then(r => r.blob());
+      const a = Object.assign(document.createElement('a'), { href: URL.createObjectURL(blob), download: name });
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(a.href);
+      await new Promise(r => setTimeout(r, 300));
+    } catch(e) { console.error('Download failed:', name, e); }
+  }
+}
+
+async function downloadSkolkaZip() {
+  if (!gallerySelection.size) return;
+  const zip = new JSZip();
+  for (const [name, url] of gallerySelection) {
+    try { zip.file(name, await fetch(url).then(r => r.blob())); }
+    catch(e) { console.error('ZIP: skipping', name, e); }
+  }
+  const blob = await zip.generateAsync({ type: 'blob' });
+  const a = Object.assign(document.createElement('a'), { href: URL.createObjectURL(blob), download: (currentGalleryFolderName || 'fotky') + '.zip' });
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(a.href);
+}
+
+// ── BOOT ──
+loadEditorUrl();
+if (sessionStorage.getItem('vs_auth')==='1') {
+  document.getElementById('login-wrap').style.display='none';
+  document.getElementById('app').style.display='block';
+  loadFolders();
+}
+</script>
+
+<!-- cookie notice -->
+<div id="cookie-banner" style="display:none;position:fixed;bottom:0;left:0;right:0;background:#F9C832;color:#0D3D6E;padding:14px 20px;z-index:9999;align-items:center;justify-content:center;gap:14px;font-family:'Quicksand',sans-serif;font-size:14px;font-weight:600;box-shadow:0 -2px 20px rgba(0,0,0,.15);flex-wrap:wrap;text-align:center;">
+  <span>Táto stránka používa nevyhnutné cookies pre prihlásenie a bezpečnosť. Prehliadaním súhlasíte. <a href="privacy.html" style="color:#1A5FA8;text-decoration:underline;">Zásady ochrany súkromia</a></span>
+  <button onclick="document.getElementById('cookie-banner').style.display='none';localStorage.setItem('cookie_ok','1');" style="background:#1A5FA8;color:#fff;border:none;border-radius:50px;padding:8px 22px;font-family:'Quicksand',sans-serif;font-weight:700;font-size:13px;cursor:pointer;white-space:nowrap;flex-shrink:0;">Rozumiem</button>
+</div>
+<script>if(!localStorage.getItem('cookie_ok')){var b=document.getElementById('cookie-banner');b.style.display='flex';}</script>
+</body>
+</html>

@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="sk">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Povinné predprimárne vzdelávanie | Včielka MŠ</title>
+<link rel="icon" type="image/png" href="vcielka_logo2.png"/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@800;900&family=Quicksand:wght@500;600;700&family=Inter:wght@400;500&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{font-family:'Inter',sans-serif;background:#FFF9E0;color:#1a1a1a;min-height:100vh;overflow-wrap:break-word;word-break:normal;hyphens:none;}
+a{text-decoration:none;color:inherit;}
+
+/* ── top bar ── */
+.ppv-nav{background:#fff;border-bottom:1px solid rgba(0,0,0,.07);padding:14px 32px;display:flex;align-items:center;gap:16px;position:sticky;top:0;z-index:100;}
+.ppv-back{display:inline-flex;align-items:center;gap:7px;font-family:'Quicksand',sans-serif;font-size:13px;font-weight:700;color:#1A5FA8;background:#EEF7FF;padding:8px 18px;border-radius:50px;transition:.2s;}
+.ppv-back:hover{background:#D9EFFF;}
+.ppv-back svg{flex-shrink:0;}
+.ppv-nav-title{font-family:'Quicksand',sans-serif;font-size:14px;font-weight:700;color:#888;}
+
+/* ── content ── */
+.ppv-wrap{max-width:780px;margin:0 auto;padding:52px 32px 80px;}
+.ppv-label{font-family:'Quicksand',sans-serif;font-size:11px;font-weight:700;color:#5590C4;text-transform:uppercase;letter-spacing:1px;margin-bottom:12px;}
+.ppv-title{font-family:'Quicksand',sans-serif;font-size:clamp(24px,4vw,36px);font-weight:700;color:#1A5FA8;line-height:1.25;margin-bottom:32px;}
+.ppv-body{font-family:'Inter',sans-serif;font-size:16px;color:#333;line-height:1.85;}
+.ppv-body p{margin-bottom:18px;}
+.ppv-body p:last-child{margin-bottom:0;}
+.ppv-body h4{font-family:'Quicksand',sans-serif;font-size:17px;font-weight:700;color:#1A5FA8;margin:28px 0 10px;}
+.ppv-body ul{margin:8px 0 18px 0;list-style:none;}
+.ppv-body ul li{padding-left:20px;position:relative;margin-bottom:8px;font-size:15px;color:#444;}
+.ppv-body ul li::before{content:'–';position:absolute;left:0;color:#4A9FD4;font-weight:700;}
+.ppv-divider{height:1px;background:rgba(0,0,0,.08);margin:32px 0;}
+.ppv-loading{color:#999;font-family:'Inter',sans-serif;font-size:15px;padding:40px 0;}
+
+/* ── footer ── */
+.ppv-footer{background:#1A5FA8;padding:20px 32px;text-align:center;}
+.ppv-footer a{font-family:'Quicksand',sans-serif;font-size:13px;font-weight:700;color:rgba(255,255,255,.7);transition:color .2s;}
+.ppv-footer a:hover{color:#fff;}
+
+@media(max-width:600px){
+  .ppv-nav{padding:12px 18px;}
+  .ppv-wrap{padding:36px 18px 60px;}
+}
+</style>
+</head>
+<body>
+
+<!-- navigation bar -->
+<nav class="ppv-nav">
+  <a href="index.html#o-nas" class="ppv-back">
+    <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M10 3L5 8L10 13" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    Späť na hlavnú stránku
+  </a>
+  <span class="ppv-nav-title">Materská škola Včielka</span>
+</nav>
+
+<!-- main content -->
+<div class="ppv-wrap">
+  <div class="ppv-label">Informácie pre rodičov</div>
+  <h1 class="ppv-title">Povinné predprimárne vzdelávanie</h1>
+  <div class="ppv-body" id="ppvContent">
+    <p class="ppv-loading">Načítavam obsah…</p>
+  </div>
+</div>
+
+<!-- footer -->
+<footer class="ppv-footer">
+  <a href="index.html">← Vrátiť sa na hlavnú stránku Včielka</a>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script>
+const SUPA_URL = 'https://fmjtzuligqsugsauqkgz.supabase.co';
+const SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZtanR6dWxpZ3FzdWdzYXVxa2d6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU0MTQyMTUsImV4cCI6MjA5MDk5MDIxNX0.gRF-roExLgnVDG4bSNt7EzX6c1v-JtM5v6ZcX8dY934';
+
+async function loadPPV() {
+  const container = document.getElementById('ppvContent');
+  try {
+    const { createClient } = supabase;
+    const db = createClient(SUPA_URL, SUPA_KEY);
+    const { data } = await db.from('settings').select('value').eq('key','ppv_extra').single();
+    if (data && data.value && data.value.trim()) {
+      container.innerHTML = data.value;
+    } else {
+      container.innerHTML = '<p>Obsah ešte nebol pridaný. Prosím, vložte text v administrátorskom rozhraní.</p>';
+    }
+  } catch(e) {
+    container.innerHTML = '<p>Obsah sa nepodarilo načítať. Skúste stránku obnoviť.</p>';
+  }
+}
+
+document.addEventListener('DOMContentLoaded', loadPPV);
+</script>
+
+<!-- cookie notice -->
+<div id="cookie-banner" style="display:none;position:fixed;bottom:0;left:0;right:0;background:#F9C832;color:#0D3D6E;padding:14px 20px;z-index:9999;align-items:center;justify-content:center;gap:14px;font-family:'Quicksand',sans-serif;font-size:14px;font-weight:600;box-shadow:0 -2px 20px rgba(0,0,0,.15);flex-wrap:wrap;text-align:center;">
+  <span>Táto stránka používa nevyhnutné cookies pre prihlásenie a bezpečnosť. Prehliadaním súhlasíte. <a href="privacy.html" style="color:#1A5FA8;text-decoration:underline;">Zásady ochrany súkromia</a></span>
+  <button onclick="document.getElementById('cookie-banner').style.display='none';localStorage.setItem('cookie_ok','1');" style="background:#1A5FA8;color:#fff;border:none;border-radius:50px;padding:8px 22px;font-family:'Quicksand',sans-serif;font-weight:700;font-size:13px;cursor:pointer;white-space:nowrap;flex-shrink:0;">Rozumiem</button>
+</div>
+<script>if(!localStorage.getItem('cookie_ok')){var b=document.getElementById('cookie-banner');b.style.display='flex';}</script>
+</body>
+</html>
