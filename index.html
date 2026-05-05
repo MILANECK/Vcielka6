@@ -773,18 +773,18 @@ button{outline:none;border:none;}
 @keyframes cloudDrift8{0%{transform:translateX(0);}30%{transform:translateX(-20px);}70%{transform:translateX(10px);}100%{transform:translateX(0);}}
 @keyframes cloudDrift2{0%{transform:translateX(0);}50%{transform:translateX(-22px);}100%{transform:translateX(0);}}
 @keyframes cloudDrift3{0%{transform:translateX(0);}50%{transform:translateX(14px);}100%{transform:translateX(0);}}
-.cloud-1{animation:cloudDrift1 12s ease-in-out infinite;}
-.cloud-2{animation:cloudDrift2 16s ease-in-out infinite;}
-.cloud-3{animation:cloudDrift3 10s ease-in-out infinite;}
-.cloud-4{animation:cloudDrift1 18s ease-in-out infinite;}
-.cloud-5{animation:cloudDrift2 14s ease-in-out infinite;}
-.cloud-6{animation:cloudDrift6 19s ease-in-out infinite;}
-.cloud-7{animation:cloudDrift7 11s ease-in-out infinite;}
-.cloud-8{animation:cloudDrift8 22s ease-in-out infinite;}
-.cloud-9{animation:cloudDrift1 15s ease-in-out infinite 3s;}
-.cloud-10{animation:cloudDrift2 20s ease-in-out infinite 5s;}
-.cloud-11{animation:cloudDrift3 13s ease-in-out infinite 2s;}
-.cloud-12{animation:cloudDrift6 17s ease-in-out infinite 7s;}
+.cloud-1>svg{animation:cloudDrift1 12s ease-in-out infinite;}
+.cloud-2>svg{animation:cloudDrift2 16s ease-in-out infinite;}
+.cloud-3>svg{animation:cloudDrift3 10s ease-in-out infinite;}
+.cloud-4>svg{animation:cloudDrift1 18s ease-in-out infinite;}
+.cloud-5>svg{animation:cloudDrift2 14s ease-in-out infinite;}
+.cloud-6>svg{animation:cloudDrift6 19s ease-in-out infinite;}
+.cloud-7>svg{animation:cloudDrift7 11s ease-in-out infinite;}
+.cloud-8>svg{animation:cloudDrift8 22s ease-in-out infinite;}
+.cloud-9>svg{animation:cloudDrift1 15s ease-in-out infinite 3s;}
+.cloud-10>svg{animation:cloudDrift2 20s ease-in-out infinite 5s;}
+.cloud-11>svg{animation:cloudDrift3 13s ease-in-out infinite 2s;}
+.cloud-12>svg{animation:cloudDrift6 17s ease-in-out infinite 7s;}
 
 
 /* ===== ABOUT EXPANDABLE ===== */
@@ -858,11 +858,11 @@ button{outline:none;border:none;}
 #cennik .section-center .desc{color:rgba(0,0,0,.65)!important;}
 
 /* ===== GLASS CARRIER (contact only) ===== */
-.glass-carrier{position:relative;z-index:2;max-width:1060px;width:100%;margin:0 auto;padding:40px;border-radius:28px;}
+.glass-carrier{position:relative;z-index:2;max-width:1060px;width:100%;margin:0 auto;padding:40px;border-radius:40px;}
 .glass-carrier-blue{background:rgba(176,218,255,0.42);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);box-shadow:0 8px 40px rgba(26,95,168,0.09);}
-#kontakt .glass-carrier{padding-bottom:0;background:rgba(135,200,236,0.70);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);}
-.contact-solid-bg{background:#fffdf6;border-radius:20px;padding:32px 0 36px;margin-top:24px;}
-@media(max-width:640px){.glass-carrier{padding:20px 14px;border-radius:20px;}.contact-solid-bg{padding:20px 14px 24px;border-radius:14px;}.contact-solid-bg [style*="margin-top:40px"]{margin-top:24px!important;}}
+#kontakt .glass-carrier{padding-bottom:0;background:rgba(135,200,236,0.70);}
+.contact-solid-bg{background:#fffdf6;border-radius:24px;padding:32px 0 36px;margin-top:24px;}
+@media(max-width:640px){.glass-carrier{padding:20px 14px;border-radius:24px;}.contact-solid-bg{padding:20px 14px 24px;border-radius:16px;}.contact-solid-bg [style*="margin-top:40px"]{margin-top:24px!important;}}
 /* ===== SECTION PANELS ===== */
 #sluzby{background:var(--blue-pale);border-radius:40px;overflow:hidden;padding-bottom:52px;}
 .panel-stack{max-width:1200px;margin:0 auto;padding:0 32px;}
@@ -1014,10 +1014,10 @@ button{outline:none;border:none;}
 =========================== -->
 <section class="section bg-yellow-pale" id="o-nas" style="position:relative;padding-bottom:48px;">
   <!-- clouds -->
-  <div style="position:absolute;top:6%;right:2%;width:190px;opacity:0.45;pointer-events:none;z-index:0;animation:cloudDriftA 9s ease-in-out infinite;"><svg viewBox="0 0 198.9 90.1" xmlns="http://www.w3.org/2000/svg"><path d="M142.2,47.3c0-18.8-15.3-34.1-34.1-34.1-8.2,0-15.7,2.9-21.6,7.6C77.8,8.2,63.5,0,47.2,0,21.1,0,0,21.1,0,47.2v13c0,16.5,13.4,29.9,29.9,29.9h139.1c16.5,0,29.9-13.4,29.9-29.9,0,0,0-11.9-56.7-12.9Z" fill="#fff"/></svg></div>
-  <div style="position:absolute;top:42%;left:-1%;width:150px;opacity:0.4;pointer-events:none;z-index:0;animation:cloudDriftB 12s ease-in-out infinite 1.5s;"><svg viewBox="0 0 218.2 104.9" xmlns="http://www.w3.org/2000/svg"><path d="M126.1,13.2c-8.2,0-15.7,2.9-21.6,7.6C95.8,8.2,81.5,0,65.2,0,39.1,0,18,21.1,18,47.2c0,1.3,0,2.5.1,3.8C7.8,53,0,61.8,0,72.5c0,9.6,6.2,17.5,14.8,21.3,5.6,2.5,12.1,3.5,18.9,3,5.4,5,12.6,8.1,20.5,8.1h134.1c16.5,0,29.9-13.4,29.9-29.9v-15.9c0-23-5.7-45.1-92.1-45.9Z" fill="#fff"/></svg></div>
-  <div style="position:absolute;bottom:10%;right:4%;width:105px;opacity:0.45;pointer-events:none;z-index:0;animation:cloudDriftC 10s ease-in-out infinite 3s;"><svg viewBox="0 0 74.6 41.8" xmlns="http://www.w3.org/2000/svg"><path d="M50.3,5.3c-3.3,0-6.2,1.1-8.6,3C38.2,3.3,32.5,0,26,0,15.7,0,7.2,8.4,7.2,18.8v1.5c-4.1.8-7.2,4.3-7.2,8.6,0,3.8,2.5,7,5.9,8.5,2.2,1,4.8,1.4,7.5,1.2,2.2,2,5.1,3.2,8.2,3.2h41.1c6.6,0,11.9-5.3,11.9-11.9,0-16.2-8.4-24.6-24.3-24.6Z" fill="#fff"/></svg></div>
-  <div style="position:absolute;bottom:18%;left:28%;width:72px;opacity:0.35;pointer-events:none;z-index:0;animation:cloudDriftA 14s ease-in-out infinite 5s;"><svg viewBox="0 0 74.6 41.8" xmlns="http://www.w3.org/2000/svg"><path d="M50.3,5.3c-3.3,0-6.2,1.1-8.6,3C38.2,3.3,32.5,0,26,0,15.7,0,7.2,8.4,7.2,18.8v1.5c-4.1.8-7.2,4.3-7.2,8.6,0,3.8,2.5,7,5.9,8.5,2.2,1,4.8,1.4,7.5,1.2,2.2,2,5.1,3.2,8.2,3.2h41.1c6.6,0,11.9-5.3,11.9-11.9,0-16.2-8.4-24.6-24.3-24.6Z" fill="#fff"/></svg></div>
+  <div class="cloud-deco" style="position:absolute;top:6%;right:2%;width:190px;opacity:0.45;pointer-events:none;z-index:0;"><svg style="animation:cloudDriftA 9s ease-in-out infinite;" viewBox="0 0 198.9 90.1" xmlns="http://www.w3.org/2000/svg"><path d="M142.2,47.3c0-18.8-15.3-34.1-34.1-34.1-8.2,0-15.7,2.9-21.6,7.6C77.8,8.2,63.5,0,47.2,0,21.1,0,0,21.1,0,47.2v13c0,16.5,13.4,29.9,29.9,29.9h139.1c16.5,0,29.9-13.4,29.9-29.9,0,0,0-11.9-56.7-12.9Z" fill="#fff"/></svg></div>
+  <div class="cloud-deco" style="position:absolute;top:42%;left:-1%;width:150px;opacity:0.4;pointer-events:none;z-index:0;"><svg style="animation:cloudDriftB 12s ease-in-out infinite 1.5s;" viewBox="0 0 218.2 104.9" xmlns="http://www.w3.org/2000/svg"><path d="M126.1,13.2c-8.2,0-15.7,2.9-21.6,7.6C95.8,8.2,81.5,0,65.2,0,39.1,0,18,21.1,18,47.2c0,1.3,0,2.5.1,3.8C7.8,53,0,61.8,0,72.5c0,9.6,6.2,17.5,14.8,21.3,5.6,2.5,12.1,3.5,18.9,3,5.4,5,12.6,8.1,20.5,8.1h134.1c16.5,0,29.9-13.4,29.9-29.9v-15.9c0-23-5.7-45.1-92.1-45.9Z" fill="#fff"/></svg></div>
+  <div class="cloud-deco" style="position:absolute;bottom:10%;right:4%;width:105px;opacity:0.45;pointer-events:none;z-index:0;"><svg style="animation:cloudDriftC 10s ease-in-out infinite 3s;" viewBox="0 0 74.6 41.8" xmlns="http://www.w3.org/2000/svg"><path d="M50.3,5.3c-3.3,0-6.2,1.1-8.6,3C38.2,3.3,32.5,0,26,0,15.7,0,7.2,8.4,7.2,18.8v1.5c-4.1.8-7.2,4.3-7.2,8.6,0,3.8,2.5,7,5.9,8.5,2.2,1,4.8,1.4,7.5,1.2,2.2,2,5.1,3.2,8.2,3.2h41.1c6.6,0,11.9-5.3,11.9-11.9,0-16.2-8.4-24.6-24.3-24.6Z" fill="#fff"/></svg></div>
+  <div class="cloud-deco" style="position:absolute;bottom:18%;left:28%;width:72px;opacity:0.35;pointer-events:none;z-index:0;"><svg style="animation:cloudDriftA 14s ease-in-out infinite 5s;" viewBox="0 0 74.6 41.8" xmlns="http://www.w3.org/2000/svg"><path d="M50.3,5.3c-3.3,0-6.2,1.1-8.6,3C38.2,3.3,32.5,0,26,0,15.7,0,7.2,8.4,7.2,18.8v1.5c-4.1.8-7.2,4.3-7.2,8.6,0,3.8,2.5,7,5.9,8.5,2.2,1,4.8,1.4,7.5,1.2,2.2,2,5.1,3.2,8.2,3.2h41.1c6.6,0,11.9-5.3,11.9-11.9,0-16.2-8.4-24.6-24.3-24.6Z" fill="#fff"/></svg></div>
   <div class="section-center fade-in" style="position:relative;z-index:1;">
     <span class="label">O nás</span>
     <h2>Kto sme</h2>
@@ -2177,13 +2177,13 @@ const gradient = new NeatGradient({
   colors: [
     { color: '#F7E7D5', enabled: true },
     { color: '#97CDE0', enabled: true },
-    { color: '#FFE57E', enabled: true },
-    { color: '#FFB88B', enabled: true },
+    { color: '#DAC778', enabled: true },
+    { color: '#CAE6E8', enabled: true },
     { color: '#FFEEC5', enabled: true },
   ],
   speed: 1,
   horizontalPressure: 2,
-  verticalPressure: 5,
+  verticalPressure: 6,
   waveFrequencyX: 1,
   waveFrequencyY: 2,
   waveAmplitude: 8,
@@ -2192,7 +2192,7 @@ const gradient = new NeatGradient({
   colorBrightness: 1,
   colorSaturation: 7,
   wireframe: false,
-  colorBlending: 5,
+  colorBlending: 9,
   backgroundColor: '#003FFF',
   backgroundAlpha: 1,
   grainScale: 3,
@@ -2200,7 +2200,7 @@ const gradient = new NeatGradient({
   grainIntensity: 0.3,
   grainSpeed: 5,
   resolution: 0.55,
-  yOffset: -138212,
+  yOffset: -42130,
   yOffsetWaveMultiplier: 4.3,
   yOffsetColorMultiplier: 3,
   yOffsetFlowMultiplier: 2.5,
