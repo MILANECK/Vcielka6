@@ -15,8 +15,12 @@
 <style>
 /* ===== RESET & BASE ===== */
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
-html{scroll-behavior:smooth;}
+html{scroll-behavior:smooth;scrollbar-width:thin;scrollbar-color:rgba(255,255,255,.45) transparent;}
 body{font-family:'Inter',sans-serif;background:transparent;color:#1a1a1a;overflow-x:hidden;font-size:16px;overflow-wrap:break-word;word-break:normal;hyphens:none;}
+::-webkit-scrollbar{width:4px;}
+::-webkit-scrollbar-track{background:transparent;}
+::-webkit-scrollbar-thumb{background:rgba(255,255,255,.45);border-radius:4px;}
+::-webkit-scrollbar-thumb:hover{background:rgba(255,255,255,.7);}
 img{max-width:100%;display:block;}
 a{text-decoration:none;color:inherit;}
 
@@ -858,10 +862,11 @@ button{outline:none;border:none;}
 @media(max-width:640px){.glass-carrier{padding:24px 18px;border-radius:20px;}}
 /* ===== SECTION PANELS ===== */
 #sluzby{background:var(--blue-pale);border-radius:40px;overflow:hidden;padding-bottom:96px;}
-#galeria{background:#fff;border-radius:40px;}
-#aktuality{background:#C0E8FF;border-radius:40px;padding-bottom:96px;}
+.panel-stack{max-width:1200px;margin:0 auto;padding:0 32px;}
+#galeria{background:rgba(74,159,212,.5);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-radius:40px 40px 0 0;}
+#aktuality{background:#fff;border-radius:0 0 40px 40px;padding-bottom:96px;}
 #galeria .gallery-header h2,#aktuality .news-header h2{color:var(--navy);text-shadow:none;}
-@media(max-width:640px){#galeria,#aktuality{border-radius:24px;}}
+@media(max-width:640px){.panel-stack{padding:0 16px;}#galeria{border-radius:24px 24px 0 0;}#aktuality{border-radius:0 0 24px 24px;}}
 
 /* ===== POPUP ANIMATIONS ===== */
 /* — OPEN: circle reveal from close button position — */
@@ -1119,8 +1124,9 @@ button{outline:none;border:none;}
 
 
 <!-- ===========================
-     GALLERY
+     GALLERY + NEWS PANEL STACK
 =========================== -->
+<div class="panel-stack">
 <section class="section gallery-section bg-blue-pale" id="galeria" style="position:relative;">
   <!-- CLOUD DECORATIONS GALLERY -->
   <div class="cloud-deco cloud-10" style="position:absolute;top:8%;right:2%;width:160px;opacity:0.4;pointer-events:none;z-index:0;"><svg viewBox="0 0 198.9 90.1" xmlns="http://www.w3.org/2000/svg"><path d="M142.2,47.3c0-18.8-15.3-34.1-34.1-34.1-8.2,0-15.7,2.9-21.6,7.6C77.8,8.2,63.5,0,47.2,0,21.1,0,0,21.1,0,47.2v13c0,16.5,13.4,29.9,29.9,29.9h139.1c16.5,0,29.9-13.4,29.9-29.9,0,0,0-11.9-56.7-12.9Z" fill="#fff"/></svg></div>
@@ -1177,6 +1183,7 @@ button{outline:none;border:none;}
   </div>
   <div class="news-grid fade-in" id="cms-news"></div>
 </section>
+</div><!-- /.panel-stack -->
 
 
 
