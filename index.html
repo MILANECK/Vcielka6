@@ -745,19 +745,21 @@ button{outline:none;border:none;}
 .onas-card{background:#fffdf6;border-radius:24px;padding:36px 44px 28px;box-shadow:0 4px 24px rgba(26,95,168,.08);margin-bottom:28px;text-align:center;position:relative;}
 @media(max-width:600px){.onas-card{padding:24px 20px 20px;}}
 /* ===== ONAS BEE BADGE ===== */
-#onas-bee-badge{position:absolute;bottom:-38px;right:-28px;width:115px;pointer-events:none;opacity:0;transform:scale(0);transform-origin:center center;z-index:10;}
-@keyframes badgePopSwingFade{
-  0%  {opacity:0;transform:scale(0) rotate(0deg);}
-  12% {opacity:1;transform:scale(1.18) rotate(0deg);}
-  20% {opacity:1;transform:scale(1) rotate(0deg);}
-  28% {opacity:1;transform:scale(1) rotate(-14deg);}
-  43% {opacity:1;transform:scale(1) rotate(11deg);}
-  57% {opacity:1;transform:scale(1) rotate(-7deg);}
-  70% {opacity:1;transform:scale(1) rotate(5deg);}
-  79% {opacity:1;transform:scale(1) rotate(0deg);}
-  100%{opacity:0;transform:scale(0.88) rotate(0deg);}
+#onas-bee-badge{position:absolute;bottom:-38px;right:14px;width:115px;pointer-events:none;opacity:0;transform:scale(0);transform-origin:center center;z-index:10;transition:opacity .3s ease,transform .35s cubic-bezier(.4,0,.2,1);}
+#onas-bee-badge.badge-active{animation:badgeAppear 1.5s ease forwards;transition:none;}
+#onas-bee-badge.badge-visible{opacity:1;transform:scale(1);animation:none;}
+@keyframes badgeAppear{
+  0%   {opacity:0;transform:scale(0);}
+  22%  {opacity:1;transform:scale(1.14);}
+  35%  {transform:scale(0.96);}
+  45%  {transform:scale(1) rotate(0deg);}
+  55%  {transform:scale(1) rotate(-11deg);}
+  67%  {transform:scale(1) rotate(8deg);}
+  77%  {transform:scale(1) rotate(-5deg);}
+  86%  {transform:scale(1) rotate(3deg);}
+  93%  {transform:scale(1) rotate(-1deg);}
+  100% {opacity:1;transform:scale(1) rotate(0deg);}
 }
-#onas-bee-badge.badge-active{animation:badgePopSwingFade 1.65s cubic-bezier(.34,1.56,.64,1) forwards;}
 /* subtle card shadow — all rounded carriers */
 .service-card,.news-card,.contact-card,.price-card,.why-item,.z-item,.gallery-item,.testi-card,.map-wrap,.about-text-inner{box-shadow:0 4px 24px rgba(26,95,168,.08);}
 @keyframes cloudDriftA{0%,100%{transform:translateX(0) translateY(0);}30%{transform:translateX(28px) translateY(-10px);}65%{transform:translateX(-12px) translateY(8px);}}
@@ -1828,11 +1830,16 @@ function toggleOnas(){
   btn.classList.toggle('open', open);
   lbl.textContent = open ? 'Čítať menej' : 'Čítať viac';
   if(badge){
-    badge.classList.remove('badge-active');
     if(open){
-      void badge.offsetWidth; // force reflow to restart animation
+      badge.classList.remove('badge-visible','badge-active');
+      void badge.offsetWidth;
       badge.classList.add('badge-active');
-      badge.addEventListener('animationend', () => badge.classList.remove('badge-active'), {once:true});
+      badge.addEventListener('animationend', ()=>{
+        badge.classList.remove('badge-active');
+        badge.classList.add('badge-visible');
+      }, {once:true});
+    } else {
+      badge.classList.remove('badge-active','badge-visible');
     }
   }
 }
