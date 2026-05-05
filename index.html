@@ -370,11 +370,11 @@ button{outline:none;border:none;}
 .pricing-grid{display:grid;grid-template-columns:repeat(2,minmax(0,360px));gap:16px;justify-content:center;align-items:stretch;}
 .price-card{border-radius:var(--radius-card);overflow:hidden;will-change:transform;cursor:default;}
 .price-header{padding:18px 20px;}
-.price-header.dark{background:rgba(255,255,255,.15);}
-.price-header.yellow{background:var(--yellow);}
+.price-header.dark{background:rgba(74,159,212,.5);}
+.price-header.yellow{background:rgba(249,200,50,.5);}
 .price-header h3{font-family:'Quicksand',sans-serif;font-size:15px;font-weight:700;color:#fff;}
-.price-header.yellow h3{color:#1a1a1a;}
-.price-body{padding:20px;background:rgba(255,255,255,.88);}
+.price-header.yellow h3{color:#fff;}
+.price-body{padding:20px;background:#fff;}
 .price-amount{font-family:'Nunito',sans-serif;font-size:40px;font-weight:700;color:var(--blue);}
 .price-period{font-family:'Inter',sans-serif;font-size:13px;color:var(--text-muted);}
 .price-detail{font-family:'Inter',sans-serif;font-size:13px;color:#888;margin-top:9px;line-height:1.65;}
@@ -439,6 +439,7 @@ button{outline:none;border:none;}
   .gallery-item{flex:0 0 320px;width:320px;height:240px;}
   /* ── Desktop: fixed nav that auto-hides on scroll ── */
   body{padding-top:64px;}
+  .hero{margin-top:-64px;}
   .nav{
     position:fixed;width:100%;
     transition:transform .42s cubic-bezier(.4,0,.2,1);
@@ -857,7 +858,7 @@ button{outline:none;border:none;}
 @media(max-width:640px){.glass-carrier{padding:24px 18px;border-radius:20px;}}
 /* ===== SECTION PANELS ===== */
 #sluzby{background:var(--blue-pale);border-radius:40px;overflow:hidden;padding-bottom:96px;}
-#galeria{background:var(--warm-white);border-radius:40px;}
+#galeria{background:#fff;border-radius:40px;}
 #aktuality{background:#C0E8FF;border-radius:40px;padding-bottom:96px;}
 #galeria .gallery-header h2,#aktuality .news-header h2{color:var(--navy);text-shadow:none;}
 @media(max-width:640px){#galeria,#aktuality{border-radius:24px;}}
@@ -998,8 +999,8 @@ button{outline:none;border:none;}
   <div class="stat"><div class="stat-num">MŠ SR</div><div class="stat-label">akreditovaná MŠVVaŠ</div></div>
 </div>
 </div>
-<svg style="display:block;margin-top:-78px;position:relative;z-index:2;pointer-events:none;" viewBox="0 0 1440 80" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
-  <path d="M0,0 L1440,0 L1440,40 Q1080,80 720,40 Q360,0 0,40 Z" fill="#FFFDF8"/>
+<svg style="display:block;width:100%;margin-top:-28px;position:relative;z-index:2;pointer-events:none;" viewBox="0 0 1440 40" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+  <path d="M0,0 L1440,0 L1440,20 Q1080,40 720,20 Q360,0 0,20 Z" fill="#FFFDF8"/>
 </svg>
 
 
@@ -1120,7 +1121,7 @@ button{outline:none;border:none;}
 <!-- ===========================
      GALLERY
 =========================== -->
-<section class="gallery-section bg-blue-pale" id="galeria" style="position:relative;">
+<section class="section gallery-section bg-blue-pale" id="galeria" style="position:relative;">
   <!-- CLOUD DECORATIONS GALLERY -->
   <div class="cloud-deco cloud-10" style="position:absolute;top:8%;right:2%;width:160px;opacity:0.4;pointer-events:none;z-index:0;"><svg viewBox="0 0 198.9 90.1" xmlns="http://www.w3.org/2000/svg"><path d="M142.2,47.3c0-18.8-15.3-34.1-34.1-34.1-8.2,0-15.7,2.9-21.6,7.6C77.8,8.2,63.5,0,47.2,0,21.1,0,0,21.1,0,47.2v13c0,16.5,13.4,29.9,29.9,29.9h139.1c16.5,0,29.9-13.4,29.9-29.9,0,0,0-11.9-56.7-12.9Z" fill="#fff"/></svg></div>
   <div class="cloud-deco cloud-7" style="position:absolute;bottom:15%;left:0%;width:100px;opacity:0.4;pointer-events:none;z-index:0;"><svg viewBox="0 0 74.6 41.8" xmlns="http://www.w3.org/2000/svg"><path d="M50.3,5.3c-3.3,0-6.2,1.1-8.6,3C38.2,3.3,32.5,0,26,0,15.7,0,7.2,8.4,7.2,18.8v1.5c-4.1.8-7.2,4.3-7.2,8.6,0,3.8,2.5,7,5.9,8.5,2.2,1,4.8,1.4,7.5,1.2,2.2,2,5.1,3.2,8.2,3.2h41.1c6.6,0,11.9-5.3,11.9-11.9,0-16.2-8.4-24.6-24.3-24.6Z" fill="#fff"/></svg></div>
