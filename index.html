@@ -76,6 +76,7 @@ button{outline:none;border:none;}
 
 /* ===== CLOUD ===== */
 .cloud-group{position:absolute;pointer-events:none;}
+.cloud-deco{will-change:transform;}
 
 /* ===========================
    NAV
@@ -2016,6 +2017,25 @@ document.addEventListener('keydown', e=>{
     bg.style.transform = 'translateY(' + (sy * 0.22) + 'px)';
   }
   window.addEventListener('scroll', onScroll, {passive:true});
+})();
+
+// ===== CLOUD PARALLAX =====
+(function(){
+  const clouds = document.querySelectorAll('.cloud-deco');
+  if(!clouds.length) return;
+  const speeds = [0.07, 0.10, 0.06, 0.09, 0.12, 0.08];
+  const items = Array.from(clouds).map(function(el, i){
+    const section = el.closest('section') || el.parentElement;
+    return { el: el, anchor: section.offsetTop, speed: speeds[i % speeds.length] };
+  });
+  function onScroll(){
+    const sy = window.scrollY;
+    items.forEach(function(item){
+      item.el.style.transform = 'translateY(' + ((sy - item.anchor) * item.speed) + 'px)';
+    });
+  }
+  window.addEventListener('scroll', onScroll, {passive:true});
+  onScroll();
 })();
 
 // ===== MOUSE-FOLLOW BEE (O NÁS section only) =====
