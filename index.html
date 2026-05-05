@@ -235,14 +235,14 @@ button{outline:none;border:none;}
 .services-grid{
   display:grid;
   grid-template-columns:repeat(4,1fr);
-  gap:14px;
+  gap:11px;
 }
 .service-card{
   border-radius:var(--radius-card);
   overflow:hidden;
   display:flex;
   flex-direction:column;
-  min-height:190px;
+  min-height:152px;
   transition:transform .25s;
 }
 .service-card:hover{transform:translateY(-4px);}
@@ -255,7 +255,7 @@ button{outline:none;border:none;}
   display:flex;
   align-items:center;
   justify-content:center;
-  font-size:36px;
+  font-size:29px;
   position:relative;
   overflow:hidden;
 }
@@ -263,9 +263,9 @@ button{outline:none;border:none;}
 .service-card.yellow .service-img{background:var(--yellow-bright);}
 .service-card.green .service-img{background:var(--green-bright);}
 .service-card.red .service-img{background:var(--red-bright);}
-.service-body{flex:1;padding:11px 14px 14px;}
-.service-body h3{font-size:15px;color:#1a1a1a;margin-bottom:3px;}
-.service-body p{font-family:'Inter',sans-serif;font-size:14px;color:var(--text-muted);line-height:1.45;}
+.service-body{flex:1;padding:9px 11px 11px;}
+.service-body h3{font-size:12px;color:#1a1a1a;margin-bottom:2px;}
+.service-body p{font-family:'Inter',sans-serif;font-size:11px;color:var(--text-muted);line-height:1.45;}
 .service-card.clickable{cursor:pointer;}
 .act-popup-overlay{display:flex;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:5000!important;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(4px);opacity:0;visibility:hidden;pointer-events:none;transition:opacity .32s ease,visibility .32s;}
 .act-popup-overlay.open{opacity:1;visibility:visible;pointer-events:auto;}
@@ -473,10 +473,11 @@ button{outline:none;border:none;}
   .hero-btns{justify-content:flex-start;}
   .two-col{grid-template-columns:1fr;}
   .footer-grid{grid-template-columns:1fr 1fr;}
-  .services-grid{grid-template-columns:repeat(2,1fr);}
+  .services-grid{grid-template-columns:repeat(2,1fr);gap:9px;}
   .why-grid{grid-template-columns:repeat(2,1fr);}
   .testi-grid{grid-template-columns:repeat(2,1fr);}
   .news-grid{grid-template-columns:repeat(2,1fr);}
+  #sluzby{padding-top:36px;padding-bottom:34px;}
 }
 @media(max-width:600px){
   .section{padding:40px 18px;}
@@ -488,7 +489,8 @@ button{outline:none;border:none;}
   .stat{border-right:none;border-bottom:1px solid rgba(0,0,0,.06);padding:22px 16px;}
   .stat:last-child{border-bottom:none;}
   .pricing-grid{grid-template-columns:1fr;}
-  .services-grid{grid-template-columns:repeat(2,1fr);}
+  .services-grid{grid-template-columns:repeat(2,1fr);gap:8px;}
+  #sluzby{padding-top:32px;padding-bottom:30px;}
   .why-grid{grid-template-columns:1fr;}
   .testi-grid{grid-template-columns:1fr;}
   .news-grid{grid-template-columns:1fr;}
@@ -740,8 +742,22 @@ button{outline:none;border:none;}
 
 /* ===== O NÁS SECTION ===== */
 .onas-body{max-width:760px;margin:0 auto;text-align:center;}
-.onas-card{background:#fffdf6;border-radius:24px;padding:36px 44px 28px;box-shadow:0 4px 24px rgba(26,95,168,.08);margin-bottom:28px;text-align:center;}
+.onas-card{background:#fffdf6;border-radius:24px;padding:36px 44px 28px;box-shadow:0 4px 24px rgba(26,95,168,.08);margin-bottom:28px;text-align:center;position:relative;}
 @media(max-width:600px){.onas-card{padding:24px 20px 20px;}}
+/* ===== ONAS BEE BADGE ===== */
+#onas-bee-badge{position:absolute;bottom:-38px;right:-28px;width:115px;pointer-events:none;opacity:0;transform:scale(0);transform-origin:center center;z-index:10;}
+@keyframes badgePopSwingFade{
+  0%  {opacity:0;transform:scale(0) rotate(0deg);}
+  12% {opacity:1;transform:scale(1.18) rotate(0deg);}
+  20% {opacity:1;transform:scale(1) rotate(0deg);}
+  28% {opacity:1;transform:scale(1) rotate(-14deg);}
+  43% {opacity:1;transform:scale(1) rotate(11deg);}
+  57% {opacity:1;transform:scale(1) rotate(-7deg);}
+  70% {opacity:1;transform:scale(1) rotate(5deg);}
+  79% {opacity:1;transform:scale(1) rotate(0deg);}
+  100%{opacity:0;transform:scale(0.88) rotate(0deg);}
+}
+#onas-bee-badge.badge-active{animation:badgePopSwingFade 1.65s cubic-bezier(.34,1.56,.64,1) forwards;}
 /* subtle card shadow — all rounded carriers */
 .service-card,.news-card,.contact-card,.price-card,.why-item,.z-item,.gallery-item,.testi-card,.map-wrap,.about-text-inner{box-shadow:0 4px 24px rgba(26,95,168,.08);}
 @keyframes cloudDriftA{0%,100%{transform:translateX(0) translateY(0);}30%{transform:translateX(28px) translateY(-10px);}65%{transform:translateX(-12px) translateY(8px);}}
@@ -865,7 +881,8 @@ button{outline:none;border:none;}
 .kontakt-bottom{background:#fffdf6;border-radius:0 0 40px 40px;padding:40px;}
 @media(max-width:640px){.kontakt-panel-wrap{border-radius:24px;}.kontakt-top{border-radius:0;padding:38px 20px 14px;}.kontakt-bottom{border-radius:0;padding:24px 20px;}.kontakt-bottom [style*="margin-top:40px"]{margin-top:24px!important;}}
 /* ===== SECTION PANELS ===== */
-#sluzby{background:var(--blue-pale);border-radius:40px;overflow:hidden;padding-bottom:52px;box-shadow:0 8px 40px rgba(13,61,110,.14),0 2px 10px rgba(0,0,0,.07);}
+#sluzby{background:var(--blue-pale);border-radius:40px;overflow:hidden;padding-top:45px;padding-bottom:42px;box-shadow:0 8px 40px rgba(13,61,110,.14),0 2px 10px rgba(0,0,0,.07);}
+#sluzby .section-center{margin-bottom:26px;}
 .panel-stack{max-width:1200px;margin:0 auto;padding:0 32px;filter:drop-shadow(0 8px 32px rgba(13,61,110,.13));}
 #galeria{background:rgba(130,190,230,.5);backdrop-filter:blur(5px);-webkit-backdrop-filter:blur(5px);border-radius:40px 40px 0 0;}
 #aktuality{background:#fffdf6;border-radius:0 0 40px 40px;padding:40px;}
@@ -1026,6 +1043,7 @@ button{outline:none;border:none;}
   </div>
   <div class="onas-body fade-in" style="position:relative;z-index:1;">
     <div class="onas-card">
+      <img id="onas-bee-badge" src="vcielka_medal.png" alt="" aria-hidden="true"/>
       <p id="cms-onas-p1"></p>
       <p id="cms-onas-p2"></p>
       <div class="onas-expand" id="onasExpand">
@@ -1804,10 +1822,19 @@ function toggleOnas(){
   const btn = document.getElementById('onasBtn');
   const area = document.getElementById('onasExpand');
   const lbl = document.getElementById('onasBtnLabel');
+  const badge = document.getElementById('onas-bee-badge');
   if(!btn || !area) return;
   const open = area.classList.toggle('open');
   btn.classList.toggle('open', open);
   lbl.textContent = open ? 'Čítať menej' : 'Čítať viac';
+  if(badge){
+    badge.classList.remove('badge-active');
+    if(open){
+      void badge.offsetWidth; // force reflow to restart animation
+      badge.classList.add('badge-active');
+      badge.addEventListener('animationend', () => badge.classList.remove('badge-active'), {once:true});
+    }
+  }
 }
 
 // ===== PPV TOGGLE =====
