@@ -2071,6 +2071,32 @@ document.addEventListener('keydown', e=>{
 })();
 
 
+// ===== CLOUD PARALLAX =====
+(function(){
+  if(window.innerWidth <= 600) return;
+  const items = [];
+  document.querySelectorAll('.section').forEach(sec => {
+    sec.querySelectorAll('.cloud-deco').forEach(el => {
+      const speed = parseFloat(el.dataset.speed || '0.06');
+      items.push({el, sec, speed});
+    });
+  });
+  if(!items.length) return;
+  let ticking = false;
+  function update(){
+    const vh = window.innerHeight;
+    items.forEach(({el, sec, speed}) => {
+      const r = sec.getBoundingClientRect();
+      const offset = (r.top + r.height * 0.5) - vh * 0.5;
+      const t = Math.max(-40, Math.min(40, offset * speed));
+      el.style.transform = 'translateY(' + t + 'px)';
+    });
+    ticking = false;
+  }
+  window.addEventListener('scroll', function(){ if(!ticking){ ticking=true; requestAnimationFrame(update); } }, {passive:true});
+  update();
+})();
+
 // ===== MOUSE-FOLLOW BEE (O NÁS section only) =====
 document.addEventListener('DOMContentLoaded', function(){
   const bee = document.getElementById('mouseFollowBee');
