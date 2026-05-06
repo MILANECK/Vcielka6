@@ -156,12 +156,12 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:#c8d8e4;color:#1a2a3a
 .panel-collapse-btn:hover{background:rgba(0,94,159,.1)}
 
 /* ── Item toolbar ── */
-#item-tb{display:none;position:fixed;bottom:86px;left:50%;transform:translateX(-50%);
+#item-tb{display:none;position:fixed;bottom:110px;left:50%;transform:translateX(-50%);
   background:rgba(255,255,255,.97);backdrop-filter:blur(14px);border-radius:999px;
-  padding:8px 16px;box-shadow:0 4px 22px rgba(0,94,159,.16);align-items:center;gap:8px;z-index:200}
+  padding:6px 12px;box-shadow:0 4px 22px rgba(0,94,159,.16);align-items:center;gap:6px;z-index:200}
 #item-tb.open{display:flex}
-.itb-btn{width:62px;height:62px;border-radius:50%;border:none;background:rgba(0,94,159,.09);
-  color:#005e9f;cursor:pointer;font-size:22px;display:flex;align-items:center;justify-content:center;
+.itb-btn{width:50px;height:50px;border-radius:50%;border:none;background:rgba(0,94,159,.09);
+  color:#005e9f;cursor:pointer;font-size:18px;display:flex;align-items:center;justify-content:center;
   transition:transform .12s;flex-shrink:0}
 .itb-btn:hover{background:rgba(0,94,159,.16);transform:scale(1.09)}
 .itb-btn:active{transform:scale(.9)}
@@ -231,7 +231,7 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:#c8d8e4;color:#1a2a3a
   #tpl-change-btn{width:34px;height:34px}
   #save-btn{padding:10px 18px;font-size:13px;gap:6px}
   #float-bottom{gap:7px;bottom:10px}
-  #item-tb{bottom:62px;padding:5px 10px;gap:5px}
+  #item-tb{bottom:80px;padding:5px 10px;gap:5px}
   .itb-btn{width:42px;height:42px;font-size:17px}
   #photos-panel{width:155px;left:58px;padding:11px;font-size:12px;max-height:calc(100vh - 40px)}
   .photo-thumb img{height:60px}
@@ -384,8 +384,8 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:#c8d8e4;color:#1a2a3a
 
 <!-- Item toolbar (above save bar) -->
 <div id="item-tb">
-  <button class="itb-btn" onclick="rotSel(-15)">↺</button>
-  <button class="itb-btn" onclick="rotSel(15)">↻</button>
+  <button class="itb-btn rot-btn" onclick="rotSel(-15)">↺</button>
+  <button class="itb-btn rot-btn" onclick="rotSel(15)">↻</button>
   <button class="itb-btn" onclick="sclSel(1.12)">⊕</button>
   <button class="itb-btn" onclick="sclSel(.89)">⊖</button>
   <div id="color-area" style="display:none">
@@ -593,7 +593,7 @@ function mkText(it){
 function setSel(id){
   if(selId){const p=document.getElementById(selId);if(p){p.style.outline='none';p.style.boxShadow='none';}}
   selId=id;document.getElementById('del-btn').style.display=id?'flex':'none';
-  if(id){const el=document.getElementById(id);if(el){el.style.outline='3px solid #ff00aa';el.style.outlineOffset='2px';el.style.boxShadow='0 0 0 6px rgba(255,0,170,.2)';}document.getElementById('item-tb').classList.add('open');document.getElementById('color-area').style.display=(getSel()&&getSel().type==='text')?'block':'none';}
+  if(id){const el=document.getElementById(id);if(el){el.style.outline='3px solid #ff00aa';el.style.outlineOffset='2px';el.style.boxShadow='0 0 0 6px rgba(255,0,170,.2)';}document.getElementById('item-tb').classList.add('open');document.getElementById('color-area').style.display=(getSel()&&getSel().type==='text')?'block':'none';document.querySelectorAll('.rot-btn').forEach(b=>b.style.display=(getSel()&&getSel().type==='text')?'none':'flex');}
   else{document.getElementById('item-tb').classList.remove('open');document.getElementById('color-picker').classList.remove('open');}
 }
 
