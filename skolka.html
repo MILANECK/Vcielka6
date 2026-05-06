@@ -28,10 +28,7 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:#dce8f4;min-height:10
 #app{display:none;min-height:100vh;padding:0 0 60px}
 
 /* Header */
-.vs-header{background:rgba(255,255,255,.88);backdrop-filter:blur(14px);padding:14px 28px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;box-shadow:0 2px 14px rgba(0,0,0,.08);border-radius:0 0 20px 20px}
-@keyframes logoutBlink{0%,100%{background:rgba(0,0,0,.06);color:#555;box-shadow:none;}50%{background:#F9C832;color:#1a1a1a;box-shadow:0 0 20px rgba(249,200,50,.75),0 0 6px rgba(249,200,50,.4);}}
-.btn-logout.blink{animation:logoutBlink .85s ease-in-out 5;}
-.vs-logo-circle{cursor:pointer;}
+.vs-header{background:rgba(255,255,255,.88);backdrop-filter:blur(14px);padding:14px 28px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;box-shadow:0 2px 14px rgba(0,0,0,.08)}
 .vs-header-logo{display:flex;align-items:center;gap:12px}
 .vs-logo-circle{width:52px;height:52px;min-width:52px;aspect-ratio:1;border-radius:50%;background:#fdc003;display:flex;align-items:center;justify-content:center;padding:7px;box-shadow:0 3px 12px rgba(253,192,3,.38);overflow:hidden;flex-shrink:0}
 .vs-logo-circle img{width:100%;height:100%;object-fit:contain}
@@ -409,16 +406,6 @@ if (sessionStorage.getItem('vs_auth')==='1') {
   document.getElementById('app').style.display='block';
   loadFolders();
 }
-
-// logo click → prompt user to sign out
-document.querySelector('.vs-logo-circle').addEventListener('click', function(){
-  const btn = document.querySelector('.btn-logout');
-  if(!btn) return;
-  btn.classList.remove('blink');
-  void btn.offsetWidth; // force reflow to restart animation
-  btn.classList.add('blink');
-  btn.addEventListener('animationend', function(){ btn.classList.remove('blink'); }, {once:true});
-});
 </script>
 
 <!-- cookie notice -->
