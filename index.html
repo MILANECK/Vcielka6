@@ -2077,19 +2077,17 @@ document.addEventListener('keydown', e=>{
   const items = [];
   document.querySelectorAll('.section').forEach(sec => {
     sec.querySelectorAll('.cloud-deco').forEach(el => {
-      const speed = parseFloat(el.dataset.speed || '0.06');
+      const speed = parseFloat(el.dataset.speed || '0.28');
       items.push({el, sec, speed});
     });
   });
   if(!items.length) return;
   let ticking = false;
   function update(){
-    const vh = window.innerHeight;
     items.forEach(({el, sec, speed}) => {
       const r = sec.getBoundingClientRect();
-      const offset = (r.top + r.height * 0.5) - vh * 0.5;
-      const t = Math.max(-40, Math.min(40, offset * speed));
-      el.style.transform = 'translateY(' + t + 'px)';
+      // clouds move at (speed) fraction of scroll — slower than content = depth effect
+      el.style.transform = 'translateY(' + (-r.top * speed) + 'px)';
     });
     ticking = false;
   }
