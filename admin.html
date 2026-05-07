@@ -162,6 +162,10 @@ body{font-family:'Inter',sans-serif;background:#F0F7FF;color:#1a1a1a;min-height:
 [data-tip-r]::before{left:auto;right:0;transform:translateY(4px);}
 [data-tip-r]::after{left:auto;right:16px;transform:translateY(4px);}
 [data-tip-r]:hover::before,[data-tip-r]:hover::after{transform:translateY(0);}
+
+/* BEE UPLOAD PROGRESS */
+@keyframes sk-bee-fly{0%,100%{transform:translateY(0) rotate(-7deg);}50%{transform:translateY(-5px) rotate(7deg);}}
+#sk_bee_wrap img{animation:sk-bee-fly .9s ease-in-out infinite;}
 </style>
 </head>
 <body>
@@ -818,11 +822,34 @@ body{font-family:'Inter',sans-serif;background:#F0F7FF;color:#1a1a1a;min-height:
           <div style="font-family:'Quicksand',sans-serif;font-weight:700;font-size:16px;" id="skolka_modal_title">Nahrať fotografie</div>
           <button onclick="closeSkolkaModal()" style="background:none;border:none;font-size:20px;cursor:pointer;color:#888;">✕</button>
         </div>
-        <label style="display:inline-flex;align-items:center;gap:10px;background:#F9C832;color:#1a1a1a;font-family:'Quicksand',sans-serif;font-size:13px;font-weight:700;padding:12px 24px;border-radius:50px;cursor:pointer;width:fit-content;">
+        <label id="skolka_upload_label" style="display:inline-flex;align-items:center;gap:10px;background:#F9C832;color:#1a1a1a;font-family:'Quicksand',sans-serif;font-size:13px;font-weight:700;padding:12px 24px;border-radius:50px;cursor:pointer;width:fit-content;transition:opacity .2s;">
           <input type="file" accept="image/*" multiple style="display:none;" id="skolka_photo_input" onchange="uploadSkolkaPhotos(this)"/>
           📷 Vybrať fotografie zo zariadenia
         </label>
-        <div id="skolka_modal_grid" class="gallery-grid" style="overflow-y:auto;flex:1;"></div>
+        <!-- Bee progress bar – visible while uploading -->
+        <div id="skolka_progress_wrap" style="display:none;">
+          <div style="position:relative;height:62px;">
+            <svg id="sk_prog_svg" viewBox="0 0 560 62" width="100%" height="62" preserveAspectRatio="none" style="display:block;overflow:visible;">
+              <defs><clipPath id="sk_prog_clip"><rect id="sk_prog_clip_rect" x="0" y="0" width="0" height="62"/></clipPath></defs>
+              <!-- light-blue dashed track -->
+              <path d="M 20 46 Q 280 8 540 46" fill="none" stroke="#C8E6FA" stroke-width="3.5" stroke-dasharray="10 7" stroke-linecap="round"/>
+              <!-- blue fill (revealed by clip) -->
+              <path d="M 20 46 Q 280 8 540 46" fill="none" stroke="#4A9FD4" stroke-width="3.5" stroke-dasharray="10 7" stroke-linecap="round" clip-path="url(#sk_prog_clip)"/>
+            </svg>
+            <!-- Bee icon rides the path tip -->
+            <div id="sk_bee_wrap" style="position:absolute;width:40px;height:40px;transform:translate(-50%,-50%);pointer-events:none;display:none;top:46px;left:20px;transition:left .38s ease,top .38s ease;">
+              <img src="vcielka_logo2.png" alt="" style="width:100%;height:100%;filter:drop-shadow(0 2px 6px rgba(0,0,0,.22));"/>
+            </div>
+          </div>
+          <div id="sk_prog_label" style="text-align:center;font-family:'Quicksand',sans-serif;font-weight:700;font-size:13px;color:#1A5FA8;margin-top:4px;">Nahrávam…</div>
+        </div>
+        <!-- Upload done banner -->
+        <div id="skolka_upload_done" style="display:none;background:linear-gradient(135deg,#E8F5E9,#F0FFF4);border:2.5px solid #81C784;border-radius:18px;padding:20px 24px;text-align:center;flex-shrink:0;">
+          <div style="font-size:36px;margin-bottom:6px;">🎉</div>
+          <div style="font-family:'Quicksand',sans-serif;font-weight:800;font-size:20px;color:#2E7D32;letter-spacing:-.3px;">Fotografie úspešne nahrané!</div>
+          <div id="sk_done_count" style="font-family:'Quicksand',sans-serif;font-size:14px;color:#388E3C;margin-top:6px;font-weight:700;"></div>
+        </div>
+        <div id="skolka_modal_grid" class="gallery-grid" style="overflow-y:auto;flex:1;min-height:0;"></div>
       </div>
     </div>
 
@@ -1736,8 +1763,13 @@ function openSkolkaFolder(folderId, folderName) {
   currentSkolkaFolderId = folderId;
   document.getElementById('skolka_modal_title').textContent = '📁 ' + folderName + ' — nahrať fotografie';
   document.getElementById('skolka_modal_grid').innerHTML = '';
-  const modal = document.getElementById('skolka_upload_modal');
-  modal.style.display = 'flex';
+  document.getElementById('skolka_progress_wrap').style.display = 'none';
+  document.getElementById('skolka_upload_done').style.display = 'none';
+  document.getElementById('sk_bee_wrap').style.display = 'none';
+  const lbl = document.getElementById('skolka_upload_label');
+  lbl.style.pointerEvents = '';
+  lbl.style.opacity = '';
+  document.getElementById('skolka_upload_modal').style.display = 'flex';
 }
 
 function closeSkolkaModal() {
@@ -1746,22 +1778,58 @@ function closeSkolkaModal() {
   loadSkolka();
 }
 
+function setSkolkaProgress(progress, label) {
+  const svg = document.getElementById('sk_prog_svg');
+  const clipRect = document.getElementById('sk_prog_clip_rect');
+  const beeWrap = document.getElementById('sk_bee_wrap');
+  const progLabel = document.getElementById('sk_prog_label');
+  if (!svg) return;
+  clipRect.setAttribute('width', Math.round(560 * Math.min(progress, 1)));
+  const paths = svg.querySelectorAll('path');
+  const fillPath = paths[1];
+  const totalLen = fillPath.getTotalLength() || 540;
+  const pt = fillPath.getPointAtLength(totalLen * Math.min(progress, 1));
+  const svgW = svg.getBoundingClientRect().width || 560;
+  beeWrap.style.left = ((pt.x / 560) * svgW) + 'px';
+  beeWrap.style.top = ((pt.y / 62) * 62) + 'px';
+  beeWrap.style.display = 'block';
+  if (label) progLabel.textContent = label;
+}
+
 async function uploadSkolkaPhotos(input) {
   if (!currentSkolkaFolderId) return;
   const files = Array.from(input.files);
   if (!files.length) return;
-  toast('Nahrávam ' + files.length + ' fotografi…');
+
+  const progressWrap = document.getElementById('skolka_progress_wrap');
+  const doneBanner = document.getElementById('skolka_upload_done');
+  const uploadLabel = document.getElementById('skolka_upload_label');
+  const grid = document.getElementById('skolka_modal_grid');
+
+  progressWrap.style.display = 'block';
+  doneBanner.style.display = 'none';
+  uploadLabel.style.pointerEvents = 'none';
+  uploadLabel.style.opacity = '0.45';
+  setSkolkaProgress(0, 'Nahrávam 0 / ' + files.length + '…');
+
   let ok = 0;
-  for (const file of files) {
+  for (let i = 0; i < files.length; i++) {
+    const file = files[i];
     const path = 'skolka/' + currentSkolkaFolderId + '/' + Date.now() + '_' + file.name.replace(/[^a-zA-Z0-9._-]/g,'_');
     const { error } = await db.storage.from('vcielka').upload(path, file, { upsert: true });
     if (!error) ok++;
+    setSkolkaProgress((i + 1) / files.length, 'Nahrávam ' + (i + 1) + ' / ' + files.length + '…');
   }
+
   input.value = '';
-  toast('✅ ' + ok + ' fotografi nahratých!');
-  // refresh modal grid
+  uploadLabel.style.pointerEvents = '';
+  uploadLabel.style.opacity = '';
+
+  progressWrap.style.display = 'none';
+  doneBanner.style.display = 'block';
+  document.getElementById('sk_done_count').textContent = ok + ' fotografi' + (ok === 1 ? 'a' : 'í') + ' úspešne nahratých';
+
   const { data: files2 } = await db.storage.from('vcielka').list('skolka/' + currentSkolkaFolderId, { limit: 200 });
-  const grid = document.getElementById('skolka_modal_grid');
   const photos = (files2 || []).filter(x => x.name !== '.keep');
   grid.innerHTML = photos.map(p => {
     const { data: { publicUrl } } = db.storage.from('vcielka').getPublicUrl('skolka/' + currentSkolkaFolderId + '/' + p.name);
