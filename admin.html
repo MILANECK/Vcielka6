@@ -129,6 +129,9 @@ body{font-family:'Inter',sans-serif;background:#F0F7FF;color:#1a1a1a;min-height:
 .sk-sel-count{font-family:'Quicksand',sans-serif;font-size:12px;color:#888;font-weight:600;min-width:80px;}
 .sk-sel-action{background:#f0f0f0;color:#333;font-family:'Quicksand',sans-serif;font-size:11px;font-weight:600;padding:6px 12px;border:none;border-radius:50px;cursor:pointer;}
 .sk-sel-action:hover{background:#ddd;}
+.sk-del-btn{display:inline-flex;align-items:center;gap:6px;background:#e53e3e;color:#fff;font-family:'Quicksand',sans-serif;font-size:12px;font-weight:700;padding:8px 16px;border-radius:50px;border:none;cursor:pointer;opacity:.35;pointer-events:none;transition:.2s;}
+.sk-del-btn.active{opacity:1;pointer-events:auto;}
+.sk-del-btn.active:hover{background:#c53030;}
 .storage-panel{background:#fff;border-radius:20px;padding:20px 24px;margin-bottom:20px;box-shadow:0 2px 16px rgba(26,95,168,.06);}
 .storage-bar-wrap{background:#E0ECFF;border-radius:50px;height:10px;overflow:hidden;margin:10px 0 6px;}
 .storage-bar-fill{height:100%;border-radius:50px;background:#1A5FA8;transition:width .6s ease;}
@@ -1700,7 +1703,7 @@ async function loadSkolka() {
   let totalBytes = 0;
   for (const f of folders) {
     const { data: files } = await db.storage.from('vcielka').list('skolka/' + f.id, { limit: 1000 });
-    const photos = (files || []).filter(x => x.name !== '.keep');
+    const photos = (files || []).filter(x => x.name !== '.keep' && x.id !== null);
     const count = photos.length;
     const folderBytes = photos.reduce((s, x) => s + (x.metadata?.size || 0), 0);
     totalBytes += folderBytes;
@@ -1737,6 +1740,7 @@ async function loadSkolka() {
           <button class="sk-dl-btn" id="sk_zipbtn_${f.id}" data-tip="Stiahnuť vybrané ako ZIP archív" onclick="downloadSkolkaZip('${f.id}','${f.name.replace(/'/g,"\'")}')">📦 Stiahnuť ako ZIP</button>
           <button class="sk-sel-action" data-tip="Vybrať všetky fotografie v priečinku" onclick="selectAllSkolka('${f.id}')">Vybrať všetky</button>
           <button class="sk-sel-action" data-tip="Zrušiť výber fotografií" onclick="clearSkolkaSelection('${f.id}')">Zrušiť výber</button>
+          <button class="sk-del-btn" id="sk_delbtn_${f.id}" data-tip="Vymazať vybrané fotografie" onclick="deleteSelectedSkolka('${f.id}')">✕ Vymazať vybrané</button>
         </div>
       </div>
     `;
@@ -1763,7 +1767,7 @@ function updateSkolkaStorageBar(totalBytes) {
 function renderSkolkaGrid(folderId, files) {
   const grid = document.getElementById('skolka_grid_' + folderId);
   if (!grid) return;
-  const photos = files.filter(x => x.name !== '.keep');
+  const photos = files.filter(x => x.name !== '.keep' && x.id !== null);
   if (!photos.length) {
     grid.innerHTML = '<div style="color:#aaa;font-size:12px;padding:8px 0;">Žiadne fotografie</div>';
     return;
@@ -1951,7 +1955,7 @@ async function deleteSkolkaPhotoModal(fileName) {
   toast('Fotografia vymazaná');
   const { data: files } = await db.storage.from('vcielka').list('skolka/' + currentSkolkaFolderId, { limit: 200 });
   const grid = document.getElementById('skolka_modal_grid');
-  const photos = (files || []).filter(x => x.name !== '.keep');
+  const photos = (files || []).filter(x => x.name !== '.keep' && x.id !== null);
   grid.innerHTML = photos.map(p => {
     const { data: { publicUrl } } = db.storage.from('vcielka').getPublicUrl('skolka/' + currentSkolkaFolderId + '/' + p.name);
     return `<div class="gallery-item"><img src="${publicUrl}" alt="${p.name}" loading="lazy"/><button class="gallery-item-del" data-tip="Odstrániť fotografiu" onclick="deleteSkolkaPhotoModal('${p.name}')">✕</button></div>`;
@@ -1960,11 +1964,16 @@ async function deleteSkolkaPhotoModal(fileName) {
 
 async function deleteSkolkaFolder(folderId, folderName) {
   if (!confirm('Vymazať celý priečinok "' + folderName + '" aj so všetkými fotografiami?')) return;
-  // list and delete all files
+  // list and delete all files (including thumbs subfolder contents)
   const { data: files } = await db.storage.from('vcielka').list('skolka/' + folderId, { limit: 500 });
   if (files?.length) {
-    const paths = files.map(f => 'skolka/' + folderId + '/' + f.name);
-    await db.storage.from('vcielka').remove(paths);
+    const paths = files.filter(f => f.id !== null).map(f => 'skolka/' + folderId + '/' + f.name);
+    if (paths.length) await db.storage.from('vcielka').remove(paths);
+  }
+  const { data: thumbFiles } = await db.storage.from('vcielka').list('skolka/' + folderId + '/thumbs', { limit: 500 });
+  if (thumbFiles?.length) {
+    const thumbPaths = thumbFiles.filter(f => f.id !== null).map(f => 'skolka/' + folderId + '/thumbs/' + f.name);
+    if (thumbPaths.length) await db.storage.from('vcielka').remove(thumbPaths);
   }
   await db.from('skolka_folders').delete().eq('id', folderId);
   toast('Priečinok vymazaný');
@@ -2263,6 +2272,25 @@ function clearSkolkaSelection(folderId) {
   updateSelectionBar(folderId);
 }
 
+async function deleteSelectedSkolka(folderId) {
+  const sel = skolkaSelection.get(folderId);
+  if (!sel?.size) return;
+  const n = sel.size;
+  if (!confirm(`Vymazať ${n} vybraných fotografií? Táto akcia je nevratná.`)) return;
+  const paths = [], thumbPaths = [];
+  for (const [name] of sel) {
+    paths.push('skolka/' + folderId + '/' + name);
+    thumbPaths.push('skolka/' + folderId + '/thumbs/' + name);
+  }
+  await db.storage.from('vcielka').remove(paths);
+  await db.storage.from('vcielka').remove(thumbPaths);
+  toast('✅ ' + n + ' fotografií vymazaných');
+  clearSkolkaSelection(folderId);
+  const { data: files } = await db.storage.from('vcielka').list('skolka/' + folderId, { limit: 1000 });
+  const photos = (files || []).filter(x => x.name !== '.keep' && x.id !== null);
+  renderSkolkaGrid(folderId, photos);
+}
+
 function updateSelectionBar(folderId) {
   const count = skolkaSelection.get(folderId)?.size || 0;
   const countEl = document.getElementById('sk_selcount_' + folderId);
@@ -2271,6 +2299,7 @@ function updateSelectionBar(folderId) {
   if (countEl) countEl.textContent = count > 0 ? count + (count === 1 ? ' vybraná' : count < 5 ? ' vybrané' : ' vybraných') : '';
   dlBtn?.classList.toggle('active', count > 0);
   zipBtn?.classList.toggle('active', count > 0);
+  document.getElementById('sk_delbtn_' + folderId)?.classList.toggle('active', count > 0);
 }
 
 async function downloadSkolkaSelected(folderId) {
