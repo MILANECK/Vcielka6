@@ -270,10 +270,10 @@ button{outline:none;border:none;}
 .service-card.yellow .service-img{background:var(--yellow-bright);}
 .service-card.green .service-img{background:var(--green-bright);}
 .service-card.red .service-img{background:var(--red-bright);}
-.service-body{flex:0 0 auto;padding:12px 14px 14px;overflow:hidden;}
-.service-body h3{font-size:15px;color:#1a1a1a;margin-bottom:0;font-weight:700;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;line-height:1.38;min-height:calc(15px * 1.38 * 2);}
+.service-body{flex:0 0 auto;padding:12px 14px 20px;overflow:hidden;}
+.service-body h3{font-size:15px;color:#1a1a1a;margin:0;font-weight:700;line-height:1.38;height:calc(15px * 1.38 * 2);overflow:hidden;}
 .service-body p{font-family:'Inter',sans-serif;font-size:13px;color:var(--text-muted);line-height:1.5;max-height:0;overflow:hidden;opacity:0;margin-top:0;transition:max-height .44s cubic-bezier(.4,0,.2,1),opacity .4s ease,margin-top .44s cubic-bezier(.4,0,.2,1);}
-.service-card:hover .service-body p{max-height:100px;opacity:1;margin-top:5px;}
+.service-card:hover .service-body p{max-height:100px;opacity:1;margin-top:2px;}
 .service-card.clickable{cursor:pointer;}
 .act-popup-overlay{display:flex;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:5000!important;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(4px);opacity:0;visibility:hidden;pointer-events:none;transition:opacity .32s ease,visibility .32s;}
 .act-popup-overlay.open{opacity:1;visibility:visible;pointer-events:auto;}
