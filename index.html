@@ -248,6 +248,7 @@ button{outline:none;border:none;}
   flex-direction:column;
   height:270px;
   transition:transform .38s cubic-bezier(.4,0,.2,1);
+  will-change:transform;
 }
 .service-card:hover{transform:translateY(-3px);}
 .service-card.blue{background:var(--blue-card);}
@@ -270,8 +271,8 @@ button{outline:none;border:none;}
 .service-card.yellow .service-img{background:var(--yellow-bright);}
 .service-card.green .service-img{background:var(--green-bright);}
 .service-card.red .service-img{background:var(--red-bright);}
-.service-body{flex:0 0 auto;padding:12px 14px 20px;overflow:hidden;}
-.service-body h3{font-size:15px;color:#1a1a1a;margin:0;font-weight:700;line-height:1.38;height:calc(15px * 1.38 * 2);overflow:hidden;}
+.service-body{flex:0 0 auto;padding:13px 14px 20px;overflow:hidden;background:inherit;margin-top:-1px;}
+.service-body h3{font-size:15px;color:#1a1a1a;margin:0;font-weight:700;line-height:1.38;max-height:calc(15px * 1.38 * 2);overflow:hidden;}
 .service-body p{font-family:'Inter',sans-serif;font-size:13px;color:var(--text-muted);line-height:1.5;max-height:0;overflow:hidden;opacity:0;margin-top:0;transition:max-height .44s cubic-bezier(.4,0,.2,1),opacity .4s ease,margin-top .44s cubic-bezier(.4,0,.2,1);}
 .service-card:hover .service-body p{max-height:100px;opacity:1;margin-top:2px;}
 .service-card.clickable{cursor:pointer;}
@@ -314,7 +315,7 @@ button{outline:none;border:none;}
 .tl-time{font-family:'Quicksand',sans-serif;font-size:12px;font-weight:700;color:#5590C4;margin-bottom:1px;}
 .tl-name{font-family:'Quicksand',sans-serif;font-size:15px;font-weight:700;color:#1a1a1a;}
 .tl-desc{font-family:'Inter',sans-serif;font-size:14px;color:var(--text-muted);}
-.z-item{background:rgba(255,255,255,.6);border-radius:18px;padding:14px 16px;display:flex;gap:12px;align-items:center;margin-bottom:0;}
+.z-item{background:rgba(255,255,255,.6);border-radius:18px;padding:14px 16px;display:flex;gap:12px;align-items:center;margin-bottom:0;position:relative;overflow:hidden;isolation:isolate;}
 .z-icon{font-size:24px;width:40px;height:40px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
 .z-icon img{width:40px;height:40px;object-fit:contain;filter:drop-shadow(0 3px 8px rgba(0,0,0,.13));}
 .z-item:last-child{margin-bottom:0;}
@@ -372,7 +373,7 @@ button{outline:none;border:none;}
 .news-card.red .news-img{background:var(--red-bright);}
 .news-img img{width:100%;height:100%;object-fit:cover;transition:transform .44s cubic-bezier(.4,0,.2,1);}
 .news-card:hover .news-img img{transform:translateY(-6px) scale(1.03);}
-.news-body{flex:0 0 auto;padding:12px 17px 20px;overflow:hidden;}
+.news-body{flex:0 0 auto;padding:13px 17px 20px;overflow:hidden;background:inherit;margin-top:-1px;}
 .news-date{font-family:'Inter',sans-serif;font-size:12px;color:var(--text-muted);margin-bottom:4px;font-weight:500;}
 .news-title{font-family:'Quicksand',sans-serif;font-size:16px;font-weight:700;color:#1a1a1a;margin:0;line-height:1.38;max-height:calc(16px * 1.38 * 2);overflow:hidden;}
 .news-excerpt{font-family:'Inter',sans-serif;font-size:13px;color:#666;line-height:1.5;max-height:0;overflow:hidden;opacity:0;margin-top:0;transition:max-height .44s cubic-bezier(.4,0,.2,1),opacity .4s ease,margin-top .44s cubic-bezier(.4,0,.2,1);}
@@ -1132,7 +1133,7 @@ button{outline:none;border:none;}
       </div>
       <!-- ZVEDAVA EXPAND -->
       <div style="margin-top:36px;text-align:center;">
-        <div style="display:flex;gap:12px;justify-content:center;">
+        <div style="display:inline-flex;gap:12px;align-items:center;">
           <button class="about-expand-btn" id="zvedavaBtn" onclick="toggleZvedava()">
             Viac o programe
             <svg class="arrow" width="12" height="7" viewBox="0 0 12 7" fill="none"><path d="M1 1l5 5 5-5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
@@ -1480,37 +1481,27 @@ document.querySelectorAll('.fade-in').forEach(el=>obs.observe(el));
   so.observe(statsEl);
 })();
 
-// ===== 3D TILT + MAGENTA SPOTLIGHT =====
+// ===== MAGENTA SPOTLIGHT (CATEGORY PANELS) =====
 (function(){
-  function addTiltGlow(els, maxTilt, radius) {
-    els.forEach(function(el) {
-      if (!el) return;
-      var glow = document.createElement('div');
-      glow.style.cssText = 'position:absolute;inset:0;border-radius:inherit;pointer-events:none;opacity:0;transition:opacity .35s ease;z-index:0;';
-      el.insertBefore(glow, el.firstChild);
-      var raf;
-      el.addEventListener('mousemove', function(e) {
-        cancelAnimationFrame(raf);
-        raf = requestAnimationFrame(function() {
-          var r = el.getBoundingClientRect();
-          var x = e.clientX - r.left, y = e.clientY - r.top;
-          var rx = (x / r.width - 0.5) * 2, ry = (y / r.height - 0.5) * 2;
-          el.style.transform = 'perspective(700px) rotateX(' + (-ry * maxTilt).toFixed(2) + 'deg) rotateY(' + (rx * maxTilt).toFixed(2) + 'deg) translateY(-2px)';
-          glow.style.background = 'radial-gradient(circle ' + radius + 'px at ' + x + 'px ' + y + 'px, rgba(220,0,160,.14), transparent 70%)';
-          glow.style.opacity = '1';
-        });
-      });
-      el.addEventListener('mouseleave', function() {
-        cancelAnimationFrame(raf);
-        el.style.transition = 'transform .45s cubic-bezier(.4,0,.2,1)';
-        el.style.transform = '';
-        glow.style.opacity = '0';
-        setTimeout(function(){ el.style.transition = ''; }, 450);
+  document.querySelectorAll('.z-item').forEach(function(el){
+    var glow = document.createElement('div');
+    glow.style.cssText = 'position:absolute;inset:0;border-radius:inherit;pointer-events:none;opacity:0;transition:opacity 1.5s ease;z-index:-1;';
+    el.insertBefore(glow, el.firstChild);
+    var raf;
+    el.addEventListener('mousemove', function(e){
+      cancelAnimationFrame(raf);
+      raf = requestAnimationFrame(function(){
+        var r = el.getBoundingClientRect();
+        var x = e.clientX - r.left, y = e.clientY - r.top;
+        glow.style.background = 'radial-gradient(circle 300px at '+x+'px '+y+'px, rgba(220,0,160,.18), transparent 70%)';
+        glow.style.opacity = '1';
       });
     });
-  }
-  addTiltGlow(Array.from(document.querySelectorAll('#zvedavaBtn,#ucebneBtn')), 5, 60);
-  addTiltGlow(Array.from(document.querySelectorAll('.price-card')), 3, 130);
+    el.addEventListener('mouseleave', function(){
+      cancelAnimationFrame(raf);
+      glow.style.opacity = '0';
+    });
+  });
 })();
 
 // ===== GALLERY SCROLL DOTS =====
