@@ -95,7 +95,7 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:#c8d8e4;color:#1a2a3a
   width:210px;background:rgba(255,255,255,.95);backdrop-filter:blur(16px);
   border-radius:22px;padding:16px;display:none;flex-direction:column;gap:10px;
   box-shadow:0 8px 32px rgba(0,94,159,.15);z-index:199;
-  max-height:calc(100vh - 40px);overflow:hidden}
+  height:calc(100vh - 40px);max-height:680px;overflow:hidden}
 #photos-panel.open{display:flex}
 .panel-hdr{display:flex;align-items:center;justify-content:space-between;cursor:grab;user-select:none;padding-bottom:6px;border-bottom:1px solid rgba(0,94,159,.1);margin-bottom:2px}.panel-hdr:active{cursor:grabbing}
 .panel-hdr-title{font-weight:800;font-size:14px;display:flex;align-items:center;gap:6px}
@@ -235,7 +235,7 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:#c8d8e4;color:#1a2a3a
   #float-bottom{gap:7px;bottom:10px}
   #item-tb{bottom:80px;padding:5px 10px;gap:5px}
   .itb-btn{width:42px;height:42px;font-size:17px}
-  #photos-panel{width:155px;left:58px;padding:11px;font-size:12px;max-height:calc(100vh - 40px)}
+  #photos-panel{width:155px;left:58px;padding:11px;font-size:12px;height:calc(100vh - 40px);max-height:580px}
   .photo-thumb img{height:60px}
   .panel-hdr-title{font-size:12px}
   #photo-count{font-size:10px}
@@ -776,12 +776,17 @@ async function sbShowFolders(){
   content.innerHTML = '';
   for(const f of folders){
     const { data: files } = await sbDb.storage.from('vcielka').list('skolka/' + f.id, {limit:200});
-    const count = (files||[]).filter(x=>x.name!=='.keep'&&x.id!==null).length;
+    const photos = (files||[]).filter(x=>x.name!=='.keep'&&x.id!==null);
+    const count = photos.length;
     const btn = document.createElement('div');
     btn.className = 'sb-folder-btn';
-    const folderThumb = f.cover_url
-      ? `<img src="${sbThumbUrl(f.cover_url)}" data-full="${f.cover_url}" style="width:64px;height:48px;object-fit:cover;border-radius:8px;" alt="${f.name}" loading="lazy" onerror="this.src=this.dataset.full;this.onerror=null;">`
-      : `<div class="sb-folder-icon">📁</div>`;
+    let folderThumb = `<div class="sb-folder-icon">📁</div>`;
+    if (f.cover_url) {
+      folderThumb = `<img src="${sbThumbUrl(f.cover_url)}" data-full="${f.cover_url}" style="width:64px;height:48px;object-fit:cover;border-radius:8px;" alt="${f.name}" loading="lazy" onerror="this.src=this.dataset.full;this.onerror=null;">`;
+    } else if (photos.length) {
+      const { data: { publicUrl } } = sbDb.storage.from('vcielka').getPublicUrl('skolka/' + f.id + '/' + photos[0].name);
+      folderThumb = `<img src="${sbThumbUrl(publicUrl)}" data-full="${publicUrl}" style="width:64px;height:48px;object-fit:cover;border-radius:8px;" alt="${f.name}" loading="lazy" onerror="this.src=this.dataset.full;this.onerror=null;">`;
+    }
     btn.innerHTML = `${folderThumb}<div>${f.name}</div><div class="sb-folder-count">${count} fotografi${count===1?'a':'í'}</div>`;
     btn.onclick = () => sbOpenFolder(f.id, f.name);
     content.appendChild(btn);
@@ -844,32 +849,36 @@ function sbTogglePhoto(div, url, name){
 
 async function sbImport(){
   if(!sbSelected.length) return;
+  const btn = document.getElementById('sb-pridat-btn');
+  if(btn) btn.disabled = true;
   let added = 0;
   for(const {url, name} of sbSelected){
     if(photos.length >= 5) break;
-    // fetch as blob → dataURL so it works offline too
     try{
       const resp = await fetch(url);
       const blob = await resp.blob();
       await new Promise(res => {
         const fr = new FileReader();
         fr.onload = ev => {
-          photos.push({id: uid(), src: ev.target.result, thumb: sbThumbUrl(url), name});
-          added++;
+          if(photos.length < 5){
+            photos.push({id: uid(), src: ev.target.result, thumb: sbThumbUrl(url), name});
+            added++;
+          }
           res();
         };
         fr.readAsDataURL(blob);
       });
     }catch(e){
-      // fallback: use URL directly
-      photos.push({id: uid(), src: url, thumb: sbThumbUrl(url), name});
-      added++;
+      if(photos.length < 5){
+        photos.push({id: uid(), src: url, thumb: sbThumbUrl(url), name});
+        added++;
+      }
     }
   }
   renderPanel();
   sbClose();
   if(!panOpen) togglePanel();
-  toast('✅ ' + added + ' fotografi${added===1?"a":"í"} pridaných!');
+  toast(`✅ ${added} fotografi${added===1?'a':'í'} pridaných!`);
 }
 
 /* ── Draggable photos panel ── */

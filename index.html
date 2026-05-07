@@ -11,7 +11,7 @@
 <link rel="icon" type="image/png" href="vcielka_logo2.png"/>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
-<link href="https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,200..1000;1,200..1000&family=Quicksand:wght@500;600;700&family=Inter:wght@400;500&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@700;900&family=Quicksand:wght@500;600;700&family=Inter:wght@400;500&display=swap" rel="stylesheet"/>
 <style>
 /* ===== RESET & BASE ===== */
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
@@ -1016,8 +1016,8 @@ button{outline:none;border:none;}
   <!-- dark overlay for readability -->
   <div class="hero-overlay"></div>
   <!-- floating bee decorations -->
-  <img class="hero-bee-deco" src="https://www.skolka-vcielka.sk/images/header_imgs/vcela2.png" alt=""/>
-  <img class="hero-bee-deco2" src="https://www.skolka-vcielka.sk/images/header_imgs/vcela3.png" alt=""/>
+  <img class="hero-bee-deco" src="vcela2.png" alt=""/>
+  <img class="hero-bee-deco2" src="vcela3.png" alt=""/>
   <!-- content -->
   <div style="width:100%;max-width:1100px;margin:0 auto;padding:0 0 0 48px;" class="hero-wrapper">
   <div class="hero-content fade-in">
@@ -1702,6 +1702,8 @@ document.addEventListener('keydown',e=>{
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
+// ===== HERO CACHE: show last-known hero immediately, before Supabase loads =====
+(function(){ const c=localStorage.getItem('hero_photo_cache'); if(c){ const bg=document.getElementById('cms-hero-bg'); if(bg){bg.src=c;bg.style.display='block';} } })();
 // ===== CMS LOADER =====
 function thumbUrl(url){ if(!url)return url; var i=url.lastIndexOf('/'); return url.slice(0,i+1)+'thumbs/'+url.slice(i+1); }
 const SUPA_URL = 'https://fmjtzuligqsugsauqkgz.supabase.co';
@@ -1727,7 +1729,7 @@ async function loadCMS() {
       if (_heroTitle) { const raw = s.hero_title || 'Kde deti rastú a objavujú svet'; _heroTitle.innerHTML = raw.replace('rastú','<em>rastú</em>'); _heroTitle.style.opacity='1'; }
       const _heroSub = document.getElementById('cms-hero-subtitle');
       if (_heroSub) { _heroSub.textContent = s.hero_subtitle || 'Súkromná materská škola s odborným tímom, bohatým programom Zvedavá Včielka a láskyplným prostredím pre deti od 2,5 do 6 rokov.'; _heroSub.style.opacity='1'; }
-      if (s.hero_photo) { const bg = document.getElementById('cms-hero-bg'); if(bg) { bg.src = s.hero_photo; bg.style.display='block'; } }
+      if (s.hero_photo) { const bg = document.getElementById('cms-hero-bg'); if(bg) { bg.src = s.hero_photo; bg.style.display='block'; } localStorage.setItem('hero_photo_cache', s.hero_photo); }
       if (s.logo_url) { document.querySelectorAll('.cms-logo').forEach(el => el.src = s.logo_url); }
       // Stats
       ['1','2','3','4'].forEach(function(i){

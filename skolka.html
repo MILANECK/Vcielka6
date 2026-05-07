@@ -331,6 +331,13 @@ async function renderFolders(folders) {
     grid.innerHTML = '<div class="vs-empty">📭 Zatiaľ žiadne fotografie.<br><small>Administrátor pridá priečinky čoskoro.</small></div>';
     return;
   }
+  // RPC doesn't return cover_url (added after function was created) — fetch separately
+  const ids = folders.map(f => f.id);
+  const { data: coverRows } = await db.from('skolka_folders').select('id,cover_url').in('id', ids);
+  if (coverRows) {
+    const coverMap = Object.fromEntries(coverRows.map(r => [r.id, r.cover_url]));
+    folders.forEach(f => { if (!f.cover_url) f.cover_url = coverMap[f.id] || null; });
+  }
   grid.innerHTML = '';
   for (const f of folders) {
     const { data: files } = await db.storage.from('vcielka').list('skolka/'+f.id,{limit:200});
