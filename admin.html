@@ -166,6 +166,8 @@ body{font-family:'Inter',sans-serif;background:#F0F7FF;color:#1a1a1a;min-height:
 /* BEE UPLOAD PROGRESS */
 @keyframes sk-bee-fly{0%,100%{transform:translateY(0) rotate(-7deg);}50%{transform:translateY(-5px) rotate(7deg);}}
 #sk_bee_wrap img{animation:sk-bee-fly .9s ease-in-out infinite;}
+@keyframes sk-party-jump{0%,100%{transform:translateY(0) scale(1);}30%{transform:translateY(-14px) scale(1.15);}55%{transform:translateY(-5px) scale(1.05);}75%{transform:translateY(-10px) scale(1.1);}}
+#sk_done_icon{display:inline-block;animation:sk-party-jump 1s ease infinite;}
 </style>
 </head>
 <body>
@@ -844,12 +846,12 @@ body{font-family:'Inter',sans-serif;background:#F0F7FF;color:#1a1a1a;min-height:
           <div id="sk_prog_label" style="text-align:center;font-family:'Quicksand',sans-serif;font-weight:700;font-size:13px;color:#1A5FA8;margin-top:4px;">Nahrávam…</div>
         </div>
         <!-- Upload done banner -->
-        <div id="skolka_upload_done" style="display:none;background:linear-gradient(135deg,#E8F5E9,#F0FFF4);border:2.5px solid #81C784;border-radius:18px;padding:20px 24px;text-align:center;flex-shrink:0;">
-          <div style="font-size:36px;margin-bottom:6px;">🎉</div>
-          <div style="font-family:'Quicksand',sans-serif;font-weight:800;font-size:20px;color:#2E7D32;letter-spacing:-.3px;">Fotografie úspešne nahrané!</div>
-          <div id="sk_done_count" style="font-family:'Quicksand',sans-serif;font-size:14px;color:#388E3C;margin-top:6px;font-weight:700;"></div>
+        <div id="skolka_upload_done" style="display:none;background:#2E7D32;border-radius:18px;padding:20px 24px;text-align:center;flex-shrink:0;">
+          <div id="sk_done_icon" style="font-size:36px;margin-bottom:6px;">🎉</div>
+          <div style="font-family:'Quicksand',sans-serif;font-weight:800;font-size:20px;color:#fff;letter-spacing:-.3px;">Fotografie úspešne nahrané!</div>
+          <div id="sk_done_count" style="font-family:'Quicksand',sans-serif;font-size:14px;color:rgba(255,255,255,.85);margin-top:6px;font-weight:700;"></div>
         </div>
-        <div id="skolka_modal_grid" class="gallery-grid" style="overflow-y:auto;flex:1;min-height:0;"></div>
+        <div id="skolka_modal_grid" class="gallery-grid" style="overflow-y:auto;flex:1;min-height:0;grid-auto-rows:130px;align-content:start;"></div>
       </div>
     </div>
 
