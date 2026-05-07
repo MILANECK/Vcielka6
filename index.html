@@ -224,8 +224,12 @@ button{outline:none;border:none;}
    STATS
 =========================== */
 .stats{background:#fffdf6;display:flex;flex-wrap:wrap;justify-content:center;border-radius:0 0 36px 36px;}
-.stat{flex:1;min-width:100px;padding:40px 16px;text-align:center;border-right:1px solid rgba(0,0,0,.06);}
+.stat{flex:1;min-width:100px;padding:40px 16px;text-align:center;border-right:1px solid rgba(0,0,0,.06);opacity:0;transform:translateY(14px);transition:opacity .45s ease,transform .45s ease;}
 .stat:last-child{border-right:none;}
+.stats.stats-anim .stat:nth-child(1){opacity:1;transform:none;transition-delay:0s;}
+.stats.stats-anim .stat:nth-child(2){opacity:1;transform:none;transition-delay:.16s;}
+.stats.stats-anim .stat:nth-child(3){opacity:1;transform:none;transition-delay:.32s;}
+.stats.stats-anim .stat:nth-child(4){opacity:1;transform:none;transition-delay:.48s;}
 .stat-num{font-family:'Nunito',sans-serif;font-size:26px;font-weight:700;color:var(--blue);}
 .stat-label{font-family:'Inter',sans-serif;font-size:11px;color:var(--text-muted);margin-top:2px;}
 
@@ -1024,7 +1028,7 @@ button{outline:none;border:none;}
 
 <div style="position:relative;overflow:hidden;">
 <div class="cloud-deco cloud-3" style="position:absolute;pointer-events:none;opacity:0.4;z-index:0;top:10%;left:3%;"><svg viewBox="0 0 74.6 41.8" xmlns="http://www.w3.org/2000/svg" style="width:80px;display:block;"><path d="M50.3,5.3c-3.3,0-6.2,1.1-8.6,3C38.2,3.3,32.5,0,26,0,15.7,0,7.2,8.4,7.2,18.8v1.5c-4.1.8-7.2,4.3-7.2,8.6,0,3.8,2.5,7,5.9,8.5,2.2,1,4.8,1.4,7.5,1.2,2.2,2,5.1,3.2,8.2,3.2h41.1c6.6,0,11.9-5.3,11.9-11.9,0-16.2-8.4-24.6-24.3-24.6Z" fill="#fff"/></svg></div><div class="cloud-deco cloud-7" style="position:absolute;pointer-events:none;opacity:0.4;z-index:0;top:5%;right:-1%;"><svg viewBox="0 0 198.9 90.1" xmlns="http://www.w3.org/2000/svg" style="width:160px;display:block;"><path d="M142.2,47.3c0-18.8-15.3-34.1-34.1-34.1-8.2,0-15.7,2.9-21.6,7.6C77.8,8.2,63.5,0,47.2,0,21.1,0,0,21.1,0,47.2v13c0,16.5,13.4,29.9,29.9,29.9h139.1c16.5,0,29.9-13.4,29.9-29.9,0,0,0-11.9-56.7-12.9Z" fill="#fff"/></svg></div><div class="cloud-deco cloud-11" style="position:absolute;pointer-events:none;opacity:0.4;z-index:0;bottom:5%;left:45%;"><svg viewBox="0 0 74.6 41.8" xmlns="http://www.w3.org/2000/svg" style="width:60px;display:block;"><path d="M50.3,5.3c-3.3,0-6.2,1.1-8.6,3C38.2,3.3,32.5,0,26,0,15.7,0,7.2,8.4,7.2,18.8v1.5c-4.1.8-7.2,4.3-7.2,8.6,0,3.8,2.5,7,5.9,8.5,2.2,1,4.8,1.4,7.5,1.2,2.2,2,5.1,3.2,8.2,3.2h41.1c6.6,0,11.9-5.3,11.9-11.9,0-16.2-8.4-24.6-24.3-24.6Z" fill="#fff"/></svg></div>
-<div class="stats bg-white fade-in" style="position:relative;z-index:1;">
+<div class="stats bg-white" style="position:relative;z-index:1;">
   <div class="stat"><div class="stat-num">3</div><div class="stat-label">triedy</div></div>
   <div class="stat"><div class="stat-num">2,5–6</div><div class="stat-label">vek detí (roky)</div></div>
   <div class="stat"><div class="stat-num">15+</div><div class="stat-label">aktivít & krúžkov</div></div>
@@ -1295,12 +1299,6 @@ button{outline:none;border:none;}
           </iframe>
         </div>
       </div>
-      <div style="text-align:center;margin-top:40px;">
-        <a href="#home" style="display:inline-flex;align-items:center;gap:8px;border:1.5px solid rgba(13,61,110,.3);color:var(--navy);padding:10px 24px;border-radius:50px;font-family:'Quicksand',sans-serif;font-size:13px;font-weight:700;text-decoration:none;transition:background .2s;" onmouseover="this.style.background='rgba(13,61,110,.07)'" onmouseout="this.style.background='transparent'">
-          <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M7 11V3M3 7l4-4 4 4" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-          Späť na vrch
-        </a>
-      </div>
     </div><!-- /.kontakt-bottom -->
   </div><!-- /.kontakt-panel-wrap -->
 </section>
@@ -1342,6 +1340,12 @@ button{outline:none;border:none;}
       <a id="cms-footer-email-link" href="#" class="footer-link"></a>
       <span class="footer-link">Po–Pia: 7:00 – 17:00</span>
     </div>
+  </div>
+  <div style="text-align:center;padding:8px 0 20px;">
+    <a href="#home" style="display:inline-flex;align-items:center;gap:8px;border:1.5px solid rgba(255,255,255,.3);color:rgba(255,255,255,.7);padding:9px 22px;border-radius:50px;font-family:'Quicksand',sans-serif;font-size:13px;font-weight:700;text-decoration:none;transition:color .2s,border-color .2s;" onmouseover="this.style.color='#fff';this.style.borderColor='rgba(255,255,255,.65)'" onmouseout="this.style.color='rgba(255,255,255,.7)';this.style.borderColor='rgba(255,255,255,.3)'">
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M7 11V3M3 7l4-4 4 4" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      Späť na vrch
+    </a>
   </div>
   <div class="footer-bottom">
     <span class="footer-copy" id="cms-footer-copy-left">© 2025 Materská škola Včielka · Všetky práva vyhradené</span>
@@ -1447,6 +1451,16 @@ const obs=new IntersectionObserver((entries)=>{
   entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');}});
 },{threshold:0.12});
 document.querySelectorAll('.fade-in').forEach(el=>obs.observe(el));
+
+// ===== STATS SEQUENTIAL FADE-IN =====
+(function(){
+  const statsEl=document.querySelector('.stats');
+  if(!statsEl)return;
+  const so=new IntersectionObserver(entries=>{
+    entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('stats-anim');so.unobserve(e.target);}});
+  },{threshold:0.2});
+  so.observe(statsEl);
+})();
 
 // ===== GALLERY SCROLL DOTS =====
 const track=document.getElementById('galleryTrack');
