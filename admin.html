@@ -515,10 +515,13 @@ body{font-family:'Inter',sans-serif;background:#F0F7FF;color:#1a1a1a;min-height:
       <div class="page-title">🖼️ Galéria</div>
       <div class="page-sub">Nahrávajte a spravujte fotografie zo života škôlky</div>
       <div class="card" style="margin-bottom:20px;">
-        <label id="galleryUploadBtn" style="display:inline-flex;align-items:center;gap:10px;background:#F9C832;color:#1a1a1a;font-family:'Quicksand',sans-serif;font-size:13px;font-weight:700;padding:12px 24px;border-radius:50px;cursor:pointer;">
-          <input type="file" accept="image/*" multiple style="display:none;" onchange="uploadGalleryPhotos(this)"/>
-          📷 + Nahrať fotografie
-        </label>
+        <div style="display:flex;flex-wrap:wrap;gap:10px;align-items:center;">
+          <label id="galleryUploadBtn" style="display:inline-flex;align-items:center;gap:10px;background:#F9C832;color:#1a1a1a;font-family:'Quicksand',sans-serif;font-size:13px;font-weight:700;padding:12px 24px;border-radius:50px;cursor:pointer;">
+            <input type="file" accept="image/*" multiple style="display:none;" onchange="uploadGalleryPhotos(this)"/>
+            📷 + Nahrať fotografie
+          </label>
+          <button onclick="regenerateGalleryThumbs()" style="display:inline-flex;align-items:center;gap:8px;background:#EEF7FF;color:#1A5FA8;font-family:'Quicksand',sans-serif;font-size:13px;font-weight:700;padding:12px 20px;border-radius:50px;border:none;cursor:pointer;">🔄 Regenerovať náhľady</button>
+        </div>
         <p style="font-size:12px;color:#888;margin-top:10px;">Môžete vybrať viacero fotografií naraz. Kliknite na ✕ pre vymazanie.</p>
       </div>
       <div class="gallery-grid" id="galleryItemsGrid">
@@ -1527,6 +1530,29 @@ async function uploadGalleryPhotos(input) {
   await loadGallery();
 }
 
+async function regenerateGalleryThumbs() {
+  if (!confirm('Regenerovať náhľady pre všetky fotografie v galérii?\n\nMôže to trvať niekoľko minút.')) return;
+  const { data, error } = await db.from('gallery').select('*').order('sort_order');
+  if (error || !data?.length) { toast('Žiadne fotografie v galérii.'); return; }
+  let done = 0, errors = 0;
+  toast('Spracúvam ' + data.length + ' fotografií…');
+  for (const g of data) {
+    try {
+      const resp = await fetch(g.photo_url);
+      const blob = await resp.blob();
+      const thumb = await generateThumb(blob, 500);
+      if (thumb) {
+        const i = g.photo_url.lastIndexOf('/');
+        const fname = g.photo_url.slice(i + 1);
+        await db.storage.from('vcielka').upload('gallery/thumbs/' + fname, thumb, { upsert: true, contentType: 'image/jpeg' });
+        done++;
+      }
+    } catch(e) { errors++; console.error('Gallery thumb regen failed:', g.id, e); }
+  }
+  toast('✅ ' + done + ' náhľadov regenerovaných' + (errors ? ' (' + errors + ' chýb)' : '') + '.');
+  await loadGallery();
+}
+
 async function deleteGalleryItem(id) {
   if (!confirm('Odstrániť túto fotografiu?')) return;
   const el = document.getElementById('gitem-'+id);
@@ -1789,8 +1815,13 @@ function renderSkolkaGrid(folderId, files, coverUrl) {
 
 async function setCoverPhoto(folderId, url) {
   localStorage.setItem('sk_cover_' + folderId, url);
-  await db.from('skolka_folders').update({ cover_url: url }).eq('id', folderId);
-  toast('✅ Titulná fotografia nastavená');
+  const { error } = await db.from('skolka_folders').update({ cover_url: url }).eq('id', folderId);
+  if (error) {
+    console.error('setCoverPhoto DB error:', error);
+    toast('⚠️ Uložené len lokálne – DB chyba: ' + error.message, 'error');
+  } else {
+    toast('✅ Titulná fotografia nastavená');
+  }
   loadSkolka();
 }
 

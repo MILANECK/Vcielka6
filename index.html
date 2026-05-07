@@ -671,7 +671,7 @@ button{outline:none;border:none;}
 #ucebneInlineText.open{
   padding:18px 0;
 }
-.ucebne-btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;font-family:'Quicksand',sans-serif;font-size:15px;font-weight:700;color:#c1006d;background:rgba(255,255,255,.7);border:none;cursor:pointer;padding:10px 24px;min-width:190px;border-radius:50px;transition:background .25s,box-shadow .25s;backdrop-filter:blur(6px);box-shadow:0 2px 12px rgba(26,95,168,.1);position:relative;overflow:hidden;}
+.ucebne-btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;font-family:'Quicksand',sans-serif;font-size:15px;font-weight:700;color:var(--blue);background:rgba(255,255,255,.7);border:none;cursor:pointer;padding:10px 24px;min-width:190px;border-radius:50px;transition:background .25s,box-shadow .25s;backdrop-filter:blur(6px);box-shadow:0 2px 12px rgba(26,95,168,.1);position:relative;overflow:hidden;}
 .ucebne-btn:hover{background:#fffdf6;box-shadow:0 4px 20px rgba(26,95,168,.15);}
 @media(max-width:720px){.ucebne-grid{grid-template-columns:repeat(2,1fr);} .ucebne-row-sep{display:none;}}
 @media(max-width:420px){.ucebne-grid{gap:8px;}}
@@ -723,7 +723,7 @@ button{outline:none;border:none;}
   font-family:'Quicksand',sans-serif;
   font-size:15px;
   font-weight:700;
-  color:#c1006d;
+  color:var(--blue);
   background:rgba(255,255,255,.7);
   border:none;
   cursor:pointer;
@@ -850,7 +850,7 @@ button{outline:none;border:none;}
   font-family:'Quicksand',sans-serif;
   font-size:15px;
   font-weight:700;
-  color:#c1006d;
+  color:var(--blue);
   background:rgba(255,255,255,.7);
   border:none;
   cursor:pointer;
@@ -1142,8 +1142,8 @@ button{outline:none;border:none;}
         <div class="z-item"><span id="cms-icon-intellect" class="z-icon">🔬</span><div><div class="z-item-title">Intelektuálny rozvoj</div><div class="z-item-desc">Zvedavosť, pokusy, objavovanie</div></div></div>
       </div>
       <!-- ZVEDAVA EXPAND -->
-      <div style="margin-top:36px;display:flex;justify-content:center;">
-        <div style="display:inline-flex;gap:12px;align-items:center;">
+      <div style="margin-top:36px;">
+        <div style="display:flex;justify-content:center;gap:12px;align-items:center;">
           <button class="about-expand-btn" id="zvedavaBtn" onclick="toggleZvedava()">
             Viac o programe
             <svg class="arrow" width="12" height="7" viewBox="0 0 12 7" fill="none"><path d="M1 1l5 5 5-5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
@@ -1828,7 +1828,7 @@ async function loadCMS() {
     if (gallery && gallery.length) {
       const track = document.getElementById('galleryTrack');
       if (track) track.innerHTML = gallery.map(g => `
-        <div class="gallery-item"><img src="${thumbUrl(g.photo_url)}" data-full="${g.photo_url}" alt="foto" loading="lazy" onerror="this.src=this.dataset.full;this.onerror=null;"/></div>
+        <div class="gallery-item"><img src="${thumbUrl(g.photo_url)}" data-full="${g.photo_url}" alt="foto" loading="eager" onerror="this.src=this.dataset.full;this.onerror=null;"/></div>
       `).join('');
     }
 
