@@ -14,7 +14,21 @@
 body{font-family:'Plus Jakarta Sans',sans-serif;background:#dce8f4;min-height:100vh;color:#1a2a3a;overflow-wrap:break-word;word-break:normal;hyphens:none;}
 
 /* ── LOGIN ── */
-#login-wrap{display:flex;align-items:center;justify-content:center;min-height:100vh;padding:20px}
+#login-wrap{display:flex;align-items:center;justify-content:center;min-height:100vh;padding:20px;position:relative;overflow:hidden;isolation:isolate;}
+
+/* ── LOGIN CLOUDS ── */
+.login-cloud{position:absolute;pointer-events:none;z-index:-1;transition:transform .65s cubic-bezier(.25,.46,.45,.94);}
+@keyframes lcDrift1{0%,100%{transform:translateX(0) translateY(0);}33%{transform:translateX(18px) translateY(-7px);}66%{transform:translateX(6px) translateY(5px);}}
+@keyframes lcDrift2{0%,100%{transform:translateX(0) translateY(0);}50%{transform:translateX(-22px) translateY(4px);}}
+@keyframes lcDrift3{0%,100%{transform:translateX(0) translateY(0) scale(1);}50%{transform:translateX(12px) translateY(-11px) scale(1.05);}}
+@keyframes lcDrift4{0%,100%{transform:translateX(0) translateY(0);}40%{transform:translateX(-16px) translateY(10px);}75%{transform:translateX(24px) translateY(-5px);}}
+.lc-1 svg{animation:lcDrift1 13s ease-in-out infinite;}
+.lc-2 svg{animation:lcDrift4 18s ease-in-out infinite;}
+.lc-3 svg{animation:lcDrift2 9s ease-in-out infinite;}
+.lc-4 svg{animation:lcDrift3 15s ease-in-out infinite 2s;}
+.lc-5 svg{animation:lcDrift1 11s ease-in-out infinite 4s;}
+.lc-6 svg{animation:lcDrift4 21s ease-in-out infinite 1s;}
+.lc-7 svg{animation:lcDrift2 8s ease-in-out infinite 6s;}
 .login-box{background:#fff;border-radius:28px;padding:48px 40px;width:100%;max-width:400px;box-shadow:0 8px 40px rgba(26,95,168,.13);text-align:center;position:relative;}
 .login-logo{width:96px;height:96px;border-radius:50%;background:#fdc003;display:flex;align-items:center;justify-content:center;padding:12px;margin:0 auto 24px;box-shadow:0 4px 20px rgba(253,192,3,.4)}
 .login-logo img{width:100%;height:auto}
@@ -38,9 +52,8 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:#dce8f4;min-height:10
 .flip-card-inner:not(.flipped) .flip-card-back{pointer-events:none;}
 /* Back card */
 .login-box-back{background:linear-gradient(155deg,#1563b5 0%,#1a90e0 100%);border-radius:28px;padding:48px 40px;width:100%;min-height:100%;text-align:center;box-shadow:0 8px 40px rgba(26,95,168,.35);position:relative;overflow:hidden;display:flex;flex-direction:column;align-items:center;justify-content:center;box-sizing:border-box;}
-.login-box-back::before{content:'🐝';position:absolute;bottom:-14px;right:-8px;font-size:120px;opacity:.1;pointer-events:none;transform:rotate(-15deg);line-height:1;}
-.login-back-logo{width:96px;height:96px;border-radius:50%;background:rgba(255,255,255,.18);border:2px solid rgba(255,255,255,.3);display:flex;align-items:center;justify-content:center;padding:12px;margin:0 auto 24px;box-shadow:0 4px 20px rgba(0,0,0,.18);}
-.login-back-logo img{width:100%;height:auto;filter:brightness(0) invert(1);}
+.login-back-logo{width:96px;height:96px;border-radius:50%;background:rgba(255,255,255,.92);border:2px solid rgba(255,255,255,.6);display:flex;align-items:center;justify-content:center;padding:12px;margin:0 auto 24px;box-shadow:0 4px 20px rgba(0,0,0,.18);}
+.login-back-logo img{width:100%;height:auto;}
 .login-back-title{font-family:'Quicksand',sans-serif;font-size:20px;font-weight:700;color:#fff;margin-bottom:8px;}
 .login-back-sub{font-size:13px;color:rgba(255,255,255,.72);margin-bottom:36px;line-height:1.6;}
 .login-back-btn{display:block;width:100%;background:rgba(255,255,255,.95);color:#1A5FA8;font-family:'Quicksand',sans-serif;font-size:16px;font-weight:700;padding:15px;border-radius:50px;cursor:pointer;text-decoration:none;text-align:center;box-sizing:border-box;transition:.2s;box-shadow:0 4px 16px rgba(0,0,0,.15);}
@@ -151,6 +164,37 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:#dce8f4;min-height:10
 
 <!-- LOGIN -->
 <div id="login-wrap">
+
+  <!-- background clouds -->
+  <!-- large, top-left -->
+  <div class="login-cloud lc-1" data-speed="0.016" style="top:2%;left:-3%;width:215px;opacity:0.38;">
+    <svg viewBox="0 0 198.9 90.1" xmlns="http://www.w3.org/2000/svg"><path d="M142.2,47.3c0-18.8-15.3-34.1-34.1-34.1-8.2,0-15.7,2.9-21.6,7.6C77.8,8.2,63.5,0,47.2,0,21.1,0,0,21.1,0,47.2v13c0,16.5,13.4,29.9,29.9,29.9h139.1c16.5,0,29.9-13.4,29.9-29.9,0,0,0-11.9-56.7-12.9Z" fill="#fff"/></svg>
+  </div>
+  <!-- medium, top-right -->
+  <div class="login-cloud lc-2" data-speed="0.023" style="top:4%;right:-2%;width:175px;opacity:0.34;">
+    <svg viewBox="0 0 218.2 104.9" xmlns="http://www.w3.org/2000/svg"><path d="M126.1,13.2c-8.2,0-15.7,2.9-21.6,7.6C95.8,8.2,81.5,0,65.2,0,39.1,0,18,21.1,18,47.2c0,1.3,0,2.5.1,3.8C7.8,53,0,61.8,0,72.5c0,9.6,6.2,17.5,14.8,21.3,5.6,2.5,12.1,3.5,18.9,3,5.4,5,12.6,8.1,20.5,8.1h134.1c16.5,0,29.9-13.4,29.9-29.9v-15.9c0-23-5.7-45.1-92.1-45.9Z" fill="#fff"/></svg>
+  </div>
+  <!-- small, top-center -->
+  <div class="login-cloud lc-3" data-speed="0.042" style="top:9%;left:30%;width:96px;opacity:0.27;">
+    <svg viewBox="0 0 74.6 41.8" xmlns="http://www.w3.org/2000/svg"><path d="M50.3,5.3c-3.3,0-6.2,1.1-8.6,3C38.2,3.3,32.5,0,26,0,15.7,0,7.2,8.4,7.2,18.8v1.5c-4.1.8-7.2,4.3-7.2,8.6,0,3.8,2.5,7,5.9,8.5,2.2,1,4.8,1.4,7.5,1.2,2.2,2,5.1,3.2,8.2,3.2h41.1c6.6,0,11.9-5.3,11.9-11.9,0-16.2-8.4-24.6-24.3-24.6Z" fill="#fff"/></svg>
+  </div>
+  <!-- medium, right-center -->
+  <div class="login-cloud lc-4" data-speed="0.019" style="top:46%;right:-4%;width:162px;opacity:0.31;">
+    <svg viewBox="0 0 198.9 90.1" xmlns="http://www.w3.org/2000/svg"><path d="M142.2,47.3c0-18.8-15.3-34.1-34.1-34.1-8.2,0-15.7,2.9-21.6,7.6C77.8,8.2,63.5,0,47.2,0,21.1,0,0,21.1,0,47.2v13c0,16.5,13.4,29.9,29.9,29.9h139.1c16.5,0,29.9-13.4,29.9-29.9,0,0,0-11.9-56.7-12.9Z" fill="#fff"/></svg>
+  </div>
+  <!-- small, left-center -->
+  <div class="login-cloud lc-5" data-speed="0.038" style="top:60%;left:0%;width:82px;opacity:0.25;">
+    <svg viewBox="0 0 74.6 41.8" xmlns="http://www.w3.org/2000/svg"><path d="M50.3,5.3c-3.3,0-6.2,1.1-8.6,3C38.2,3.3,32.5,0,26,0,15.7,0,7.2,8.4,7.2,18.8v1.5c-4.1.8-7.2,4.3-7.2,8.6,0,3.8,2.5,7,5.9,8.5,2.2,1,4.8,1.4,7.5,1.2,2.2,2,5.1,3.2,8.2,3.2h41.1c6.6,0,11.9-5.3,11.9-11.9,0-16.2-8.4-24.6-24.3-24.6Z" fill="#fff"/></svg>
+  </div>
+  <!-- large, bottom-left -->
+  <div class="login-cloud lc-6" data-speed="0.014" style="bottom:7%;left:-2%;width:195px;opacity:0.40;">
+    <svg viewBox="0 0 218.2 104.9" xmlns="http://www.w3.org/2000/svg"><path d="M126.1,13.2c-8.2,0-15.7,2.9-21.6,7.6C95.8,8.2,81.5,0,65.2,0,39.1,0,18,21.1,18,47.2c0,1.3,0,2.5.1,3.8C7.8,53,0,61.8,0,72.5c0,9.6,6.2,17.5,14.8,21.3,5.6,2.5,12.1,3.5,18.9,3,5.4,5,12.6,8.1,20.5,8.1h134.1c16.5,0,29.9-13.4,29.9-29.9v-15.9c0-23-5.7-45.1-92.1-45.9Z" fill="#fff"/></svg>
+  </div>
+  <!-- large, bottom-right -->
+  <div class="login-cloud lc-7" data-speed="0.021" style="bottom:4%;right:-3%;width:225px;opacity:0.37;">
+    <svg viewBox="0 0 198.9 90.1" xmlns="http://www.w3.org/2000/svg"><path d="M142.2,47.3c0-18.8-15.3-34.1-34.1-34.1-8.2,0-15.7,2.9-21.6,7.6C77.8,8.2,63.5,0,47.2,0,21.1,0,0,21.1,0,47.2v13c0,16.5,13.4,29.9,29.9,29.9h139.1c16.5,0,29.9-13.4,29.9-29.9,0,0,0-11.9-56.7-12.9Z" fill="#fff"/></svg>
+  </div>
+
   <div class="flip-card">
     <div class="flip-card-inner" id="flip-inner">
       <!-- FRONT -->
@@ -293,7 +337,9 @@ async function renderFolders(folders) {
     const photos = (files||[]).filter(x=>x.name!=='.keep'&&x.id!==null);
     const count = photos.length;
     let thumbHtml = '<div class="folder-thumb-placeholder">📷</div>';
-    if (photos.length) {
+    if (f.cover_url) {
+      thumbHtml = `<img class="folder-thumb" src="${thumbUrl(f.cover_url)}" data-full="${f.cover_url}" alt="${f.name}" loading="lazy" onerror="this.src=this.dataset.full;this.onerror=null;"/>`;
+    } else if (photos.length) {
       const { data:{publicUrl} } = db.storage.from('vcielka').getPublicUrl('skolka/'+f.id+'/'+photos[0].name);
       thumbHtml = `<img class="folder-thumb" src="${thumbUrl(publicUrl)}" data-full="${publicUrl}" alt="${f.name}" loading="lazy" onerror="this.src=this.dataset.full;this.onerror=null;"/>`;
     }
@@ -493,6 +539,28 @@ document.querySelector('.vs-logo-circle').addEventListener('click', function(){
   if(!wrap||!card||!inner)return;
   card.addEventListener('click',function(e){e.stopPropagation();});
   wrap.addEventListener('click',function(){inner.classList.toggle('flipped');});
+})();
+
+// ── CLOUD MOUSE PARALLAX ──
+(function(){
+  var clouds=document.querySelectorAll('.login-cloud');
+  if(!clouds.length)return;
+  var raf=false;
+  var mx=window.innerWidth/2, my=window.innerHeight/2;
+  function applyParallax(){
+    raf=false;
+    var hw=window.innerWidth/2, hh=window.innerHeight/2;
+    clouds.forEach(function(c){
+      var spd=parseFloat(c.dataset.speed)||0.02;
+      var ox=((mx-hw)*spd).toFixed(2);
+      var oy=((my-hh)*spd).toFixed(2);
+      c.style.transform='translate('+ox+'px,'+oy+'px)';
+    });
+  }
+  document.addEventListener('mousemove',function(e){
+    mx=e.clientX; my=e.clientY;
+    if(!raf){raf=true;requestAnimationFrame(applyParallax);}
+  });
 })();
 </script>
 

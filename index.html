@@ -1649,7 +1649,7 @@ const lbNext = document.getElementById('lbNext');
 
 window.openLightbox = function(idx){
   lbCurrent = idx;
-  lbImg.src = galleryImgs[idx].src;
+  lbImg.src = galleryImgs[idx].dataset.full || galleryImgs[idx].src;
   lb.classList.add('open');
   document.body.style.overflow='hidden';
 }
@@ -1660,7 +1660,7 @@ window.closeLightbox = function(){
 window.lbGo = function(dir){
   const allImgs = [...document.querySelectorAll('#galleryTrack .gallery-item img')];
   lbCurrent = (lbCurrent + dir + allImgs.length) % allImgs.length;
-  if(allImgs[lbCurrent]) lbImg.src = allImgs[lbCurrent].src;
+  if(allImgs[lbCurrent]) lbImg.src = allImgs[lbCurrent].dataset.full || allImgs[lbCurrent].src;
 }
 
 galleryImgs.forEach((img,i)=>{
@@ -1682,7 +1682,7 @@ document.getElementById('galleryTrack').addEventListener('click', function(e){
 window.openLightbox = function(idx){
   const allImgs = [...document.querySelectorAll('#galleryTrack .gallery-item img')];
   lbCurrent = idx;
-  if(allImgs[idx]) lbImg.src = allImgs[idx].src;
+  if(allImgs[idx]) lbImg.src = allImgs[idx].dataset.full || allImgs[idx].src;
   lb.classList.add('open');
   document.body.style.overflow='hidden';
 }
@@ -1704,6 +1704,7 @@ document.addEventListener('keydown',e=>{
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
 // ===== CMS LOADER =====
+function thumbUrl(url){ if(!url)return url; var i=url.lastIndexOf('/'); return url.slice(0,i+1)+'thumbs/'+url.slice(i+1); }
 const SUPA_URL = 'https://fmjtzuligqsugsauqkgz.supabase.co';
 const SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZtanR6dWxpZ3FzdWdzYXVxa2d6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU0MTQyMTUsImV4cCI6MjA5MDk5MDIxNX0.gRF-roExLgnVDG4bSNt7EzX6c1v-JtM5v6ZcX8dY934';
 let cms = null;
@@ -1828,7 +1829,7 @@ async function loadCMS() {
     if (gallery && gallery.length) {
       const track = document.getElementById('galleryTrack');
       if (track) track.innerHTML = gallery.map(g => `
-        <div class="gallery-item"><img src="${g.photo_url}" alt="foto" loading="lazy"/></div>
+        <div class="gallery-item"><img src="${thumbUrl(g.photo_url)}" data-full="${g.photo_url}" alt="foto" loading="lazy" onerror="this.src=this.dataset.full;this.onerror=null;"/></div>
       `).join('');
     }
 
@@ -2025,9 +2026,10 @@ async function openFullGallery(){
   const grid = document.getElementById('galleryPopupGrid');
   const imgs = _galleryImgs();
   if(imgs.length){
-    grid.innerHTML = imgs.map((img,i) =>
-      `<div class="gallery-popup-item" onclick="openLightboxUrl('${img.src}')"><img src="${img.src}" alt="foto" loading="lazy"/></div>`
-    ).join('');
+    grid.innerHTML = imgs.map((img,i) => {
+      const full = img.dataset.full || img.src;
+      return `<div class="gallery-popup-item" onclick="openLightboxUrl('${full}')"><img src="${img.src}" alt="foto" loading="lazy"/></div>`;
+    }).join('');
   } else {
     try {
       const { createClient } = supabase;
@@ -2035,7 +2037,7 @@ async function openFullGallery(){
       const { data: gItems } = await db2.from('gallery').select('*').order('sort_order');
       if(gItems?.length){
         grid.innerHTML = gItems.map((g,i) =>
-          `<div class="gallery-popup-item" onclick="openLightboxUrl('${g.photo_url}')"><img src="${g.photo_url}" alt="foto" loading="lazy"/></div>`
+          `<div class="gallery-popup-item" onclick="openLightboxUrl('${g.photo_url}')"><img src="${thumbUrl(g.photo_url)}" alt="foto" loading="lazy" onerror="this.src='${g.photo_url}';this.onerror=null;"/></div>`
         ).join('');
       } else { grid.innerHTML='<div style="color:rgba(255,255,255,.5);">Galéria je prázdna.</div>'; }
     } catch(e){ grid.innerHTML='<div style="color:rgba(255,255,255,.5);">Chyba načítania.</div>'; }
@@ -2193,8 +2195,9 @@ document.addEventListener('keydown', e=>{
   function update(){
     items.forEach(({el, sec, speed}) => {
       const r = sec.getBoundingClientRect();
-      // clouds move at (speed) fraction of scroll — slower than content = depth effect
-      el.style.transform = 'translateY(' + (-r.top * speed) + 'px)';
+      // Only parallax when section is in/above viewport; clamp to 0 when section is below
+      const dy = r.top > 0 ? 0 : Math.round(-r.top * speed);
+      el.style.transform = 'translateY(' + dy + 'px)';
     });
     ticking = false;
   }

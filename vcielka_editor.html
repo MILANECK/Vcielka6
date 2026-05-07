@@ -552,7 +552,7 @@ function renderPanel(){
     const d=document.createElement('div');d.className='photo-thumb';d.draggable=true;
     d.ondragstart=()=>window._did=ph.id;d.ondragend=()=>window._did=null;
     d.innerHTML=`
-      <img src="${ph.src}" alt="" onclick="expandThumb('${ph.src}')" style="cursor:zoom-in">
+      <img src="${ph.thumb||ph.src}" alt="" onclick="expandThumb('${ph.src}')" style="cursor:zoom-in" onerror="this.src='${ph.src}';this.onerror=null;">
       <button class="thumb-del" onclick="removePhoto('${ph.id}')">✕</button>
       <button class="thumb-add" onclick="tapPlace('${ph.id}')">+</button>`;
     list.appendChild(d);
@@ -739,6 +739,7 @@ document.addEventListener('click',e=>{if(!e.target.closest('#float-template'))do
 const SUPABASE_URL = 'https://fmjtzuligqsugsauqkgz.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZtanR6dWxpZ3FzdWdzYXVxa2d6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU0MTQyMTUsImV4cCI6MjA5MDk5MDIxNX0.gRF-roExLgnVDG4bSNt7EzX6c1v-JtM5v6ZcX8dY934';
 const sbDb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+function sbThumbUrl(url){if(!url)return url;var i=url.lastIndexOf('/');return url.slice(0,i+1)+'thumbs/'+url.slice(i+1);}
 
 let sbSelected = [];   // {url, name}
 let sbCurrentFolder = null;
@@ -775,10 +776,13 @@ async function sbShowFolders(){
   content.innerHTML = '';
   for(const f of folders){
     const { data: files } = await sbDb.storage.from('vcielka').list('skolka/' + f.id, {limit:200});
-    const count = (files||[]).filter(x=>x.name!=='.keep').length;
+    const count = (files||[]).filter(x=>x.name!=='.keep'&&x.id!==null).length;
     const btn = document.createElement('div');
     btn.className = 'sb-folder-btn';
-    btn.innerHTML = `<div class="sb-folder-icon">📁</div><div>${f.name}</div><div class="sb-folder-count">${count} fotografi${count===1?'a':'í'}</div>`;
+    const folderThumb = f.cover_url
+      ? `<img src="${sbThumbUrl(f.cover_url)}" data-full="${f.cover_url}" style="width:64px;height:48px;object-fit:cover;border-radius:8px;" alt="${f.name}" loading="lazy" onerror="this.src=this.dataset.full;this.onerror=null;">`
+      : `<div class="sb-folder-icon">📁</div>`;
+    btn.innerHTML = `${folderThumb}<div>${f.name}</div><div class="sb-folder-count">${count} fotografi${count===1?'a':'í'}</div>`;
     btn.onclick = () => sbOpenFolder(f.id, f.name);
     content.appendChild(btn);
   }
@@ -798,7 +802,7 @@ async function sbOpenFolder(folderId, folderName){
   content.innerHTML = '<div class="sb-loading">Načítavam fotografie…</div>';
 
   const { data: files, error } = await sbDb.storage.from('vcielka').list('skolka/' + folderId, {limit:200});
-  const fileList = (files||[]).filter(x=>x.name!=='.keep');
+  const fileList = (files||[]).filter(x=>x.name!=='.keep'&&x.name!=='thumbs'&&x.id!==null);
   if(!fileList.length){
     content.innerHTML = '<div class="sb-loading">Priečinok je prázdny.</div>';
     return;
@@ -806,11 +810,12 @@ async function sbOpenFolder(folderId, folderName){
   content.innerHTML = '';
   for(const p of fileList){
     const { data: { publicUrl } } = sbDb.storage.from('vcielka').getPublicUrl('skolka/'+folderId+'/'+p.name);
+    const thumbSrc = sbThumbUrl(publicUrl);
     const div = document.createElement('div');
     div.className = 'sb-photo';
     div.dataset.url = publicUrl;
     div.dataset.name = p.name;
-    div.innerHTML = `<img src="${publicUrl}" alt="${p.name}" loading="lazy"><div class="sb-photo-chk"></div>`;
+    div.innerHTML = `<img src="${thumbSrc}" data-full="${publicUrl}" alt="${p.name}" loading="lazy" onerror="this.src=this.dataset.full;this.onerror=null;"><div class="sb-photo-chk"></div>`;
     div.onclick = () => sbTogglePhoto(div, publicUrl, p.name);
     content.appendChild(div);
   }
@@ -849,7 +854,7 @@ async function sbImport(){
       await new Promise(res => {
         const fr = new FileReader();
         fr.onload = ev => {
-          photos.push({id: uid(), src: ev.target.result, name});
+          photos.push({id: uid(), src: ev.target.result, thumb: sbThumbUrl(url), name});
           added++;
           res();
         };
@@ -857,7 +862,7 @@ async function sbImport(){
       });
     }catch(e){
       // fallback: use URL directly
-      photos.push({id: uid(), src: url, name});
+      photos.push({id: uid(), src: url, thumb: sbThumbUrl(url), name});
       added++;
     }
   }

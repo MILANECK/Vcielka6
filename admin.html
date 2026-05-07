@@ -160,8 +160,6 @@ body{font-family:'Inter',sans-serif;background:#F0F7FF;color:#1a1a1a;min-height:
 .section-page{display:none;}
 .section-page.active{display:block;}
 
-/* LOGO UPLOAD */
-.logo-current{height:60px;margin-bottom:14px;display:block;}
 
 /* ── TOOLTIPS ── */
 [data-tip]{position:relative;}
@@ -231,9 +229,6 @@ body{font-family:'Inter',sans-serif;background:#F0F7FF;color:#1a1a1a;min-height:
     </div>
     <div class="nav-item" onclick="showPage('pricing')" id="nav-pricing">
       <span class="icon">💰</span> Cenník
-    </div>
-    <div class="nav-item" onclick="showPage('logo')" id="nav-logo">
-      <span class="icon">🐝</span> Logo
     </div>
     <div class="nav-item" onclick="showPage('footer')" id="nav-footer">
       <span class="icon">📋</span> Pätička (footer)
@@ -679,20 +674,6 @@ body{font-family:'Inter',sans-serif;background:#F0F7FF;color:#1a1a1a;min-height:
         <div style="color:#888;font-size:13px;">Načítavam...</div>
       </div>
     </div>
-    <!-- LOGO -->
-    <div class="section-page" id="page-logo">
-      <div class="page-title">🐝 Logo škôlky</div>
-      <div class="page-sub">Nahrajte nové logo — PNG s priesvitným pozadím</div>
-      <div class="card">
-        <div class="card-title">Aktuálne logo</div>
-        <img id="logo_preview" class="logo-current" src="VCIELKA_LOGO.png" alt="Logo"/>
-        <div class="img-upload" style="margin-top:16px;">
-          <input type="file" accept="image/png,image/svg+xml,image/webp" onchange="uploadLogo(this)"/>
-          <div class="icon">🐝</div>
-          <p>Kliknite sem pre nahratie nového loga<br/><small>PNG s priesvitným pozadím · odporúčané</small></p>
-        </div>
-      </div>
-    </div>
 
 
     <!-- JEDÁLNY LÍSTOK -->
@@ -810,6 +791,7 @@ body{font-family:'Inter',sans-serif;background:#F0F7FF;color:#1a1a1a;min-height:
         <div style="display:flex;gap:10px;flex-wrap:wrap;">
           <a href="skolka.html" target="_blank" class="btn-save" style="text-decoration:none;display:inline-flex;align-items:center;gap:7px;">🔐 Virtuálna Škôlka (verejná)</a>
           <a href="vcielka_editor.html" target="_blank" class="btn-magenta">🖼️ Otvoriť Editor</a>
+          <button class="btn-secondary" onclick="regenerateSkolkaThumbs()" data-tip="Vygeneruje malé náhľady pre všetky existujúce fotografie">🔄 Regenerovať náhľady</button>
         </div>
       </div>
 
@@ -1007,7 +989,6 @@ async function loadPage(name) {
   if (name === 'news') await loadNews();
   if (name === 'gallery') await loadGallery();
   if (name === 'testimonials') await loadTestimonials();
-  if (name === 'logo') await loadSettings(['logo_url']);
   if (name === 'documents') await loadDocuments();
   if (name === 'jedalny') { loadJLLocal(); return; }
   if (name === 'footer') await loadSettings(['footer_desc','footer_links_title','footer_links','footer_copy_left','footer_copy_right','contact_address','contact_phone','contact_email','contact_hours']);
@@ -1505,7 +1486,7 @@ async function loadGallery() {
          ondragstart="galleryDragStart(event)" ondragover="galleryDragOver(event)"
          ondrop="galleryDrop(event)" ondragend="galleryDragEnd(event)">
       <img src="${thumbUrl(g.photo_url)}" data-full="${g.photo_url}" alt="foto" loading="lazy" onerror="this.src=this.dataset.full;this.onerror=null;"/>
-      <button class="gallery-item-del" data-tip="Odstrániť z galérie" onclick="deleteGalleryItem(${g.id})">✕</button>
+      <button class="gallery-item-del" data-tip="Odstrániť z galérie" onclick="deleteGalleryItem('${g.id}')">✕</button>
     </div>
   `).join('');
 }
@@ -1533,7 +1514,7 @@ async function uploadGalleryPhotos(input) {
   if (uploaded.length) {
     for (let i = 0; i < uploaded.length; i++) {
       if (lbl) lbl.textContent = `Optimalizujem náhľady ${i + 1}/${uploaded.length}...`;
-      const blob = await generateThumb(uploaded[i].file, 300);
+      const blob = await generateThumb(uploaded[i].file, 500);
       if (blob) {
         const thumbPath = 'gallery/thumbs/' + uploaded[i].path.split('/').pop();
         await db.storage.from('vcielka').upload(thumbPath, blob, { upsert: true, contentType: 'image/jpeg' });
@@ -1548,9 +1529,20 @@ async function uploadGalleryPhotos(input) {
 
 async function deleteGalleryItem(id) {
   if (!confirm('Odstrániť túto fotografiu?')) return;
+  const el = document.getElementById('gitem-'+id);
+  const photoUrl = el?.querySelector('img')?.dataset?.full;
   const { error } = await db.from('gallery').delete().eq('id', id);
   if (error) { toast('Chyba pri mazaní', 'error'); return; }
-  const el = document.getElementById('gitem-'+id);
+  if (photoUrl) {
+    const m = photoUrl.match(/\/object\/public\/vcielka\/(.+)/);
+    if (m) {
+      const filePath = decodeURIComponent(m[1]);
+      const parts = filePath.split('/');
+      const fname = parts.pop();
+      const thumbPath = [...parts, 'thumbs', fname].join('/');
+      await db.storage.from('vcielka').remove([filePath, thumbPath]);
+    }
+  }
   if (el) el.remove();
   toast('Fotografia odstránená');
   const grid = document.getElementById('galleryItemsGrid');
@@ -1610,17 +1602,6 @@ async function uploadHeroPhoto(input) {
   toast('✅ Fotografia nahratá!');
 }
 
-// ===== LOGO =====
-async function uploadLogo(input) {
-  const file = input.files[0]; if (!file) return;
-  const path = `logo/logo_${Date.now()}.${file.name.split('.').pop()}`;
-  const { error } = await db.storage.from('vcielka').upload(path, file, { upsert: true });
-  if (error) { toast('Chyba nahrávania', 'error'); return; }
-  const { data: { publicUrl } } = db.storage.from('vcielka').getPublicUrl(path);
-  await db.from('settings').upsert({ key: 'logo_url', value: publicUrl }, { onConflict: 'key' });
-  document.getElementById('logo_preview').src = publicUrl;
-  toast('✅ Logo nahraté!');
-}
 
 
 // ===== DOCUMENTS =====
@@ -1729,7 +1710,7 @@ async function loadSkolka() {
     card.className = 'card';
     card.style.marginBottom = '16px';
     card.dataset.folderName = f.name;
-    const coverUrl = localStorage.getItem('sk_cover_' + f.id) || '';
+    const coverUrl = f.cover_url || localStorage.getItem('sk_cover_' + f.id) || '';
     const isOpen = localStorage.getItem('sk_open_' + f.id) !== '0';
     const coverThumb = coverUrl
       ? `<img src="${thumbUrl(coverUrl,128)}" data-full="${coverUrl}" style="width:64px;height:48px;object-fit:cover;border-radius:10px;flex-shrink:0;box-shadow:0 2px 8px rgba(0,0,0,.12);" alt="obálka" onerror="this.src=this.dataset.full;this.onerror=null;"/>`
@@ -1739,7 +1720,7 @@ async function loadSkolka() {
         <div style="display:flex;align-items:center;gap:12px;">
           ${coverThumb}
           <div>
-            <div style="font-family:'Quicksand',sans-serif;font-weight:700;font-size:15px;">${f.name}</div>
+            <div id="sk_fname_${f.id}" style="font-family:'Quicksand',sans-serif;font-weight:700;font-size:15px;">${f.name}</div>
             <div style="font-size:12px;color:#888;margin-top:2px;">${count} fotografi${count===1?'a':'í'} · <span class="folder-size-tag">${folderMB} MB</span></div>
           </div>
         </div>
@@ -1763,7 +1744,7 @@ async function loadSkolka() {
       </div>
     `;
     list.appendChild(card);
-    renderSkolkaGrid(f.id, photos);
+    renderSkolkaGrid(f.id, photos, coverUrl);
   }
   updateSkolkaStorageBar(totalBytes);
 }
@@ -1782,7 +1763,7 @@ function updateSkolkaStorageBar(totalBytes) {
   usedEl.textContent = usedMB + ' MB využito';
 }
 
-function renderSkolkaGrid(folderId, files) {
+function renderSkolkaGrid(folderId, files, coverUrl) {
   const grid = document.getElementById('skolka_grid_' + folderId);
   if (!grid) return;
   const photos = files.filter(x => x.name !== '.keep' && x.id !== null);
@@ -1790,7 +1771,7 @@ function renderSkolkaGrid(folderId, files) {
     grid.innerHTML = '<div style="color:#aaa;font-size:12px;padding:8px 0;">Žiadne fotografie</div>';
     return;
   }
-  const coverUrl = localStorage.getItem('sk_cover_' + folderId) || '';
+  coverUrl = coverUrl || localStorage.getItem('sk_cover_' + folderId) || '';
   grid.innerHTML = photos.map(p => {
     const { data: { publicUrl } } = db.storage.from('vcielka').getPublicUrl('skolka/' + folderId + '/' + p.name);
     const safeName = p.name.replace(/'/g, "\\'");
@@ -1806,8 +1787,9 @@ function renderSkolkaGrid(folderId, files) {
   }).join('');
 }
 
-function setCoverPhoto(folderId, url) {
+async function setCoverPhoto(folderId, url) {
   localStorage.setItem('sk_cover_' + folderId, url);
+  await db.from('skolka_folders').update({ cover_url: url }).eq('id', folderId);
   toast('✅ Titulná fotografia nastavená');
   loadSkolka();
 }
@@ -1819,7 +1801,7 @@ function thumbUrl(url) {
 }
 
 async function generateThumb(file, maxWidth) {
-  maxWidth = maxWidth || 300;
+  maxWidth = maxWidth || 500;
   return new Promise(function(resolve) {
     var img = new Image();
     var objUrl = URL.createObjectURL(file);
@@ -1836,6 +1818,36 @@ async function generateThumb(file, maxWidth) {
     img.onerror = function() { URL.revokeObjectURL(objUrl); resolve(null); };
     img.src = objUrl;
   });
+}
+
+async function regenerateSkolkaThumbs() {
+  if (!confirm('Regenerovať náhľady pre všetky fotografie Virtuálnej Škôlky?\n\nMôže to trvať niekoľko minút podľa počtu fotografií.')) return;
+  const { data: folders } = await db.from('skolka_folders').select('id,name').order('name');
+  if (!folders?.length) { toast('Žiadne priečinky.'); return; }
+  let total = 0, done = 0, errors = 0;
+  for (const f of folders) {
+    const { data: files } = await db.storage.from('vcielka').list('skolka/'+f.id, {limit:500});
+    total += (files||[]).filter(x=>x.name!=='.keep'&&x.id!==null).length;
+  }
+  toast('Spracúvam ' + total + ' fotografií…');
+  for (const f of folders) {
+    const { data: files } = await db.storage.from('vcielka').list('skolka/'+f.id, {limit:500});
+    const photos = (files||[]).filter(x=>x.name!=='.keep'&&x.id!==null);
+    for (const p of photos) {
+      const { data: { publicUrl } } = db.storage.from('vcielka').getPublicUrl('skolka/'+f.id+'/'+p.name);
+      try {
+        const resp = await fetch(publicUrl);
+        const blob = await resp.blob();
+        const thumb = await generateThumb(blob, 500);
+        if (thumb) {
+          await db.storage.from('vcielka').upload('skolka/'+f.id+'/thumbs/'+p.name, thumb, {upsert:true, contentType:'image/jpeg'});
+        }
+        done++;
+        if (done % 10 === 0 || done === total) toast(done + ' / ' + total + ' náhľadov hotových…');
+      } catch(e) { errors++; console.error('Thumb regen failed:', f.name, p.name, e); }
+    }
+  }
+  toast('✅ Hotovo! ' + done + ' náhľadov regenerovaných' + (errors ? ' (' + errors + ' chýb)' : '') + '.');
 }
 
 function toggleSkolkaFolder(id) {
@@ -1940,7 +1952,7 @@ async function uploadSkolkaPhotos(input) {
   if (uploaded.length) {
     for (let i = 0; i < uploaded.length; i++) {
       setSkolkaProgress(i / uploaded.length, 'Optimalizujem náhľady ' + (i + 1) + ' / ' + uploaded.length + '…');
-      const blob = await generateThumb(uploaded[i].file, 300);
+      const blob = await generateThumb(uploaded[i].file, 500);
       if (blob) {
         const thumbPath = 'skolka/' + currentSkolkaFolderId + '/thumbs/' + uploaded[i].name;
         await db.storage.from('vcielka').upload(thumbPath, blob, { upsert: true, contentType: 'image/jpeg' });
@@ -1986,8 +1998,11 @@ async function renameSkolkaFolder(folderId, currentName) {
   const trimmed = newName.trim();
   if (!trimmed) { toast('Názov nemôže byť prázdny', 'error'); return; }
   if (trimmed === currentName) return;
-  const { error } = await db.from('skolka_folders').update({ name: trimmed }).eq('id', folderId);
+  const { data: updated, error } = await db.from('skolka_folders').update({ name: trimmed }).eq('id', folderId).select();
   if (error) { toast('Chyba pri premenovaní', 'error'); return; }
+  if (!updated || updated.length === 0) { toast('Priečinok sa nepodarilo premenovať', 'error'); return; }
+  const nameEl = document.getElementById('sk_fname_' + folderId);
+  if (nameEl) nameEl.textContent = trimmed;
   toast('✅ Priečinok premenovaný');
   loadSkolka();
 }
@@ -2053,13 +2068,27 @@ function loadJLLocal(){
     }catch(e){}
     updateJLPreview();
   }
-  requestAnimationFrame(()=>requestAnimationFrame(jlInitZoom));
+  /* Detect actual background image dimensions, resize canvas, then init zoom */
+  const _bgImg = new Image();
+  _bgImg.onload = function(){
+    if(_bgImg.naturalWidth && _bgImg.naturalHeight){
+      JL_CONTENT_W = _bgImg.naturalWidth;
+      JL_CONTENT_H = _bgImg.naturalHeight;
+      const page   = document.getElementById('jl-preview-page');
+      const scaler = document.getElementById('jl-preview-scaler');
+      if(page)  { page.style.width = JL_CONTENT_W+'px'; page.style.height = JL_CONTENT_H+'px'; page.style.minHeight = ''; }
+      if(scaler){ scaler.style.width = JL_CONTENT_W+'px'; }
+    }
+    requestAnimationFrame(()=>requestAnimationFrame(jlInitZoom));
+  };
+  _bgImg.onerror = function(){ requestAnimationFrame(()=>requestAnimationFrame(jlInitZoom)); };
+  _bgImg.src = 'jedalny-bg.png';
 }
 
 let jlZoom = 1.0;
 let jlBaseScale = 0.529;
-const JL_CONTENT_W = 794;
-const JL_CONTENT_H = 1123;
+let JL_CONTENT_W = 794;
+let JL_CONTENT_H = 1123;
 const JL_ZOOM_MIN  = 0.25;
 const JL_ZOOM_MAX  = 3.0;
 const JL_ZOOM_STEP = 0.1;
@@ -2071,12 +2100,16 @@ function jlCalcBaseScale(){
   /* Collapse sizer so it doesn't inflate measurements */
   const sizer = document.getElementById('jl-preview-sizer');
   if(sizer){ sizer.style.width='0'; sizer.style.height='0'; }
-  /* Fit the full A4 within the available width AND height */
-  const availH = wrap.clientHeight || (window.innerHeight - 100);
-  const availW = wrap.clientWidth  || Math.round(window.innerWidth * 0.38);
+  /* Derive available space from viewport — wrap.clientWidth is 0 before first layout */
+  const vw = window.innerWidth, vh = window.innerHeight;
+  const padding = 80; /* panel top/bottom padding + controls row */
+  const availH = vh - padding;
+  /* Preview panel takes ≤45% of viewport width (form gets the rest + gap) */
+  const maxW = Math.floor(vw * 0.44) - 32;
+  const availW = Math.max(maxW, 280);
   jlBaseScale = Math.min(availH / JL_CONTENT_H, availW / JL_CONTENT_W);
-  /* Resize panel to match the A4 aspect ratio at this scale */
-  panel.style.width = Math.round(JL_CONTENT_W * jlBaseScale) + 'px';
+  /* Resize panel to exactly fit the scaled content */
+  panel.style.width = (Math.round(JL_CONTENT_W * jlBaseScale) + 32) + 'px';
 }
 
 function jlApplyZoom(){
@@ -2199,7 +2232,7 @@ function generateJLHTML(data){
 html{background:#777;}
 body{display:flex;justify-content:center;padding:24px;font-family:'Inter',sans-serif;}
 @media print{html,body{background:#fff;padding:0;display:block;}@page{size:A4 portrait;margin:0;}.no-print{display:none!important;}.page{box-shadow:none!important;}}
-.page{width:794px;height:1123px;background:#F8F4ED url('${bgUrl}') center top/cover no-repeat;position:relative;overflow:hidden;box-shadow:0 4px 32px rgba(0,0,0,.3);}
+.page{width:${JL_CONTENT_W}px;height:${JL_CONTENT_H}px;background:#F8F4ED url('${bgUrl}') center top/cover no-repeat;position:relative;overflow:hidden;box-shadow:0 4px 32px rgba(0,0,0,.3);}
 .overlay{position:absolute;top:248px;left:72px;right:62px;}
 .no-print{position:fixed;top:12px;right:12px;background:#1a2a4a;color:#fff;border:none;border-radius:8px;padding:9px 20px;font-size:13px;cursor:pointer;font-family:'Inter',sans-serif;z-index:99;}
 </style></head>
