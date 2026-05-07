@@ -187,13 +187,13 @@ button{outline:none;border:none;}
   background:linear-gradient(105deg,rgba(8,32,72,.72) 0%,rgba(12,45,100,.50) 50%,rgba(8,32,72,.18) 100%);
   z-index:1;
 }
-/* white wave at the bottom of the hero, ON TOP of the image */
+/* white wave at the bottom of the hero, behind news blob */
 .hero-wave{
   position:absolute;
   bottom:-2px;
   left:0;
   width:100%;
-  z-index:3;
+  z-index:2;
   line-height:0;
   pointer-events:none;
 }
@@ -1056,10 +1056,10 @@ button{outline:none;border:none;}
 <div style="position:relative;overflow:hidden;">
 <div class="cloud-deco cloud-3" style="position:absolute;pointer-events:none;opacity:0.4;z-index:0;top:10%;left:3%;"><svg viewBox="0 0 74.6 41.8" xmlns="http://www.w3.org/2000/svg" style="width:80px;display:block;"><path d="M50.3,5.3c-3.3,0-6.2,1.1-8.6,3C38.2,3.3,32.5,0,26,0,15.7,0,7.2,8.4,7.2,18.8v1.5c-4.1.8-7.2,4.3-7.2,8.6,0,3.8,2.5,7,5.9,8.5,2.2,1,4.8,1.4,7.5,1.2,2.2,2,5.1,3.2,8.2,3.2h41.1c6.6,0,11.9-5.3,11.9-11.9,0-16.2-8.4-24.6-24.3-24.6Z" fill="#fff"/></svg></div><div class="cloud-deco cloud-7" style="position:absolute;pointer-events:none;opacity:0.4;z-index:0;top:5%;right:-1%;"><svg viewBox="0 0 198.9 90.1" xmlns="http://www.w3.org/2000/svg" style="width:160px;display:block;"><path d="M142.2,47.3c0-18.8-15.3-34.1-34.1-34.1-8.2,0-15.7,2.9-21.6,7.6C77.8,8.2,63.5,0,47.2,0,21.1,0,0,21.1,0,47.2v13c0,16.5,13.4,29.9,29.9,29.9h139.1c16.5,0,29.9-13.4,29.9-29.9,0,0,0-11.9-56.7-12.9Z" fill="#fff"/></svg></div><div class="cloud-deco cloud-11" style="position:absolute;pointer-events:none;opacity:0.4;z-index:0;bottom:5%;left:45%;"><svg viewBox="0 0 74.6 41.8" xmlns="http://www.w3.org/2000/svg" style="width:60px;display:block;"><path d="M50.3,5.3c-3.3,0-6.2,1.1-8.6,3C38.2,3.3,32.5,0,26,0,15.7,0,7.2,8.4,7.2,18.8v1.5c-4.1.8-7.2,4.3-7.2,8.6,0,3.8,2.5,7,5.9,8.5,2.2,1,4.8,1.4,7.5,1.2,2.2,2,5.1,3.2,8.2,3.2h41.1c6.6,0,11.9-5.3,11.9-11.9,0-16.2-8.4-24.6-24.3-24.6Z" fill="#fff"/></svg></div>
 <div class="stats bg-white" style="position:relative;z-index:1;">
-  <div class="stat"><div class="stat-num">3</div><div class="stat-label">triedy</div></div>
-  <div class="stat"><div class="stat-num">2,5–6</div><div class="stat-label">vek detí (roky)</div></div>
-  <div class="stat"><div class="stat-num">15+</div><div class="stat-label">aktivít & krúžkov</div></div>
-  <div class="stat"><div class="stat-num">MŠ SR</div><div class="stat-label">akreditovaná MŠVVaŠ</div></div>
+  <div class="stat"><div class="stat-num" id="stat1_num">3</div><div class="stat-label" id="stat1_label">triedy</div></div>
+  <div class="stat"><div class="stat-num" id="stat2_num">2,5–6</div><div class="stat-label" id="stat2_label">vek detí (roky)</div></div>
+  <div class="stat"><div class="stat-num" id="stat3_num">15+</div><div class="stat-label" id="stat3_label">aktivít & krúžkov</div></div>
+  <div class="stat"><div class="stat-num" id="stat4_num">MŠ SR</div><div class="stat-label" id="stat4_label">akreditovaná MŠVVaŠ</div></div>
 </div>
 </div>
 
@@ -1729,6 +1729,13 @@ async function loadCMS() {
       if (_heroSub) { _heroSub.textContent = s.hero_subtitle || 'Súkromná materská škola s odborným tímom, bohatým programom Zvedavá Včielka a láskyplným prostredím pre deti od 2,5 do 6 rokov.'; _heroSub.style.opacity='1'; }
       if (s.hero_photo) { const bg = document.getElementById('cms-hero-bg'); if(bg) { bg.src = s.hero_photo; bg.style.display='block'; } }
       if (s.logo_url) { document.querySelectorAll('.cms-logo').forEach(el => el.src = s.logo_url); }
+      // Stats
+      ['1','2','3','4'].forEach(function(i){
+        var numEl=document.getElementById('stat'+i+'_num');
+        var lblEl=document.getElementById('stat'+i+'_label');
+        if(numEl&&s['stat'+i+'_num'])numEl.textContent=s['stat'+i+'_num'];
+        if(lblEl&&s['stat'+i+'_label'])lblEl.textContent=s['stat'+i+'_label'];
+      });
       // Contact
       if (s.contact_address) { const el = document.getElementById('cms-address'); if(el) el.textContent = s.contact_address; }
       if (s.contact_phone) { document.querySelectorAll('.cms-phone').forEach(el => { el.textContent = s.contact_phone; el.href = 'tel:'+s.contact_phone.replace(/\s/g,''); }); }

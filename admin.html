@@ -480,6 +480,21 @@ body{font-family:'Inter',sans-serif;background:#F0F7FF;color:#1a1a1a;min-height:
           <p>Kliknite sem alebo potiahnite fotografiu<br/><small>Odporúčaná veľkosť: 1920×1080px · WebP alebo JPG</small></p>
         </div>
       </div>
+      <div class="card">
+        <div class="card-title">📊 Štatistiky</div>
+        <p style="font-size:12px;color:#888;margin-bottom:14px;">Štyri počítadlá zobrazené pod hero sekciou na hlavnej stránke.</p>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px 16px;margin-bottom:16px;">
+          <div class="field" style="margin:0;"><label>Hodnota 1</label><input type="text" id="stat1_num" placeholder="3"/></div>
+          <div class="field" style="margin:0;"><label>Popis 1</label><input type="text" id="stat1_label" placeholder="triedy"/></div>
+          <div class="field" style="margin:0;"><label>Hodnota 2</label><input type="text" id="stat2_num" placeholder="2,5–6"/></div>
+          <div class="field" style="margin:0;"><label>Popis 2</label><input type="text" id="stat2_label" placeholder="vek detí (roky)"/></div>
+          <div class="field" style="margin:0;"><label>Hodnota 3</label><input type="text" id="stat3_num" placeholder="15+"/></div>
+          <div class="field" style="margin:0;"><label>Popis 3</label><input type="text" id="stat3_label" placeholder="aktivít & krúžkov"/></div>
+          <div class="field" style="margin:0;"><label>Hodnota 4</label><input type="text" id="stat4_num" placeholder="MŠ SR"/></div>
+          <div class="field" style="margin:0;"><label>Popis 4</label><input type="text" id="stat4_label" placeholder="akreditovaná MŠVVaŠ"/></div>
+        </div>
+        <button class="btn-save" data-tip="Uložiť štatistiky hero sekcie" onclick="saveSettings(['stat1_num','stat1_label','stat2_num','stat2_label','stat3_num','stat3_label','stat4_num','stat4_label'])">💾 Uložiť štatistiky</button>
+      </div>
     </div>
 
     <!-- ACTIVITIES -->
@@ -772,7 +787,7 @@ body{font-family:'Inter',sans-serif;background:#F0F7FF;color:#1a1a1a;min-height:
           </div>
           <!-- Scrollable preview container -->
           <div id="jl-preview-wrap" style="flex:1;overflow:auto;border-radius:14px;box-shadow:0 6px 28px rgba(0,0,0,.22);">
-            <div id="jl-preview-sizer" style="width:420px;height:594px;overflow:hidden;">
+            <div id="jl-preview-sizer" style="width:0;height:0;overflow:hidden;">
               <div id="jl-preview-scaler" style="width:794px;transform-origin:top left;">
                 <div id="jl-preview-page" style="width:794px;min-height:1123px;background:#F8F4ED url('jedalny-bg.png') center top/cover no-repeat;position:relative;font-family:'Quicksand',sans-serif;">
                   <div id="jl-preview-overlay" style="position:absolute;top:248px;left:72px;right:62px;"></div>
@@ -984,7 +999,7 @@ async function loadPage(name) {
   if (name === 'skolka') { loadSkolka(); return; }
   if (name === 'skolka_pw') { loadSkolkaPw(); return; }
   if (name === 'admin_pw') { return; }
-  if (name === 'hero') await loadSettings(['hero_title','hero_subtitle','hero_photo']);
+  if (name === 'hero') await loadSettings(['hero_title','hero_subtitle','hero_photo','stat1_num','stat1_label','stat2_num','stat2_label','stat3_num','stat3_label','stat4_num','stat4_label']);
   if (name === 'onas') await loadSettings(['onas_p1','onas_p2','onas_extra_p1','onas_extra_p2','onas_list','ppv_intro','ppv_extra','program_text','icon_social','icon_kreativ','icon_sport','icon_intellect']);
   if (name === 'contact') await loadSettings(['contact_address','contact_phone','contact_email','contact_hours','icon_adresa','icon_telefon','icon_email','icon_hodiny']);
   if (name === 'pricing') await loadSettings(['price_full_amount','price_full_detail','price_half_amount','price_half_detail']);
@@ -1730,6 +1745,7 @@ async function loadSkolka() {
         </div>
         <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;">
           <button class="btn-add" style="margin-bottom:0;" data-tip="Nahrať fotografie do priečinka" onclick="openSkolkaFolder('${f.id}','${f.name.replace(/'/g,"\'")}')">📷 Nahrať fotografie</button>
+          <button class="btn-secondary" style="padding:11px 18px;font-size:13px;" data-tip="Premenovať priečinok" onclick="renameSkolkaFolder('${f.id}','${f.name.replace(/'/g,"\'")}')">✏️ Premenovať</button>
           <button class="btn-danger" style="padding:11px 18px;font-size:13px;" data-tip="Vymazať priečinok so všetkými fotkamy" onclick="deleteSkolkaFolder('${f.id}','${f.name.replace(/'/g,"\'")}')">🗑️ Vymazať priečinok</button>
           <button class="sk-toggle${isOpen?' open':''}" id="sk_toggle_${f.id}" title="${isOpen?'Zbaliť':'Rozbaliť'}" onclick="toggleSkolkaFolder('${f.id}')">▾</button>
         </div>
@@ -1964,6 +1980,18 @@ async function deleteSkolkaPhotoModal(fileName) {
   }).join('');
 }
 
+async function renameSkolkaFolder(folderId, currentName) {
+  const newName = prompt('Nový názov priečinka:', currentName);
+  if (newName === null) return;
+  const trimmed = newName.trim();
+  if (!trimmed) { toast('Názov nemôže byť prázdny', 'error'); return; }
+  if (trimmed === currentName) return;
+  const { error } = await db.from('skolka_folders').update({ name: trimmed }).eq('id', folderId);
+  if (error) { toast('Chyba pri premenovaní', 'error'); return; }
+  toast('✅ Priečinok premenovaný');
+  loadSkolka();
+}
+
 async function deleteSkolkaFolder(folderId, folderName) {
   if (!confirm('Vymazať celý priečinok "' + folderName + '" aj so všetkými fotografiami?')) return;
   // list and delete all files (including thumbs subfolder contents)
@@ -2009,22 +2037,23 @@ function getJLData(){
 
 function loadJLLocal(){
   const raw=localStorage.getItem('jl_data');
-  if(!raw) return;
-  try{
-    const d=JSON.parse(raw);
-    const set=(id,v)=>{const el=document.getElementById(id);if(el&&v!==undefined)el.value=v;};
-    set('jl-ovocie',d.ovocie); set('jl-mliecny',d.mliecny);
-    set('jl-eu',d.eu_text); set('jl-alergeny',d.alergeny);
-    set('jl-week',d.week);
-    JL_DAYS.forEach(day=>{
-      const k=day.key;
-      set('jl-'+k+'-desiata',d[k+'_desiata']);
-      set('jl-'+k+'-obed',d[k+'_obed']);
-      set('jl-'+k+'-olovrant',d[k+'_olovrant']);
-    });
-  }catch(e){}
-  updateJLPreview();
-  requestAnimationFrame(jlInitZoom);
+  if(raw){
+    try{
+      const d=JSON.parse(raw);
+      const set=(id,v)=>{const el=document.getElementById(id);if(el&&v!==undefined)el.value=v;};
+      set('jl-ovocie',d.ovocie); set('jl-mliecny',d.mliecny);
+      set('jl-eu',d.eu_text); set('jl-alergeny',d.alergeny);
+      set('jl-week',d.week);
+      JL_DAYS.forEach(day=>{
+        const k=day.key;
+        set('jl-'+k+'-desiata',d[k+'_desiata']);
+        set('jl-'+k+'-obed',d[k+'_obed']);
+        set('jl-'+k+'-olovrant',d[k+'_olovrant']);
+      });
+    }catch(e){}
+    updateJLPreview();
+  }
+  requestAnimationFrame(()=>requestAnimationFrame(jlInitZoom));
 }
 
 let jlZoom = 1.0;
@@ -2039,13 +2068,14 @@ function jlCalcBaseScale(){
   const wrap  = document.getElementById('jl-preview-wrap');
   const panel = document.getElementById('jl-preview-panel');
   if(!wrap || !panel) return;
-  /* Collapse sizer so it doesn't inflate clientHeight */
+  /* Collapse sizer so it doesn't inflate measurements */
   const sizer = document.getElementById('jl-preview-sizer');
   if(sizer){ sizer.style.width='0'; sizer.style.height='0'; }
-  /* Scale by available height so the A4 fills the panel vertically */
-  const h = wrap.clientHeight || 594;
-  jlBaseScale = h / JL_CONTENT_H;
-  /* Widen the panel to match the A4 aspect ratio at this scale */
+  /* Fit the full A4 within the available width AND height */
+  const availH = wrap.clientHeight || (window.innerHeight - 100);
+  const availW = wrap.clientWidth  || Math.round(window.innerWidth * 0.38);
+  jlBaseScale = Math.min(availH / JL_CONTENT_H, availW / JL_CONTENT_W);
+  /* Resize panel to match the A4 aspect ratio at this scale */
   panel.style.width = Math.round(JL_CONTENT_W * jlBaseScale) + 'px';
 }
 
