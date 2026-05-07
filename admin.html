@@ -67,6 +67,8 @@ body{font-family:'Inter',sans-serif;background:#F0F7FF;color:#1a1a1a;min-height:
 .btn-danger:hover{background:#fecaca;}
 .btn-add{background:#D9EFFF;color:#1A5FA8;font-family:'Quicksand',sans-serif;font-size:13px;font-weight:700;padding:11px 24px;border:none;border-radius:50px;cursor:pointer;margin-bottom:16px;}
 .btn-add:hover{background:#C8E6FA;}
+.btn-magenta{background:#dc00a0;color:#fff;font-family:'Quicksand',sans-serif;font-size:13px;font-weight:700;padding:11px 24px;border:none;border-radius:50px;cursor:pointer;transition:.2s;text-decoration:none;display:inline-flex;align-items:center;gap:7px;}
+.btn-magenta:hover{background:#b50084;}
 .btn-secondary{background:#f0f0f0;color:#333;font-family:'Quicksand',sans-serif;font-size:13px;font-weight:600;padding:11px 20px;border:none;border-radius:50px;cursor:pointer;}
 
 /* IMAGE UPLOAD */
@@ -792,7 +794,7 @@ body{font-family:'Inter',sans-serif;background:#F0F7FF;color:#1a1a1a;min-height:
         </div>
         <div style="display:flex;gap:10px;flex-wrap:wrap;">
           <a href="skolka.html" target="_blank" class="btn-save" style="text-decoration:none;display:inline-flex;align-items:center;gap:7px;">🔐 Virtuálna Škôlka (verejná)</a>
-          <a href="vcielka_editor.html" target="_blank" class="btn-add" style="text-decoration:none;display:inline-flex;align-items:center;gap:7px;">🖼️ Otvoriť Editor</a>
+          <a href="vcielka_editor.html" target="_blank" class="btn-magenta">🖼️ Otvoriť Editor</a>
         </div>
       </div>
 
@@ -1727,8 +1729,8 @@ async function loadSkolka() {
           </div>
         </div>
         <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;">
-          <button class="btn-add" data-tip="Nahrať fotografie do priečinka" onclick="openSkolkaFolder('${f.id}','${f.name.replace(/'/g,"\'")}')">📷 Nahrať fotografie</button>
-          <button class="btn-danger" data-tip="Vymazať priečinok so všetkými fotkamy" onclick="deleteSkolkaFolder('${f.id}','${f.name.replace(/'/g,"\'")}')">🗑️ Vymazať priečinok</button>
+          <button class="btn-add" style="margin-bottom:0;" data-tip="Nahrať fotografie do priečinka" onclick="openSkolkaFolder('${f.id}','${f.name.replace(/'/g,"\'")}')">📷 Nahrať fotografie</button>
+          <button class="btn-danger" style="padding:11px 18px;font-size:13px;" data-tip="Vymazať priečinok so všetkými fotkamy" onclick="deleteSkolkaFolder('${f.id}','${f.name.replace(/'/g,"\'")}')">🗑️ Vymazať priečinok</button>
           <button class="sk-toggle${isOpen?' open':''}" id="sk_toggle_${f.id}" title="${isOpen?'Zbaliť':'Rozbaliť'}" onclick="toggleSkolkaFolder('${f.id}')">▾</button>
         </div>
       </div>

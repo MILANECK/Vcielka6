@@ -1494,12 +1494,13 @@ document.querySelectorAll('.fade-in').forEach(el=>obs.observe(el));
 
 // ===== MAGENTA SPOTLIGHT =====
 (function(){
-  function makeSpotlight(el, radius, lerp){
+  function makeSpotlight(el, radius, lerp, alpha){
     var glow = document.createElement('div');
     glow.style.cssText = 'position:absolute;inset:0;border-radius:inherit;pointer-events:none;opacity:0;transition:opacity .5s ease;z-index:-1;';
     el.insertBefore(glow, el.firstChild);
     var tx=0,ty=0,cx=0,cy=0,running=false,raf;
     var useEllipse=typeof radius==='function';
+    var al=alpha||0.22;
     function loop(){
       cx += (tx-cx)*lerp;
       cy += (ty-cy)*lerp;
@@ -1507,7 +1508,7 @@ document.querySelectorAll('.fade-in').forEach(el=>obs.observe(el));
       if(useEllipse){
         grad='radial-gradient(ellipse '+el.offsetWidth+'px '+el.offsetHeight+'px at '+cx.toFixed(1)+'px '+cy.toFixed(1)+'px,rgba(220,0,160,.38),rgba(220,0,160,0))';
       } else {
-        grad='radial-gradient(circle '+radius+'px at '+cx.toFixed(1)+'px '+cy.toFixed(1)+'px,rgba(220,0,160,.22),transparent 70%)';
+        grad='radial-gradient(circle '+radius+'px at '+cx.toFixed(1)+'px '+cy.toFixed(1)+'px,rgba(220,0,160,'+al+'),transparent 70%)';
       }
       glow.style.background=grad;
       if(Math.abs(tx-cx)>0.3||Math.abs(ty-cy)>0.3){raf=requestAnimationFrame(loop);}
@@ -1530,7 +1531,7 @@ document.querySelectorAll('.fade-in').forEach(el=>obs.observe(el));
     function loop(){
       cx+=(tx-cx)*0.08;cy+=(ty-cy)*0.08;al+=(tal-al)*0.08;
       if(al>0.002){
-        gal.style.backgroundImage='radial-gradient(circle 700px at '+cx.toFixed(1)+'px '+cy.toFixed(1)+'px,rgba(220,0,160,'+(0.22*al).toFixed(3)+'),transparent 70%)';
+        gal.style.backgroundImage='radial-gradient(circle 900px at '+cx.toFixed(1)+'px '+cy.toFixed(1)+'px,rgba(220,0,160,'+(0.242*al).toFixed(3)+'),transparent 70%)';
       }else if(!run){gal.style.backgroundImage='';}
       if(Math.abs(tx-cx)>0.1||Math.abs(ty-cy)>0.1||Math.abs(tal-al)>0.005){raf=requestAnimationFrame(loop);}
       else{run=false;if(al<=0.002)gal.style.backgroundImage='';}
@@ -1544,7 +1545,7 @@ document.querySelectorAll('.fade-in').forEach(el=>obs.observe(el));
     });
   })();}
   var ktop=document.querySelector('.kontakt-top');
-  if(ktop) makeSpotlight(ktop,500,0.08);
+  if(ktop) makeSpotlight(ktop,650,0.08,0.242);
 })();
 
 // ===== GALLERY SCROLL DOTS =====
