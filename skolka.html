@@ -331,13 +331,20 @@ async function renderFolders(folders) {
     grid.innerHTML = '<div class="vs-empty">📭 Zatiaľ žiadne fotografie.<br><small>Administrátor pridá priečinky čoskoro.</small></div>';
     return;
   }
-  // RPC doesn't return cover_url (added after function was created) — fetch separately
+  // RPC doesn't return cover_url — read from both skolka_folders and settings table
   const ids = folders.map(f => f.id);
-  const { data: coverRows } = await db.from('skolka_folders').select('id,cover_url').in('id', ids);
-  if (coverRows) {
-    const coverMap = Object.fromEntries(coverRows.map(r => [r.id, r.cover_url]));
-    folders.forEach(f => { if (!f.cover_url) f.cover_url = coverMap[f.id] || null; });
-  }
+  const coverKeys = ids.map(id => 'sk_cover_' + id);
+  const [{ data: coverRows }, { data: settingsRows }] = await Promise.all([
+    db.from('skolka_folders').select('id,cover_url').in('id', ids),
+    db.from('settings').select('key,value').in('key', coverKeys)
+  ]);
+  const coverMap = {};
+  if (coverRows) coverRows.forEach(r => { if (r.cover_url) coverMap[r.id] = r.cover_url; });
+  if (settingsRows) settingsRows.forEach(r => {
+    const id = parseInt(r.key.replace('sk_cover_', ''));
+    if (!coverMap[id] && r.value) coverMap[id] = r.value;
+  });
+  folders.forEach(f => { if (!f.cover_url) f.cover_url = coverMap[f.id] || null; });
   grid.innerHTML = '';
   for (const f of folders) {
     const { data: files } = await db.storage.from('vcielka').list('skolka/'+f.id,{limit:200});

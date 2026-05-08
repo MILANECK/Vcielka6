@@ -1882,13 +1882,17 @@ function renderSkolkaGrid(folderId, files, coverUrl) {
 
 async function setCoverPhoto(folderId, url) {
   localStorage.setItem('sk_cover_' + folderId, url);
-  const { error } = await db.from('skolka_folders').update({ cover_url: url }).eq('id', folderId);
-  if (error) {
-    console.error('setCoverPhoto DB error:', error);
-    toast('⚠️ Uložené len lokálne – DB chyba: ' + error.message, 'error');
+  const [r1, r2] = await Promise.all([
+    db.from('skolka_folders').update({ cover_url: url }).eq('id', folderId),
+    db.from('settings').upsert({ key: 'sk_cover_' + folderId, value: url }, { onConflict: 'key' })
+  ]);
+  if (r2.error) {
+    console.error('setCoverPhoto settings error:', r2.error);
+    toast('⚠️ Chyba uloženia obálky: ' + r2.error.message, 'error');
   } else {
     toast('✅ Titulná fotografia nastavená');
   }
+  if (r1.error) console.warn('setCoverPhoto folder update skipped:', r1.error.message);
   loadSkolka();
 }
 

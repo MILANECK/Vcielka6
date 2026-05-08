@@ -521,6 +521,9 @@ button{outline:none;border:none;}
   .testi-grid{grid-template-columns:1fr;}
   .news-grid{grid-template-columns:1fr;}
   .section-center h2,.gallery-header h2,.news-header h2{font-size:30px;}
+  .about-expand-btn,.ucebne-btn{min-width:0;padding:10px 14px;font-size:13px;flex:1;}
+  .service-card{height:auto;}
+  .service-card .service-body p{max-height:200px;opacity:1;margin-top:2px;}
 }
 
 
@@ -580,7 +583,8 @@ button{outline:none;border:none;}
   align-items:center;
   cursor:pointer;
   animation:heroBlobFloat 4.5s ease-in-out infinite alternate;
-  transition:transform .25s ease;
+  transition:transform .25s ease, opacity .5s ease;
+  opacity:0;
 }
 .hero-news-blob:hover{transform:scale(1.12);}
 @keyframes heroBlobFloat{
@@ -1336,11 +1340,13 @@ button{outline:none;border:none;}
 <svg class="wave" viewBox="0 0 1440 44" preserveAspectRatio="none" style="display:block;margin-bottom:-2px;background:transparent;" xmlns="http://www.w3.org/2000/svg">
   <path d="M0,20 C300,44 700,0 1100,30 C1300,42 1420,10 1440,18 L1440,46 L0,46Z" fill="#0D3D6E"/>
 </svg>
-<div style="text-align:center;position:relative;z-index:10;margin-top:-10px;padding-bottom:24px;background:#0D3D6E;">
-  <a href="#home" style="display:inline-flex;align-items:center;gap:8px;border:1.5px solid rgba(255,255,255,.3);color:rgba(255,255,255,.7);padding:9px 22px;border-radius:50px;font-family:'Quicksand',sans-serif;font-size:13px;font-weight:700;text-decoration:none;transition:color .2s,border-color .2s;" onmouseover="this.style.color='#fff';this.style.borderColor='rgba(255,255,255,.65)'" onmouseout="this.style.color='rgba(255,255,255,.7)';this.style.borderColor='rgba(255,255,255,.3)'">
-    <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M7 11V3M3 7l4-4 4 4" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-    Späť na vrch
-  </a>
+<div style="position:relative;background:#0D3D6E;padding-top:52px;">
+  <div style="position:absolute;top:0;left:50%;transform:translate(-50%,-50%);z-index:10;">
+    <a href="#home" style="display:inline-flex;align-items:center;gap:8px;background:#0D3D6E;border:1.5px solid rgba(255,255,255,.3);color:rgba(255,255,255,.7);padding:9px 22px;border-radius:50px;font-family:'Quicksand',sans-serif;font-size:13px;font-weight:700;text-decoration:none;transition:color .2s,border-color .2s;white-space:nowrap;" onmouseover="this.style.color='#fff';this.style.borderColor='rgba(255,255,255,.65)'" onmouseout="this.style.color='rgba(255,255,255,.7)';this.style.borderColor='rgba(255,255,255,.3)'">
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M7 11V3M3 7l4-4 4 4" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      Späť na vrch
+    </a>
+  </div>
 </div>
 
 <!-- ===========================
@@ -1818,7 +1824,8 @@ async function loadCMS() {
           const ph = document.getElementById('heroBlobPhoto');
           if(ph){ ph.src = featured.photo_url; ph.style.display='block'; }
         }
-        blob.style.display = 'block';
+        blob.style.display = 'flex';
+        setTimeout(() => { blob.style.opacity = '1'; }, 150);
         blob._newsId = featured.id;
         window._cmsNews = window._cmsNews || [];
         if (!window._cmsNews.find(x => x.id === featured.id)) window._cmsNews.push(featured);
