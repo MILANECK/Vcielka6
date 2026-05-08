@@ -527,10 +527,11 @@ button{outline:none;border:none;}
 }
 @media(hover:none) and (max-width:768px){
   .service-card{height:220px;position:relative;}
-  .service-card .service-body{position:absolute;bottom:0;left:0;right:0;background:inherit;margin-top:0;}
-  .service-card .service-more{display:block;}
-  .service-card.tapped .service-body p{max-height:120px;opacity:1;margin-top:4px;transform:translateY(0);}
-  .service-card.tapped .service-more{opacity:.6;max-height:18px;margin-top:6px;}
+  .service-card .service-body{position:absolute;bottom:0;left:0;right:0;background:inherit;margin-top:0;transform:translateY(calc(100% - 58px));transition:transform .44s cubic-bezier(.4,0,.2,1);}
+  .service-card .service-body p{max-height:none!important;opacity:1;transform:none;transition:none;margin-top:4px;}
+  .service-card .service-more{display:block;opacity:.55;max-height:none;margin-top:6px;}
+  .service-card.tapped .service-body{transform:translateY(0);}
+  .service-card.tapped .service-img img{transform:translateY(-12px);}
 }
 
 
