@@ -2541,7 +2541,7 @@ function updateJLPreview(){
 }
 
 /* ── PRINT / PDF WINDOW — identical markup to live preview ── */
-function generateJLHTML(data){
+function generateJLHTML(data, autoPrint=false){
   const base=window.location.href.replace(/[^/\\]*$/,'');
   const bgUrl=base+'jedalny-bg.png';
   const flagUrl='https://emojiguide.org/images/emoji/9/14k7e3jnewfv9.png';
@@ -2567,20 +2567,35 @@ function generateJLHTML(data){
   const alCol1=alItems.slice(0,mid).map(l=>`<div>${l}</div>`).join('');
   const alCol2=alItems.slice(mid).map(l=>`<div>${l}</div>`).join('');
 
+  const W=JL_CONTENT_W, H=JL_CONTENT_H;
+  const fitScript=autoPrint?`<script>
+function _jlFit(){
+  var p=document.querySelector('.page'),w=document.getElementById('jl-wrap');
+  if(!p||!w)return;
+  var s=Math.min(1,(window.innerWidth-40)/${W},(window.innerHeight-40)/${H});
+  p.style.transform='scale('+s+')';
+  w.style.width=Math.ceil(${W}*s)+'px';
+  w.style.height=Math.ceil(${H}*s)+'px';
+}
+window.addEventListener('resize',_jlFit);
+window.addEventListener('load',function(){_jlFit();setTimeout(function(){window.print();},600);});
+<\/script>`:'';
+
   return`<!DOCTYPE html><html><head><meta charset="UTF-8"/>
 <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"/>
 <style>
 *{box-sizing:border-box;margin:0;padding:0;}
-html{background:#777;}
-body{display:flex;justify-content:center;padding:24px;font-family:'Inter',sans-serif;}
-@media print{html,body{background:#fff;padding:0;display:block;}@page{size:A4 portrait;margin:0;}.no-print{display:none!important;}.page{box-shadow:none!important;}}
-.page{width:${JL_CONTENT_W}px;height:${JL_CONTENT_H}px;background:#F8F4ED url('${bgUrl}') center top/cover no-repeat;position:relative;overflow:hidden;box-shadow:0 4px 32px rgba(0,0,0,.3);}
+html{background:#666;}
+body{display:flex;justify-content:center;align-items:flex-start;padding:20px;font-family:'Inter',sans-serif;min-height:100vh;}
+#jl-wrap{display:inline-block;flex-shrink:0;}
+@media print{html,body{background:#fff;padding:0;display:block;margin:0;}@page{size:A4 portrait;margin:0;}.no-print{display:none!important;}#jl-wrap{width:${W}px!important;height:${H}px!important;}.page{box-shadow:none!important;transform:none!important;width:${W}px!important;height:${H}px!important;print-color-adjust:exact;-webkit-print-color-adjust:exact;color-adjust:exact;}}
+.page{width:${W}px;height:${H}px;background:#F8F4ED url('${bgUrl}') center top/cover no-repeat;position:relative;overflow:hidden;box-shadow:0 4px 32px rgba(0,0,0,.3);transform-origin:top left;}
 .overlay{position:absolute;top:290px;left:72px;right:62px;}
 .no-print{position:fixed;top:12px;right:12px;background:#1a2a4a;color:#fff;border:none;border-radius:8px;padding:9px 20px;font-size:13px;cursor:pointer;font-family:'Inter',sans-serif;z-index:99;}
 </style></head>
 <body>
 <button class="no-print" onclick="window.print()">⬇️ Vytlačiť / Uložiť PDF</button>
-<div class="page"><div class="overlay">
+<div id="jl-wrap"><div class="page"><div class="overlay">
   <div style="display:flex;gap:14px;justify-content:center;align-items:center;padding:6px 0 9px;border-bottom:1.5px solid #d8d0c0;margin-bottom:9px;">
     <div style="display:flex;align-items:center;gap:5px;font-size:13px;color:#333;font-family:'Inter',sans-serif;"><span style="font-size:14px;">🍎</span><span>Ovocie týždňa: <strong>${e(data.ovocie)||'—'}</strong></span></div>
     <div style="display:flex;align-items:center;gap:5px;font-size:13px;color:#333;font-family:'Inter',sans-serif;"><span style="font-size:14px;">🥛</span><span>Mliečny program: <strong>${e(data.mliecny)||'—'}</strong></span></div>
@@ -2598,7 +2613,8 @@ body{display:flex;justify-content:center;padding:24px;font-family:'Inter',sans-s
       <div style="flex:1;font-size:9px;color:#555;line-height:1.5;">${alCol2}</div>
     </div>
   </div>
-</div></div>
+</div></div></div>
+${fitScript}
 </body></html>`;
 }
 
@@ -2606,8 +2622,7 @@ function printJL(){
   const data=getJLData();
   localStorage.setItem('jl_data',JSON.stringify(data));
   const w=window.open('','_blank','width=960,height=1060,scrollbars=yes');
-  w.document.open();w.document.write(generateJLHTML(data));w.document.close();
-  setTimeout(()=>w.print(),1000);
+  w.document.open();w.document.write(generateJLHTML(data,true));w.document.close();
 }
 
 async function publishJL(){
@@ -2619,7 +2634,7 @@ async function publishJL(){
   frame.style.cssText='position:fixed;left:-9999px;top:0;width:794px;height:1123px;border:0;opacity:0;pointer-events:none;';
   document.body.appendChild(frame);
   frame.contentDocument.open();
-  frame.contentDocument.write(generateJLHTML(data));
+  frame.contentDocument.write(generateJLHTML(data,false));
   frame.contentDocument.close();
   await new Promise(r=>setTimeout(r,2200));
 

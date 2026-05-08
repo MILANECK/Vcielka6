@@ -276,8 +276,7 @@ button{outline:none;border:none;}
 .service-body h3{font-size:15px;color:#1a1a1a;margin:0;font-weight:700;line-height:1.38;height:calc(15px * 1.38 * 2);overflow:hidden;}
 .service-body p{font-family:'Inter',sans-serif;font-size:13px;color:var(--text-muted);line-height:1.5;max-height:0;overflow:hidden;opacity:0;margin-top:0;transform:translateY(10px);transition:max-height .44s cubic-bezier(.4,0,.2,1),opacity .38s ease,margin-top .44s cubic-bezier(.4,0,.2,1),transform .44s cubic-bezier(.4,0,.2,1);}
 .service-card:hover .service-body p,.service-card.tapped .service-body p{max-height:100px;opacity:1;margin-top:2px;transform:translateY(0);}
-.service-more{font-family:'Inter',sans-serif;font-size:10px;font-weight:600;letter-spacing:.6px;text-transform:uppercase;color:var(--text-muted);opacity:0;max-height:0;overflow:hidden;text-align:center;transition:opacity .3s ease .25s,max-height .3s ease .25s;margin-top:0;}
-.service-card:hover .service-more,.service-card.tapped .service-more{opacity:.5;max-height:18px;margin-top:6px;}
+.service-more{font-family:'Inter',sans-serif;font-size:10px;font-weight:600;letter-spacing:.6px;text-transform:uppercase;color:var(--text-muted);opacity:0;max-height:0;overflow:hidden;text-align:center;transition:opacity .3s ease .25s,max-height .3s ease .25s;margin-top:0;display:none;}
 .service-card.clickable{cursor:pointer;}
 .act-popup-overlay{display:flex;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:5000!important;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(4px);opacity:0;visibility:hidden;pointer-events:none;transition:opacity .32s ease,visibility .32s;}
 .act-popup-overlay.open{opacity:1;visibility:visible;pointer-events:auto;}
@@ -522,11 +521,16 @@ button{outline:none;border:none;}
   .service-card{height:auto;}
 }
 @media(hover:none){
-  .service-card.tapped .service-body p{max-height:200px;opacity:1;margin-top:2px;}
-  .service-card.tapped .service-img img{transform:translateY(-6px) scale(1.03);}
   .news-card.tapped .news-excerpt{max-height:80px;opacity:1;margin-top:2px;}
   .news-card.tapped .news-more{max-height:30px;opacity:1;margin-top:5px;}
   .news-card.tapped .news-img img{transform:translateY(-6px) scale(1.03);}
+}
+@media(hover:none) and (max-width:768px){
+  .service-card{height:220px;position:relative;}
+  .service-card .service-body{position:absolute;bottom:0;left:0;right:0;background:inherit;margin-top:0;}
+  .service-card .service-more{display:block;}
+  .service-card.tapped .service-body p{max-height:120px;opacity:1;margin-top:4px;transform:translateY(0);}
+  .service-card.tapped .service-more{opacity:.6;max-height:18px;margin-top:6px;}
 }
 
 
@@ -1349,8 +1353,8 @@ button{outline:none;border:none;}
 </div>
 
 <!-- wave contact→footer -->
-<svg class="wave" viewBox="0 0 1440 44" preserveAspectRatio="none" style="display:block;margin-bottom:-2px;background:transparent;" xmlns="http://www.w3.org/2000/svg">
-  <path d="M0,20 C300,44 700,0 1100,30 C1300,42 1420,10 1440,18 L1440,46 L0,46Z" fill="#0D3D6E"/>
+<svg class="wave" viewBox="0 0 1440 80" preserveAspectRatio="none" style="display:block;margin-bottom:-2px;" xmlns="http://www.w3.org/2000/svg">
+  <path d="M0,80 Q720,0 1440,80 Z" fill="#0D3D6E"/>
 </svg>
 <div style="background:#0D3D6E;"></div>
 
