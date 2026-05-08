@@ -100,7 +100,13 @@ body{font-family:'Inter',sans-serif;background:#F0F7FF;color:#1a1a1a;min-height:
 .fmt-lh-pop.open{display:block;}
 .fmt-lh-opt{display:block;width:100%;padding:5px 10px;border:none;background:none;font-family:'Quicksand',sans-serif;font-size:12px;font-weight:700;color:#1A5FA8;cursor:pointer;text-align:center;transition:.12s;white-space:nowrap;}
 .fmt-lh-opt:hover{background:#EEF7FF;}
-.fmt-color{width:26px;height:26px;border:1.5px solid #C8E6FA;border-radius:6px;padding:2px;cursor:pointer;background:none;vertical-align:middle;}
+.fmt-color-wrap{position:relative;display:inline-flex;}
+.fmt-color-btn{padding:3px 7px!important;display:inline-flex!important;align-items:center;gap:3px;}
+.fmt-color-dot{width:12px;height:12px;border-radius:50%;background:#1a1a1a;display:inline-block;border:1.5px solid rgba(0,0,0,.15);flex-shrink:0;}
+.fmt-color-pop{display:none;position:absolute;top:calc(100% + 3px);right:0;background:#fff;border:1.5px solid #C8E6FA;border-radius:10px;box-shadow:0 4px 14px rgba(26,95,168,.12);z-index:200;padding:6px 7px;gap:5px;min-width:110px;flex-wrap:wrap;}
+.fmt-color-pop.open{display:flex;}
+.fmt-color-swatch{width:18px;height:18px;border-radius:50%;border:1.5px solid rgba(0,0,0,.12);cursor:pointer;transition:transform .1s,box-shadow .1s;flex-shrink:0;padding:0;}
+.fmt-color-swatch:hover{transform:scale(1.18);box-shadow:0 2px 6px rgba(0,0,0,.2);}
 .fake-textarea{width:100%;min-height:75px;padding:8px 10px;border:1.5px solid #C8E6FA;border-radius:10px;font-family:'Inter',sans-serif;font-size:14px;color:#333;background:#fff;outline:none;line-height:1.6;box-sizing:border-box;cursor:text;overflow-y:auto;resize:vertical;}
 .fake-textarea:focus{border-color:#1A5FA8;box-shadow:0 0 0 3px rgba(26,95,168,.08);}
 .fake-textarea[data-tall]{min-height:110px;}
@@ -712,22 +718,7 @@ body{font-family:'Inter',sans-serif;background:#F0F7FF;color:#1a1a1a;min-height:
 
           <div class="card" style="margin-bottom:20px;">
             <div class="card-title">📌 Spodná časť</div>
-            <div class="field"><label>Text EU financovania</label><input type="text" id="jl-eu" value="„Školský program" je financovaný z prostriedkov SR a Európskej únie." oninput="updateJLPreview()"/></div>
-            <div class="field"><label>Alergény</label><textarea id="jl-alergeny" rows="8" oninput="updateJLPreview()">Zoznam alergénnych zložiek:
-① obilniny obsahujúce lepok (t.j. pšenica, raž, jačmeň, špalda, kamut) a výrobky z nich
-② kôrovce a výrobky z nich
-③ vajcia a výrobky z nich
-④ ryby a výrobky z rýb
-⑤ arašidy a výrobky z nich
-⑥ sója a výrobky zo sóje
-⑦ mlieko a výrobky z mlieka
-⑧ orechy a výrobky z nich
-⑨ zeler a výrobky zo zeleru
-⑩ horčica a výrobky z horčice
-⑪ sezamové semená a výrobky z nich
-⑫ oxid siričitý a siričitany v koncentrácii viac ako 10 mg/kg alebo 10 mg/l
-⑬ vlčí bôb a výrobky z neho
-⑭ mäkkýše a výrobky z nich</textarea></div>
+            <div id="jl-bottom-fields"></div>
           </div>
 
           <div style="display:flex;gap:12px;flex-wrap:wrap;margin-bottom:40px;">
@@ -984,7 +975,7 @@ async function loadPage(name) {
   if (name === 'gallery') await loadGallery();
   if (name === 'testimonials') await loadTestimonials();
   if (name === 'documents') await loadDocuments();
-  if (name === 'jedalny') { buildJLDayCards(); loadJLLocal(); return; }
+  if (name === 'jedalny') { buildJLDayCards(); buildJLBottomFields(); loadJLLocal(); return; }
   if (name === 'footer') await loadSettings(['footer_desc','footer_links_title','footer_links','footer_copy_left','footer_copy_right','contact_address','contact_phone','contact_email','contact_hours']);
 }
 
@@ -1096,6 +1087,30 @@ function fmtColor(input) {
   document.execCommand('foreColor', false, input.value);
   _fmtSavedRange = null;
 }
+function toggleFmtColorPop(btn){
+  const pop=btn.parentElement.querySelector('.fmt-color-pop');
+  if(!pop)return;
+  const isOpen=pop.classList.contains('open');
+  document.querySelectorAll('.fmt-color-pop.open').forEach(p=>p.classList.remove('open'));
+  if(!isOpen)pop.classList.add('open');
+}
+function applyFmtColor(swatch,color){
+  const dot=swatch.closest('.fmt-color-wrap')?.querySelector('.fmt-color-dot');
+  if(dot)dot.style.background=color;
+  swatch.closest('.fmt-color-pop')?.classList.remove('open');
+  if(_fmtSavedRange){
+    const sel=window.getSelection();
+    sel.removeAllRanges();
+    sel.addRange(_fmtSavedRange);
+  }
+  document.execCommand('foreColor',false,color);
+  _fmtSavedRange=null;
+}
+document.addEventListener('mousedown',function(e){
+  if(!e.target.closest('.fmt-color-wrap')){
+    document.querySelectorAll('.fmt-color-pop.open').forEach(p=>p.classList.remove('open'));
+  }
+});
 
 // ===== ACTIVITY DRAG-TO-REORDER =====
 let _dragActId = null;
@@ -1789,9 +1804,13 @@ async function loadSkolka() {
   }
   list.innerHTML = '';
   let totalBytes = 0;
+  const { data: _skOrderRows } = await db.from('settings').select('key,value').in('key', folders.map(f => 'sk_order_' + f.id));
+  const _skOrderMap = {};
+  if (_skOrderRows) _skOrderRows.forEach(r => { const id = parseInt(r.key.replace('sk_order_', '')); try { _skOrderMap[id] = JSON.parse(r.value); } catch(e) {} });
   for (const f of folders) {
     const { data: files } = await db.storage.from('vcielka').list('skolka/' + f.id, { limit: 1000 });
     const photos = (files || []).filter(x => x.name !== '.keep' && x.id !== null);
+    const orderedPhotos = applySkOrder(photos, _skOrderMap[f.id]);
     const count = photos.length;
     const folderBytes = photos.reduce((s, x) => s + (x.metadata?.size || 0), 0);
     totalBytes += folderBytes;
@@ -1800,7 +1819,10 @@ async function loadSkolka() {
     card.className = 'card';
     card.style.marginBottom = '16px';
     card.dataset.folderName = f.name;
-    const coverUrl = f.cover_url || localStorage.getItem('sk_cover_' + f.id) || '';
+    const _fp = orderedPhotos[0];
+    const coverUrl = _fp
+      ? db.storage.from('vcielka').getPublicUrl('skolka/'+f.id+'/'+_fp.name).data.publicUrl
+      : (f.cover_url || localStorage.getItem('sk_cover_'+f.id) || '');
     const isOpen = localStorage.getItem('sk_open_' + f.id) === '1';
     const coverThumb = coverUrl
       ? `<img src="${thumbUrl(coverUrl,128)}" data-full="${coverUrl}" style="width:64px;height:48px;object-fit:cover;border-radius:10px;flex-shrink:0;box-shadow:0 2px 8px rgba(0,0,0,.12);" alt="obálka" onerror="this.src=this.dataset.full;this.onerror=null;"/>`
@@ -1835,7 +1857,7 @@ async function loadSkolka() {
       </div>
     `;
     list.appendChild(card);
-    renderSkolkaGrid(f.id, photos, coverUrl);
+    renderSkolkaGrid(f.id, orderedPhotos);
   }
   updateSkolkaStorageBar(totalBytes);
 }
@@ -1854,44 +1876,146 @@ function updateSkolkaStorageBar(totalBytes) {
   usedEl.textContent = usedMB + ' MB využito';
 }
 
-function renderSkolkaGrid(folderId, files, coverUrl) {
+function renderSkolkaGrid(folderId, sortedPhotos) {
   const grid = document.getElementById('skolka_grid_' + folderId);
   if (!grid) return;
-  const photos = files.filter(x => x.name !== '.keep' && x.id !== null);
+  const photos = (sortedPhotos || []).filter(x => x.name !== '.keep' && x.id !== null);
   if (!photos.length) {
     grid.innerHTML = '<div style="color:#aaa;font-size:12px;padding:8px 0;">Žiadne fotografie</div>';
     return;
   }
-  coverUrl = coverUrl || localStorage.getItem('sk_cover_' + folderId) || '';
-  grid.innerHTML = photos.map(p => {
+  grid.innerHTML = photos.map((p, idx) => {
     const { data: { publicUrl } } = db.storage.from('vcielka').getPublicUrl('skolka/' + folderId + '/' + p.name);
     const safeName = p.name.replace(/'/g, "\\'");
     const safeUrl = publicUrl.replace(/'/g, "\\'");
-    const isCover = coverUrl === publicUrl;
+    const isFirst = idx === 0;
+    const coverTip = isFirst ? 'Titulná fotografia albumu (prvá v poradí)' : 'Nastaviť ako titulnú fotografiu (presunúť na 1. miesto)';
+    const coverClick = isFirst ? 'event.stopPropagation()' : `event.stopPropagation();moveSkToFirst('${folderId}','${safeName}')`;
     return `
-      <div class="gallery-item${isCover ? ' is-cover' : ''}" data-name="${p.name}" data-url="${publicUrl}" onclick="toggleSkolkaSelect('${folderId}','${safeName}','${safeUrl}',this)">
+      <div class="gallery-item${isFirst ? ' is-cover' : ''}" draggable="true" data-name="${p.name}" data-url="${publicUrl}"
+           ondragstart="skDragStart(event,'${folderId}')" ondragover="skDragOver(event)"
+           ondrop="skDragDrop(event,'${folderId}')" ondragend="skDragEnd(event,'${folderId}')"
+           onclick="toggleSkolkaSelect('${folderId}','${safeName}','${safeUrl}',this)">
         <div class="sk-check">✓</div>
         <img src="${thumbUrl(publicUrl)}" data-full="${publicUrl}" alt="${p.name}" loading="lazy" onerror="this.src=this.dataset.full;this.onerror=null;"/>
         <button class="gallery-item-del" data-tip="Odstrániť fotografiu" onclick="event.stopPropagation();deleteSkolkaPhoto('${folderId}','${safeName}')">✕</button>
-        <button class="sk-cover-btn" data-tip="${isCover ? 'Titulná fotografia albumu' : 'Nastaviť ako titulnú fotografiu'}" onclick="event.stopPropagation();setCoverPhoto('${folderId}','${safeUrl}')">★</button>
+        <button class="sk-cover-btn"${isFirst?' style="background:#F9C832;color:#1a1a1a;"':''} data-tip="${coverTip}" onclick="${coverClick}">★</button>
       </div>`;
   }).join('');
 }
 
+function applySkOrder(photos, order) {
+  if (!order?.length) return photos;
+  const pos = {};
+  order.forEach((n, i) => pos[n] = i);
+  return [...photos].sort((a, b) => {
+    const ia = pos[a.name] !== undefined ? pos[a.name] : 1e9;
+    const ib = pos[b.name] !== undefined ? pos[b.name] : 1e9;
+    return ia - ib;
+  });
+}
+
+let _skDragSrc = null;
+
+function skDragStart(e, folderId) {
+  _skDragSrc = e.currentTarget;
+  e.dataTransfer.effectAllowed = 'move';
+  setTimeout(() => { if (_skDragSrc) _skDragSrc.classList.add('dragging'); }, 0);
+}
+
+function skDragOver(e) {
+  e.preventDefault();
+  e.dataTransfer.dropEffect = 'move';
+  const grid = e.currentTarget.closest('.gallery-grid');
+  if (grid) grid.querySelectorAll('.gallery-item').forEach(el => el.classList.remove('drag-over'));
+  if (e.currentTarget !== _skDragSrc) e.currentTarget.classList.add('drag-over');
+}
+
+function skDragDrop(e, folderId) {
+  e.preventDefault();
+  if (!_skDragSrc || _skDragSrc === e.currentTarget) return;
+  const grid = e.currentTarget.closest('.gallery-grid');
+  if (!grid) return;
+  const items = [...grid.querySelectorAll('.gallery-item')];
+  const srcIdx = items.indexOf(_skDragSrc);
+  const tgtIdx = items.indexOf(e.currentTarget);
+  if (srcIdx < tgtIdx) {
+    grid.insertBefore(_skDragSrc, e.currentTarget.nextSibling);
+  } else {
+    grid.insertBefore(_skDragSrc, e.currentTarget);
+  }
+  grid.querySelectorAll('.gallery-item').forEach(el => el.classList.remove('drag-over'));
+}
+
+async function skDragEnd(e, folderId) {
+  if (_skDragSrc) _skDragSrc.classList.remove('dragging');
+  _skDragSrc = null;
+  await _saveSkOrderFromGrid(folderId);
+}
+
+async function moveSkToFirst(folderId, photoName) {
+  const grid = document.getElementById('skolka_grid_' + folderId);
+  if (!grid) return;
+  const target = [...grid.querySelectorAll('.gallery-item[data-name]')].find(el => el.dataset.name === photoName);
+  if (!target) return;
+  grid.insertBefore(target, grid.firstElementChild);
+  await _saveSkOrderFromGrid(folderId);
+}
+
+async function _saveSkOrderFromGrid(folderId) {
+  const grid = document.getElementById('skolka_grid_' + folderId);
+  if (!grid) return;
+  const items = [...grid.querySelectorAll('.gallery-item[data-name]')];
+  const order = items.map(el => el.dataset.name);
+  items.forEach((item, idx) => {
+    item.classList.toggle('is-cover', idx === 0);
+    const btn = item.querySelector('.sk-cover-btn');
+    if (!btn) return;
+    if (idx === 0) {
+      btn.style.background = '#F9C832'; btn.style.color = '#1a1a1a';
+      btn.setAttribute('data-tip', 'Titulná fotografia albumu (prvá v poradí)');
+      btn.setAttribute('onclick', 'event.stopPropagation()');
+    } else {
+      btn.style.background = ''; btn.style.color = '';
+      btn.setAttribute('data-tip', 'Nastaviť ako titulnú fotografiu (presunúť na 1. miesto)');
+      const n = (item.dataset.name || '').replace(/'/g, "\\'");
+      btn.setAttribute('onclick', `event.stopPropagation();moveSkToFirst('${folderId}','${n}')`);
+    }
+  });
+  const now = new Date().toISOString();
+  const { error, data } = await db.from('settings').upsert(
+    { key: 'sk_order_' + folderId, value: JSON.stringify(order), updated_at: now },
+    { onConflict: 'key' }
+  );
+  if (error) {
+    toast('⚠️ Chyba uloženia poradia: ' + error.message, 'error');
+  } else if (Array.isArray(data) && data.length === 0) {
+    toast('⚠️ Poradie uložené iba lokálne (RLS blokuje zápis)', 'error');
+  } else {
+    toast('✅ Poradie uložené');
+  }
+}
+
 async function setCoverPhoto(folderId, url) {
   localStorage.setItem('sk_cover_' + folderId, url);
+  const now = new Date().toISOString();
   const [r1, r2] = await Promise.all([
     db.from('skolka_folders').update({ cover_url: url }).eq('id', folderId),
-    db.from('settings').upsert({ key: 'sk_cover_' + folderId, value: url }, { onConflict: 'key' })
+    db.from('settings').upsert({ key: 'sk_cover_' + folderId, value: url, updated_at: now }, { onConflict: 'key' })
   ]);
   console.log('[setCoverPhoto] key=sk_cover_' + folderId + ' r1:', r1.data, r1.error, '| r2:', r2.data, r2.error);
   if (r2.error) {
-    console.error('setCoverPhoto settings error:', r2.error);
+    console.error('[setCoverPhoto] settings upsert error:', r2.error);
     toast('⚠️ Chyba uloženia obálky: ' + r2.error.message, 'error');
+  } else if (Array.isArray(r2.data) && r2.data.length === 0) {
+    console.warn('[setCoverPhoto] settings upsert returned empty array — RLS may be blocking writes. Cover saved to localStorage only.');
+    toast('⚠️ Obálka uložená iba lokálne — rodičia ju neuvidia. Skontrolujte Supabase RLS políciu na tabuľke settings.', 'error');
   } else {
     toast('✅ Titulná fotografia nastavená');
   }
-  if (r1.error) console.warn('setCoverPhoto folder update skipped:', r1.error.message);
+  if (r1.error) {
+    console.warn('[setCoverPhoto] skolka_folders update error (cover_url column may be missing or RLS blocked):', r1.error.message);
+  }
   loadSkolka();
 }
 
@@ -2190,7 +2314,7 @@ function _jlToolbar(){
     <div class="fmt-sep"></div>
     <div class="fmt-lh"><button class="fmt-btn" type="button" title="Riadkovanie" onmousedown="event.preventDefault();saveFmtSel(event,this);" onclick="toggleFmtLh(this)" style="padding:3px 7px;">${lhSvg}</button><div class="fmt-lh-pop"><button class="fmt-lh-opt" onmousedown="event.preventDefault();applyFmtLh(this,'1.2')">1.2×</button><button class="fmt-lh-opt" onmousedown="event.preventDefault();applyFmtLh(this,'1.5')">1.5×</button><button class="fmt-lh-opt" onmousedown="event.preventDefault();applyFmtLh(this,'1.8')">1.8×</button><button class="fmt-lh-opt" onmousedown="event.preventDefault();applyFmtLh(this,'2.2')">2.2×</button></div></div>
     <div class="fmt-sep"></div>
-    <input type="color" class="fmt-color" title="Farba textu" value="#222222" onmousedown="saveFmtSel(event,this)" onchange="fmtColor(this)"/>
+    <div class="fmt-color-wrap"><button class="fmt-btn fmt-color-btn" type="button" title="Farba textu" onmousedown="event.preventDefault();saveFmtSel(event,this)" onclick="toggleFmtColorPop(this)"><span class="fmt-color-dot"></span></button><div class="fmt-color-pop"><button class="fmt-color-swatch" style="background:#1a1a1a" onmousedown="event.preventDefault()" onclick="applyFmtColor(this,'#1a1a1a')"></button><button class="fmt-color-swatch" style="background:#1A5FA8" onmousedown="event.preventDefault()" onclick="applyFmtColor(this,'#1A5FA8')"></button><button class="fmt-color-swatch" style="background:#C8920A" onmousedown="event.preventDefault()" onclick="applyFmtColor(this,'#C8920A')"></button><button class="fmt-color-swatch" style="background:#3A7A3A" onmousedown="event.preventDefault()" onclick="applyFmtColor(this,'#3A7A3A')"></button><button class="fmt-color-swatch" style="background:#C03838" onmousedown="event.preventDefault()" onclick="applyFmtColor(this,'#C03838')"></button><button class="fmt-color-swatch" style="background:#6A58A0" onmousedown="event.preventDefault()" onclick="applyFmtColor(this,'#6A58A0')"></button><button class="fmt-color-swatch" style="background:#C06010" onmousedown="event.preventDefault()" onclick="applyFmtColor(this,'#C06010')"></button><button class="fmt-color-swatch" style="background:#2A70A0" onmousedown="event.preventDefault()" onclick="applyFmtColor(this,'#2A70A0')"></button><button class="fmt-color-swatch" style="background:#888" onmousedown="event.preventDefault()" onclick="applyFmtColor(this,'#888')"></button><button class="fmt-color-swatch" style="background:#fff;border-color:#C8E6FA" onmousedown="event.preventDefault()" onclick="applyFmtColor(this,'#ffffff')"></button></div></div>
   </div>`;
 }
 
@@ -2200,32 +2324,55 @@ function buildJLDayCards(){
   c.dataset.built='1';
   const tb=_jlToolbar();
   c.innerHTML=JL_DAYS.map(d=>`
-    <div class="card" style="margin-bottom:10px;border-left:4px solid ${d.border};">
-      <div class="card-title" style="color:${d.title};">${d.icon} ${d.label}</div>
-      <div class="field fmt-wrap">
-        <label>Desiata</label>${tb}
-        <div class="fake-textarea" id="jl-${d.key}-desiata" contenteditable="true" oninput="updateJLPreview()"></div>
+    <div class="card" style="margin-bottom:10px;padding:0;border:2px solid ${d.border};overflow:hidden;">
+      <div style="background:${d.color}33;padding:11px 20px;border-bottom:1.5px solid ${d.border}55;">
+        <div class="card-title" style="color:${d.title};margin:0;padding:0;">${d.icon} ${d.label}</div>
       </div>
-      <div class="field fmt-wrap">
-        <label>Obed</label>${tb}
-        <div class="fake-textarea" id="jl-${d.key}-obed" contenteditable="true" data-tall oninput="updateJLPreview()"></div>
-      </div>
-      <div class="field fmt-wrap">
-        <label>Olovrant</label>${tb}
-        <div class="fake-textarea" id="jl-${d.key}-olovrant" contenteditable="true" oninput="updateJLPreview()"></div>
+      <div style="padding:14px 20px 18px;">
+        <div class="field fmt-wrap">
+          <label>Desiata</label>${tb}
+          <div class="fake-textarea" id="jl-${d.key}-desiata" contenteditable="true" oninput="updateJLPreview()"></div>
+        </div>
+        <div class="field fmt-wrap">
+          <label>Obed</label>${tb}
+          <div class="fake-textarea" id="jl-${d.key}-obed" contenteditable="true" data-tall oninput="updateJLPreview()"></div>
+        </div>
+        <div class="field fmt-wrap">
+          <label>Olovrant</label>${tb}
+          <div class="fake-textarea" id="jl-${d.key}-olovrant" contenteditable="true" oninput="updateJLPreview()"></div>
+        </div>
       </div>
     </div>`).join('');
   initTooltips();
+}
+
+const JL_EU_DEFAULT = '„Školský program" je financovaný z prostriedkov SR a Európskej únie.';
+const JL_ALERGENY_DEFAULT = 'Zoznam alergénnych zložiek:<br>① obilniny obsahujúce lepok (t.j. pšenica, raž, jačmeň, špalda, kamut) a výrobky z nich<br>② kôrovce a výrobky z nich<br>③ vajcia a výrobky z nich<br>④ ryby a výrobky z rýb<br>⑤ arašidy a výrobky z nich<br>⑥ sója a výrobky zo sóje<br>⑦ mlieko a výrobky z mlieka<br>⑧ orechy a výrobky z nich<br>⑨ zeler a výrobky zo zeleru<br>⑩ horčica a výrobky z horčice<br>⑪ sezamové semená a výrobky z nich<br>⑫ oxid siričitý a siričitany v koncentrácii viac ako 10 mg/kg alebo 10 mg/l<br>⑬ vlčí bôb a výrobky z neho<br>⑭ mäkkýše a výrobky z nich';
+
+function buildJLBottomFields(){
+  const c=document.getElementById('jl-bottom-fields');
+  if(!c||c.dataset.built)return;
+  c.dataset.built='1';
+  const tb=_jlToolbar();
+  c.innerHTML=`
+    <div class="field fmt-wrap">
+      <label>Text EU financovania</label>${tb}
+      <div class="fake-textarea" id="jl-eu" contenteditable="true" oninput="updateJLPreview()">${JL_EU_DEFAULT}</div>
+    </div>
+    <div class="field fmt-wrap" style="margin-top:8px;">
+      <label>Alergény</label>${tb}
+      <div class="fake-textarea" id="jl-alergeny" contenteditable="true" data-tall oninput="updateJLPreview()" style="min-height:180px;">${JL_ALERGENY_DEFAULT}</div>
+    </div>`;
 }
 
 function getJLData(){
   const d={};
   d.ovocie  = document.getElementById('jl-ovocie').value;
   d.mliecny = document.getElementById('jl-mliecny').value;
-  d.eu_text = document.getElementById('jl-eu').value;
-  d.alergeny= document.getElementById('jl-alergeny').value;
   d.week    = document.getElementById('jl-week').value;
   const getField=id=>{const el=document.getElementById(id);return el?(el.hasAttribute('contenteditable')?el.innerHTML:el.value):'';};
+  d.eu_text = getField('jl-eu');
+  d.alergeny= getField('jl-alergeny');
   JL_DAYS.forEach(day=>{
     d[day.key+'_desiata'] = getField('jl-'+day.key+'-desiata');
     d[day.key+'_obed']    = getField('jl-'+day.key+'-obed');
