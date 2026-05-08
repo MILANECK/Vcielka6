@@ -841,6 +841,19 @@ body{font-family:'Inter',sans-serif;background:#F0F7FF;color:#1a1a1a;min-height:
       </div>
     </div>
 
+    <!-- Confirm modal (reusable) -->
+    <div id="confirm-modal" style="display:none;position:fixed;inset:0;background:rgba(0,20,50,.55);z-index:3000;align-items:center;justify-content:center;">
+      <div style="background:#fff;border-radius:22px;padding:30px 28px 24px;width:90%;max-width:420px;box-shadow:0 8px 40px rgba(0,0,0,.18);">
+        <div id="confirm-modal-icon" style="font-size:28px;margin-bottom:10px;text-align:center;"></div>
+        <div id="confirm-modal-title" style="font-family:'Quicksand',sans-serif;font-weight:700;font-size:17px;margin-bottom:10px;text-align:center;"></div>
+        <div id="confirm-modal-body" style="font-size:13px;color:#555;line-height:1.6;margin-bottom:22px;text-align:center;"></div>
+        <div style="display:flex;gap:10px;justify-content:center;">
+          <button id="confirm-modal-yes" style="background:#1A5FA8;color:#fff;font-family:'Quicksand',sans-serif;font-weight:700;font-size:14px;padding:11px 28px;border-radius:50px;border:none;cursor:pointer;">Áno, pokračovať</button>
+          <button onclick="closeConfirmModal()" style="background:#F1F5F9;color:#555;font-family:'Quicksand',sans-serif;font-weight:700;font-size:14px;padding:11px 28px;border-radius:50px;border:none;cursor:pointer;">Nie</button>
+        </div>
+      </div>
+    </div>
+
     <!-- SKOLKA photo upload modal (fullscreen) -->
     <div id="skolka_upload_modal" style="display:none;position:fixed;inset:0;background:rgba(0,20,50,.7);z-index:2000;align-items:center;justify-content:center;">
       <div style="background:#fff;border-radius:24px;padding:28px;width:90%;max-width:640px;max-height:88vh;display:flex;flex-direction:column;gap:14px;">
@@ -1543,7 +1556,11 @@ async function uploadGalleryPhotos(input) {
 }
 
 async function regenerateGalleryThumbs() {
-  if (!confirm('Regenerovať náhľady pre všetky fotografie v galérii?\n\nMôže to trvať niekoľko minút.')) return;
+  showConfirmModal('🔄', 'Regenerovať náhľady – Galéria',
+    'Táto akcia znovu vygeneruje miniatúry pre <b>všetky fotografie v hlavnej galérii</b>.<br><br>Existujúce náhľady budú prepísané — žiadne dáta sa nestratia. Pri väčšom počte fotografií môže spracovanie trvať <b>niekoľko sekúnd až minút</b>.',
+    _doRegenerateGalleryThumbs);
+}
+async function _doRegenerateGalleryThumbs() {
   const { data, error } = await db.from('gallery').select('*').order('sort_order');
   if (error || !data?.length) { toast('Žiadne fotografie v galérii.'); return; }
   let done = 0, errors = 0;
@@ -1804,7 +1821,7 @@ async function loadSkolka() {
     card.style.marginBottom = '16px';
     card.dataset.folderName = f.name;
     const coverUrl = f.cover_url || localStorage.getItem('sk_cover_' + f.id) || '';
-    const isOpen = localStorage.getItem('sk_open_' + f.id) !== '0';
+    const isOpen = localStorage.getItem('sk_open_' + f.id) === '1';
     const coverThumb = coverUrl
       ? `<img src="${thumbUrl(coverUrl,128)}" data-full="${coverUrl}" style="width:64px;height:48px;object-fit:cover;border-radius:10px;flex-shrink:0;box-shadow:0 2px 8px rgba(0,0,0,.12);" alt="obálka" onerror="this.src=this.dataset.full;this.onerror=null;"/>`
       : `<div style="width:64px;height:48px;background:#E0ECFF;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;">📁</div>`;
@@ -1820,6 +1837,7 @@ async function loadSkolka() {
         <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;">
           <button class="btn-add" style="margin-bottom:0;" data-tip="Nahrať fotografie do priečinka" onclick="openSkolkaFolder('${f.id}','${f.name.replace(/'/g,"\'")}')">📷 Nahrať fotografie</button>
           <button class="btn-secondary" style="padding:11px 18px;font-size:13px;" data-tip="Premenovať priečinok" onclick="renameSkolkaFolder('${f.id}','${f.name.replace(/'/g,"\'")}')">✏️ Premenovať</button>
+          <button class="btn-secondary" style="padding:11px 18px;font-size:13px;" data-tip="Regenerovať náhľady fotografií v tomto priečinku" onclick="regenSkolkaFolder('${f.id}','${f.name.replace(/'/g,"\\'")}',${count})">🔄 Náhľady</button>
           <button class="btn-danger" style="padding:11px 18px;font-size:13px;" data-tip="Vymazať priečinok so všetkými fotkamy" onclick="deleteSkolkaFolder('${f.id}','${f.name.replace(/'/g,"\'")}')">🗑️ Vymazať priečinok</button>
           <button class="sk-toggle${isOpen?' open':''}" id="sk_toggle_${f.id}" title="${isOpen?'Zbaliť':'Rozbaliť'}" onclick="toggleSkolkaFolder('${f.id}')">▾</button>
         </div>
@@ -1886,6 +1904,7 @@ async function setCoverPhoto(folderId, url) {
     db.from('skolka_folders').update({ cover_url: url }).eq('id', folderId),
     db.from('settings').upsert({ key: 'sk_cover_' + folderId, value: url }, { onConflict: 'key' })
   ]);
+  console.log('[setCoverPhoto] key=sk_cover_' + folderId + ' r1:', r1.data, r1.error, '| r2:', r2.data, r2.error);
   if (r2.error) {
     console.error('setCoverPhoto settings error:', r2.error);
     toast('⚠️ Chyba uloženia obálky: ' + r2.error.message, 'error');
@@ -1923,7 +1942,11 @@ async function generateThumb(file, maxWidth) {
 }
 
 async function regenerateSkolkaThumbs() {
-  if (!confirm('Regenerovať náhľady pre všetky fotografie Virtuálnej Škôlky?\n\nMôže to trvať niekoľko minút podľa počtu fotografií.')) return;
+  showConfirmModal('🔄', 'Regenerovať náhľady – Všetky priečinky',
+    'Táto akcia znovu vygeneruje miniatúry pre <b>všetky fotografie vo všetkých priečinkoch</b> Virtuálnej Škôlky.<br><br>Existujúce náhľady budú prepísané — žiadne dáta sa nestratia. Pri väčšom počte fotografií môže spracovanie trvať <b>niekoľko minút</b>.',
+    _doRegenerateSkolkaThumbs);
+}
+async function _doRegenerateSkolkaThumbs() {
   const { data: folders } = await db.from('skolka_folders').select('id,name').order('name');
   if (!folders?.length) { toast('Žiadne priečinky.'); return; }
   let total = 0, done = 0, errors = 0;
@@ -1933,23 +1956,43 @@ async function regenerateSkolkaThumbs() {
   }
   toast('Spracúvam ' + total + ' fotografií…');
   for (const f of folders) {
-    const { data: files } = await db.storage.from('vcielka').list('skolka/'+f.id, {limit:500});
-    const photos = (files||[]).filter(x=>x.name!=='.keep'&&x.id!==null);
-    for (const p of photos) {
-      const { data: { publicUrl } } = db.storage.from('vcielka').getPublicUrl('skolka/'+f.id+'/'+p.name);
-      try {
-        const resp = await fetch(publicUrl);
-        const blob = await resp.blob();
-        const thumb = await generateThumb(blob, 500);
-        if (thumb) {
-          await db.storage.from('vcielka').upload('skolka/'+f.id+'/thumbs/'+p.name, thumb, {upsert:true, contentType:'image/jpeg'});
-        }
-        done++;
-        if (done % 10 === 0 || done === total) toast(done + ' / ' + total + ' náhľadov hotových…');
-      } catch(e) { errors++; console.error('Thumb regen failed:', f.name, p.name, e); }
-    }
+    await _regenFolderPhotos(f.id, done, total, (n) => { done = n; });
   }
   toast('✅ Hotovo! ' + done + ' náhľadov regenerovaných' + (errors ? ' (' + errors + ' chýb)' : '') + '.');
+}
+
+async function regenSkolkaFolder(folderId, folderName, count) {
+  showConfirmModal('🔄', 'Regenerovať náhľady – ' + folderName,
+    'Táto akcia znovu vygeneruje miniatúry pre <b>' + count + ' fotografi' + (count===1?'u':'í') + '</b> v tomto priečinku.<br><br>Existujúce náhľady budú prepísané — žiadne dáta sa nestratia. Môže to trvať <b>niekoľko sekúnd</b>.',
+    () => _doRegenSkolkaFolder(folderId, folderName));
+}
+async function _doRegenSkolkaFolder(folderId, folderName) {
+  const { data: files } = await db.storage.from('vcielka').list('skolka/'+folderId, {limit:500});
+  const photos = (files||[]).filter(x=>x.name!=='.keep'&&x.id!==null);
+  if (!photos.length) { toast('Žiadne fotografie v priečinku.'); return; }
+  toast('Spracúvam ' + photos.length + ' fotografií v „' + folderName + '"…');
+  let done = 0, errors = 0;
+  await _regenFolderPhotos(folderId, 0, photos.length, (n) => { done = n; }, (n) => { errors = n; });
+  toast('✅ ' + done + ' náhľadov regenerovaných v „' + folderName + '"' + (errors ? ' (' + errors + ' chýb)' : '') + '.');
+}
+
+async function _regenFolderPhotos(folderId, startDone, total, setDone, setErrors) {
+  const { data: files } = await db.storage.from('vcielka').list('skolka/'+folderId, {limit:500});
+  const photos = (files||[]).filter(x=>x.name!=='.keep'&&x.id!==null);
+  let done = startDone, errors = 0;
+  for (const p of photos) {
+    const { data: { publicUrl } } = db.storage.from('vcielka').getPublicUrl('skolka/'+folderId+'/'+p.name);
+    try {
+      const resp = await fetch(publicUrl);
+      const blob = await resp.blob();
+      const thumb = await generateThumb(blob, 500);
+      if (thumb) await db.storage.from('vcielka').upload('skolka/'+folderId+'/thumbs/'+p.name, thumb, {upsert:true, contentType:'image/jpeg'});
+      done++;
+      if (done % 10 === 0 || done === total) toast(done + (total ? ' / ' + total : '') + ' náhľadov hotových…');
+    } catch(e) { errors++; console.error('Thumb regen failed:', folderId, p.name, e); }
+  }
+  if (setDone) setDone(done);
+  if (setErrors) setErrors(errors);
 }
 
 function toggleSkolkaFolder(id) {
@@ -2000,6 +2043,18 @@ function closeSkolkaModal() {
   document.getElementById('skolka_upload_modal').style.display = 'none';
   currentSkolkaFolderId = null;
   loadSkolka();
+}
+
+function showConfirmModal(icon, title, body, onYes) {
+  document.getElementById('confirm-modal-icon').textContent = icon;
+  document.getElementById('confirm-modal-title').textContent = title;
+  document.getElementById('confirm-modal-body').innerHTML = body;
+  document.getElementById('confirm-modal-yes').onclick = () => { closeConfirmModal(); onYes(); };
+  const m = document.getElementById('confirm-modal');
+  m.style.display = 'flex';
+}
+function closeConfirmModal() {
+  document.getElementById('confirm-modal').style.display = 'none';
 }
 
 function setSkolkaProgress(progress, label) {

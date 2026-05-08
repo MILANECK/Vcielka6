@@ -413,22 +413,14 @@ button{outline:none;border:none;}
    CONTACT
 =========================== */
 .contact-cards{display:grid;grid-template-columns:1fr 1fr;gap:11px;margin-bottom:14px;}
-.contact-card{border-radius:20px;display:flex;align-items:center;gap:0;min-height:72px;overflow:hidden;transition:transform .2s;text-decoration:none;color:inherit;}
+.contact-card{display:flex;align-items:center;gap:0;transition:transform .2s;text-decoration:none;color:inherit;padding:6px 0;}
 .contact-card a{text-decoration:none;color:inherit;}
 .contact-card:hover{transform:translateY(-2px);}
-.contact-card.blue{background:var(--blue-card);}
-.contact-card.yellow{background:var(--yellow-card);}
-.contact-card.green{background:var(--green-card);}
-.contact-card.sky{background:var(--blue-sky);}
-.contact-card.red{background:#FFEAEA;}
-.contact-icon{width:52px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:16px;align-self:stretch;line-height:1;}
-.contact-icon img{width:60%!important;height:60%!important;object-fit:contain;}
-.contact-card.blue .contact-icon{background:var(--blue-sky);}
-.contact-card.yellow .contact-icon{background:var(--yellow-bright);}
-.contact-card.green .contact-icon{background:var(--green-bright);}
-.contact-card.sky .contact-icon{background:#A8D4F5;}
-.contact-card.red .contact-icon{background:#FFCECE;}
-.contact-body{padding:10px 14px;}
+.contact-card.blue,.contact-card.yellow,.contact-card.green,.contact-card.sky,.contact-card.red{background:none;}
+.contact-icon{width:44px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:22px;line-height:1;}
+.contact-icon img{width:55%!important;height:55%!important;object-fit:contain;}
+.contact-card.blue .contact-icon,.contact-card.yellow .contact-icon,.contact-card.green .contact-icon,.contact-card.sky .contact-icon,.contact-card.red .contact-icon{background:none;}
+.contact-body{padding:6px 12px;}
 .contact-label{font-family:'Quicksand',sans-serif;font-size:9px;font-weight:700;color:#aaa;text-transform:uppercase;letter-spacing:.5px;margin-bottom:2px;}
 .contact-value{font-family:'Inter',sans-serif;font-size:15px;color:#1a1a1a;font-weight:500;line-height:1.4;}
 .contact-sub{font-family:'Inter',sans-serif;font-size:10px;color:#aaa;margin-top:1px;}
@@ -510,6 +502,11 @@ button{outline:none;border:none;}
   .gallery-section{padding:40px 18px 72px;}
   .gallery-track{padding:4px 0 14px;}
   .contact-cards{grid-template-columns:1fr;}
+  .contact-icon{width:35px;font-size:18px;}
+  .contact-body{padding:4px 10px;}
+  .contact-label{font-size:7px;}
+  .contact-value{font-size:12px;}
+  .contact-sub{font-size:8px;}
   .footer-grid{grid-template-columns:1fr;}
   .stats{flex-direction:column;}
   .stat{border-right:none;border-bottom:1px solid rgba(0,0,0,.06);padding:22px 16px;}
@@ -795,7 +792,8 @@ button{outline:none;border:none;}
   100% {opacity:1;transform:scale(1) rotate(0deg);}
 }
 /* subtle card shadow — all rounded carriers */
-.service-card,.news-card,.contact-card,.price-card,.why-item,.z-item,.gallery-item,.testi-card,.map-wrap,.about-text-inner{box-shadow:0 4px 24px rgba(26,95,168,.08);}
+.service-card,.news-card,.price-card,.why-item,.z-item,.gallery-item,.testi-card,.map-wrap,.about-text-inner{box-shadow:0 4px 24px rgba(26,95,168,.08);}
+.contact-card{box-shadow:none;}
 @keyframes cloudDriftA{0%,100%{transform:translateX(0) translateY(0);}30%{transform:translateX(28px) translateY(-10px);}65%{transform:translateX(-12px) translateY(8px);}}
 @keyframes cloudDriftB{0%,100%{transform:translateX(0) translateY(0);}40%{transform:translateX(-24px) translateY(12px);}75%{transform:translateX(18px) translateY(-6px);}}
 @keyframes cloudDriftC{0%,100%{transform:translateX(0) translateY(0) scale(1);}50%{transform:translateX(16px) translateY(-14px) scale(1.06);}}
@@ -1147,12 +1145,12 @@ button{outline:none;border:none;}
       </div>
       <!-- ZVEDAVA EXPAND -->
       <div style="margin-top:36px;">
-        <div style="display:flex;justify-content:center;gap:12px;align-items:center;">
-          <button class="about-expand-btn" id="zvedavaBtn" onclick="toggleZvedava()">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;max-width:700px;margin:0 auto;">
+          <button class="about-expand-btn" id="zvedavaBtn" onclick="toggleZvedava()" style="width:100%;">
             Viac o programe
             <svg class="arrow" width="12" height="7" viewBox="0 0 12 7" fill="none"><path d="M1 1l5 5 5-5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
           </button>
-          <button class="ucebne-btn" id="ucebneBtn" onclick="toggleUcebneInline()">
+          <button class="ucebne-btn" id="ucebneBtn" onclick="toggleUcebneInline()" style="width:100%;">
             Učebné osnovy
             <svg class="ucebne-arrow" width="12" height="7" viewBox="0 0 12 7" fill="none"><path d="M1 1l5 5 5-5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
           </button>
@@ -1788,7 +1786,7 @@ async function loadCMS() {
       window._cmsActivities = acts;
       const grid = document.getElementById('cms-activities');
       if (grid) grid.innerHTML = acts.map((a, i) => `
-        <div class="service-card ${a.color}${a.popup_text ? ' clickable' : ''}" ${a.popup_text ? `onclick="openActPopup(${i})"` : ''}>
+        <div class="service-card ${a.color}${(a.popup_text||a.description) ? ' clickable' : ''}" ${(a.popup_text||a.description) ? `onclick="openActPopup(${i})"` : ''}>
           <div class="service-img">${a.photo_url ? '<img src="'+a.photo_url+'" style="width:100%;height:100%;object-fit:cover;"/>' : (a.icon && a.icon.startsWith('http') ? '<img src="'+a.icon+'" style="width:72px;height:72px;object-fit:contain;filter:drop-shadow(0 4px 12px rgba(0,0,0,.12));" alt=""/>' : a.icon)}</div>
           <div class="service-body">
             <h3>${a.title}</h3>
@@ -2125,7 +2123,7 @@ function openActPopup(idx){
   }
   document.getElementById('actPopupTitle').textContent = a.title||'';
   function _autoLink(h){return h.replace(/(https?:\/\/[^&\s<"']+)/g,function(u){u=u.replace(/[.,;:!?)\]]+$/,'');return '<a href="'+u+'" target="_blank" rel="noopener noreferrer">'+u+'</a>';});}
-  document.getElementById('actPopupText').innerHTML = _autoLink((a.popup_text||'').replace(/\n/g,'<br>'));
+  document.getElementById('actPopupText').innerHTML = _autoLink((a.popup_text||a.description||'').replace(/\n/g,'<br>'));
   const imgWrap = document.getElementById('actPopupImgWrap');
   const img = document.getElementById('actPopupImg');
   if(a.popup_photo_url && imgWrap && img){ img.src = a.popup_photo_url; imgWrap.style.display='block'; }
