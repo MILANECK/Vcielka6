@@ -365,6 +365,7 @@ async function renderFolders(folders) {
   });
   // localStorage fallback (same browser/device as admin)
   ids.forEach(id => { if (!coverMap[id]) { const v = localStorage.getItem('sk_cover_' + id); if (v) coverMap[id] = v; } });
+  ids.forEach(id => { if (!orderMap[id]) { const v = localStorage.getItem('sk_order_' + id); if (v) { try { orderMap[id] = JSON.parse(v); } catch(e) {} } } });
   folders.forEach(f => { if (!f.cover_url) f.cover_url = coverMap[f.id] || null; });
   grid.innerHTML = '';
   for (const f of folders) {

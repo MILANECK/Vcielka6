@@ -740,6 +740,7 @@ const SUPABASE_URL = 'https://fmjtzuligqsugsauqkgz.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZtanR6dWxpZ3FzdWdzYXVxa2d6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU0MTQyMTUsImV4cCI6MjA5MDk5MDIxNX0.gRF-roExLgnVDG4bSNt7EzX6c1v-JtM5v6ZcX8dY934';
 const sbDb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 function sbThumbUrl(url){if(!url)return url;var i=url.lastIndexOf('/');return url.slice(0,i+1)+'thumbs/'+url.slice(i+1);}
+function applySkOrder(photos,order){if(!order?.length)return photos;const pos={};order.forEach((n,i)=>pos[n]=i);return[...photos].sort((a,b)=>{const ia=pos[a.name]!==undefined?pos[a.name]:1e9;const ib=pos[b.name]!==undefined?pos[b.name]:1e9;return ia-ib;});}
 
 let sbSelected = [];   // {url, name}
 let sbCurrentFolder = null;
@@ -773,18 +774,24 @@ async function sbShowFolders(){
     content.innerHTML = '<div class="sb-loading">Žiadne priečinky v systéme.</div>';
     return;
   }
+  // Load saved photo orders (determines which photo is the album cover)
+  const { data: orderRows } = await sbDb.from('settings').select('key,value').in('key', folders.map(f=>'sk_order_'+f.id));
+  const _editorOrderMap = {};
+  if(orderRows) orderRows.forEach(r=>{ const id=parseInt(r.key.replace('sk_order_','')); try{_editorOrderMap[id]=JSON.parse(r.value);}catch(e){} });
+  // localStorage fallback (works when admin and editor are same browser)
+  folders.forEach(f=>{ if(!_editorOrderMap[f.id]){ const v=localStorage.getItem('sk_order_'+f.id); if(v){try{_editorOrderMap[f.id]=JSON.parse(v);}catch(e){}} } });
   content.innerHTML = '';
   for(const f of folders){
     const { data: files } = await sbDb.storage.from('vcielka').list('skolka/' + f.id, {limit:200});
-    const photos = (files||[]).filter(x=>x.name!=='.keep'&&x.id!==null);
+    let photos = (files||[]).filter(x=>x.name!=='.keep'&&x.id!==null);
+    if(_editorOrderMap[f.id]?.length) photos = applySkOrder(photos, _editorOrderMap[f.id]);
     const count = photos.length;
     const btn = document.createElement('div');
     btn.className = 'sb-folder-btn';
     let folderThumb = `<div class="sb-folder-icon">📁</div>`;
-    if (f.cover_url) {
-      folderThumb = `<img src="${sbThumbUrl(f.cover_url)}" data-full="${f.cover_url}" style="width:64px;height:48px;object-fit:cover;border-radius:8px;" alt="${f.name}" loading="lazy" onerror="this.src=this.dataset.full;this.onerror=null;">`;
-    } else if (photos.length) {
-      const { data: { publicUrl } } = sbDb.storage.from('vcielka').getPublicUrl('skolka/' + f.id + '/' + photos[0].name);
+    if (photos.length) {
+      const coverPhoto = photos[0];
+      const { data: { publicUrl } } = sbDb.storage.from('vcielka').getPublicUrl('skolka/' + f.id + '/' + coverPhoto.name);
       folderThumb = `<img src="${sbThumbUrl(publicUrl)}" data-full="${publicUrl}" style="width:64px;height:48px;object-fit:cover;border-radius:8px;" alt="${f.name}" loading="lazy" onerror="this.src=this.dataset.full;this.onerror=null;">`;
     }
     btn.innerHTML = `${folderThumb}<div>${f.name}</div><div class="sb-folder-count">${count} fotografi${count===1?'a':'í'}</div>`;

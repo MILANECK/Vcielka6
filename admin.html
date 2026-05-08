@@ -1807,6 +1807,8 @@ async function loadSkolka() {
   const { data: _skOrderRows } = await db.from('settings').select('key,value').in('key', folders.map(f => 'sk_order_' + f.id));
   const _skOrderMap = {};
   if (_skOrderRows) _skOrderRows.forEach(r => { const id = parseInt(r.key.replace('sk_order_', '')); try { _skOrderMap[id] = JSON.parse(r.value); } catch(e) {} });
+  // localStorage fallback — fills any folder whose order wasn't returned from Supabase
+  folders.forEach(f => { if (!_skOrderMap[f.id]) { const ls = localStorage.getItem('sk_order_' + f.id); if (ls) { try { _skOrderMap[f.id] = JSON.parse(ls); } catch(e) {} } } });
   for (const f of folders) {
     const { data: files } = await db.storage.from('vcielka').list('skolka/' + f.id, { limit: 1000 });
     const photos = (files || []).filter(x => x.name !== '.keep' && x.id !== null);
@@ -1982,15 +1984,17 @@ async function _saveSkOrderFromGrid(folderId) {
       btn.setAttribute('onclick', `event.stopPropagation();moveSkToFirst('${folderId}','${n}')`);
     }
   });
+  // Always persist locally first — reliable across page refreshes
+  localStorage.setItem('sk_order_' + folderId, JSON.stringify(order));
   const now = new Date().toISOString();
   const { error, data } = await db.from('settings').upsert(
     { key: 'sk_order_' + folderId, value: JSON.stringify(order), updated_at: now },
     { onConflict: 'key' }
-  );
+  ).select();
   if (error) {
-    toast('⚠️ Chyba uloženia poradia: ' + error.message, 'error');
-  } else if (Array.isArray(data) && data.length === 0) {
-    toast('⚠️ Poradie uložené iba lokálne (RLS blokuje zápis)', 'error');
+    toast('⚠️ Poradie uložené lokálne (Supabase chyba: ' + error.message + ')', 'error');
+  } else if (!data || data.length === 0) {
+    toast('⚠️ Poradie uložené lokálne — Supabase RLS blokuje zápis', 'error');
   } else {
     toast('✅ Poradie uložené');
   }
@@ -2481,6 +2485,7 @@ window.addEventListener('resize', ()=>{
 });
 
 function _jlEsc(s){return(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\n/g,'<br>');}
+function _jlAlLines(html){return(html||'').replace(/<div>/gi,'\n').replace(/<\/div>/gi,'').replace(/<br\s*\/?>/gi,'\n').split('\n').map(l=>l.trim()).filter(l=>l);}
 
 /* ── INLINE LIVE PREVIEW ── */
 function updateJLPreview(){
@@ -2502,12 +2507,12 @@ function updateJLPreview(){
       </div>
     </div>`).join('');
 
-  const alLines=(data.alergeny||'').split('\n');
-  const alHeader=_jlEsc(alLines[0]||'');
-  const alItems=alLines.slice(1);
+  const alParts=_jlAlLines(data.alergeny);
+  const alHeader=alParts[0]||'';
+  const alItems=alParts.slice(1);
   const mid=Math.ceil(alItems.length/2);
-  const alCol1=alItems.slice(0,mid).map(l=>`<div>${_jlEsc(l)}</div>`).join('');
-  const alCol2=alItems.slice(mid).map(l=>`<div>${_jlEsc(l)}</div>`).join('');
+  const alCol1=alItems.slice(0,mid).map(l=>`<div>${l}</div>`).join('');
+  const alCol2=alItems.slice(mid).map(l=>`<div>${l}</div>`).join('');
 
   ov.innerHTML=`
     <div style="display:flex;gap:14px;justify-content:center;align-items:center;padding:6px 0 9px;border-bottom:1.5px solid #d8d0c0;margin-bottom:9px;">
@@ -2523,7 +2528,7 @@ function updateJLPreview(){
     ${rows}
     <div style="display:flex;align-items:center;gap:8px;background:#E2EAD4;border-radius:9px;padding:7px 14px;margin-top:6px;">
       <span style="font-size:13px;">🌿</span>
-      <span style="flex:1;font-size:11px;color:#444;text-align:center;font-style:italic;font-family:'Inter',sans-serif;">${_jlEsc(data.eu_text)}</span>
+      <span style="flex:1;font-size:11px;color:#444;text-align:center;font-style:italic;font-family:'Inter',sans-serif;">${data.eu_text}</span>
       <img src="https://emojiguide.org/images/emoji/9/14k7e3jnewfv9.png" style="height:22px;width:auto;object-fit:contain;flex-shrink:0;" alt="SK flag"/>
     </div>
     <div style="border-radius:9px;padding:8px 12px;margin-top:5px;background:rgba(255,255,255,.92);font-family:'Inter',sans-serif;box-shadow:0 1px 6px rgba(0,0,0,.07);">
@@ -2555,12 +2560,12 @@ function generateJLHTML(data){
       </div>
     </div>`).join('');
 
-  const alLines=(data.alergeny||'').split('\n');
-  const alHeader=e(alLines[0]||'');
-  const alItems=alLines.slice(1);
+  const alParts2=_jlAlLines(data.alergeny);
+  const alHeader=alParts2[0]||'';
+  const alItems=alParts2.slice(1);
   const mid=Math.ceil(alItems.length/2);
-  const alCol1=alItems.slice(0,mid).map(l=>`<div>${e(l)}</div>`).join('');
-  const alCol2=alItems.slice(mid).map(l=>`<div>${e(l)}</div>`).join('');
+  const alCol1=alItems.slice(0,mid).map(l=>`<div>${l}</div>`).join('');
+  const alCol2=alItems.slice(mid).map(l=>`<div>${l}</div>`).join('');
 
   return`<!DOCTYPE html><html><head><meta charset="UTF-8"/>
 <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"/>
@@ -2583,7 +2588,7 @@ body{display:flex;justify-content:center;padding:24px;font-family:'Inter',sans-s
   ${rows}
   <div style="display:flex;align-items:center;gap:8px;background:#E2EAD4;border-radius:9px;padding:7px 14px;margin-top:6px;">
     <span style="font-size:13px;">🌿</span>
-    <span style="flex:1;font-size:11px;color:#444;text-align:center;font-style:italic;font-family:'Inter',sans-serif;">${e(data.eu_text)}</span>
+    <span style="flex:1;font-size:11px;color:#444;text-align:center;font-style:italic;font-family:'Inter',sans-serif;">${data.eu_text}</span>
     <img src="${flagUrl}" style="height:22px;width:auto;object-fit:contain;flex-shrink:0;" alt="SK flag"/>
   </div>
   <div style="border-radius:9px;padding:8px 12px;margin-top:5px;background:rgba(255,255,255,.92);font-family:'Inter',sans-serif;box-shadow:0 1px 6px rgba(0,0,0,.07);">
