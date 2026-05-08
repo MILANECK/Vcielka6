@@ -518,9 +518,16 @@ button{outline:none;border:none;}
   .testi-grid{grid-template-columns:1fr;}
   .news-grid{grid-template-columns:1fr;}
   .section-center h2,.gallery-header h2,.news-header h2{font-size:30px;}
-  .about-expand-btn,.ucebne-btn{min-width:0;padding:10px 14px;font-size:13px;flex:1;}
+  .prog-btns{grid-template-columns:1fr!important;gap:8px!important;max-width:100%!important;}
+  .about-expand-btn,.ucebne-btn{min-width:0;padding:12px 20px;font-size:14px;width:100%;}
   .service-card{height:auto;}
-  .service-card .service-body p{max-height:200px;opacity:1;margin-top:2px;}
+}
+@media(hover:none){
+  .service-card.tapped .service-body p{max-height:200px;opacity:1;margin-top:2px;}
+  .service-card.tapped .service-img img{transform:translateY(-6px) scale(1.03);}
+  .news-card.tapped .news-excerpt{max-height:80px;opacity:1;margin-top:2px;}
+  .news-card.tapped .news-more{max-height:30px;opacity:1;margin-top:5px;}
+  .news-card.tapped .news-img img{transform:translateY(-6px) scale(1.03);}
 }
 
 
@@ -1145,7 +1152,7 @@ button{outline:none;border:none;}
       </div>
       <!-- ZVEDAVA EXPAND -->
       <div style="margin-top:36px;">
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;max-width:700px;margin:0 auto;">
+        <div class="prog-btns" style="display:grid;grid-template-columns:1fr 1fr;gap:12px;max-width:700px;margin:0 auto;">
           <button class="about-expand-btn" id="zvedavaBtn" onclick="toggleZvedava()" style="width:100%;">
             Viac o programe
             <svg class="arrow" width="12" height="7" viewBox="0 0 12 7" fill="none"><path d="M1 1l5 5 5-5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
@@ -1335,8 +1342,8 @@ button{outline:none;border:none;}
 </section>
 
 <!-- back to top -->
-<div style="text-align:center;padding:22px 0 26px;">
-  <a href="#home" style="display:inline-flex;align-items:center;gap:8px;background:rgba(255,255,255,.55);border:1.5px solid rgba(26,95,168,.18);color:#1A5FA8;padding:9px 22px;border-radius:50px;font-family:'Quicksand',sans-serif;font-size:13px;font-weight:700;text-decoration:none;backdrop-filter:blur(6px);transition:background .2s,border-color .2s;white-space:nowrap;" onmouseover="this.style.background='rgba(255,255,255,.82)'" onmouseout="this.style.background='rgba(255,255,255,.55)'">
+<div style="background:#fffdf6;text-align:center;padding:44px 0 52px;">
+  <a href="#home" style="display:inline-flex;align-items:center;gap:8px;background:#fff;border:1.5px solid rgba(26,95,168,.22);color:#1A5FA8;padding:10px 26px;border-radius:50px;font-family:'Quicksand',sans-serif;font-size:13px;font-weight:700;text-decoration:none;box-shadow:0 2px 12px rgba(26,95,168,.10);transition:background .2s,box-shadow .2s;white-space:nowrap;" onmouseover="this.style.background='#eef4fb';this.style.boxShadow='0 4px 18px rgba(26,95,168,.18)'" onmouseout="this.style.background='#fff';this.style.boxShadow='0 2px 12px rgba(26,95,168,.10)'">
     <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M7 11V3M3 7l4-4 4 4" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
     Späť na vrch
   </a>
@@ -1787,7 +1794,7 @@ async function loadCMS() {
       window._cmsActivities = acts;
       const grid = document.getElementById('cms-activities');
       if (grid) grid.innerHTML = acts.map((a, i) => `
-        <div class="service-card ${a.color}${(a.popup_text||a.description) ? ' clickable' : ''}" ${(a.popup_text||a.description) ? `onclick="openActPopup(${i})"` : ''}>
+        <div class="service-card ${a.color}${(a.popup_text||a.description) ? ' clickable' : ''}" ${(a.popup_text||a.description) ? `onclick="handleActCardTap(this,${i})"` : ''}>
           <div class="service-img">${a.photo_url ? '<img src="'+a.photo_url+'" style="width:100%;height:100%;object-fit:cover;"/>' : (a.icon && a.icon.startsWith('http') ? '<img src="'+a.icon+'" style="width:72px;height:72px;object-fit:contain;filter:drop-shadow(0 4px 12px rgba(0,0,0,.12));" alt=""/>' : a.icon)}</div>
           <div class="service-body">
             <h3>${a.title}</h3>
@@ -1804,7 +1811,7 @@ async function loadCMS() {
       window._cmsNews = newsList;
       const container = document.getElementById('cms-news');
       if (container) container.innerHTML = newsList.map(n => `
-        <div class="news-card ${n.color}" style="cursor:pointer;" onclick="openNewsPopupById(${n.id})">
+        <div class="news-card ${n.color}" style="cursor:pointer;" onclick="handleNewsCardTap(this,${n.id})">
           <div class="news-img">${n.photo_url ? '<img src="'+n.photo_url+'" alt=""/>' : '📸 foto akcie'}</div>
           <div class="news-body">
             <div class="news-date">${new Date(n.published_at||n.created_at).toLocaleDateString('sk-SK',{day:'numeric',month:'long',year:'numeric'})}</div>
@@ -2141,6 +2148,36 @@ function closeActPopup(){
   ov.classList.remove('open');
   setTimeout(()=>{ ov.classList.remove('closing'); document.body.style.overflow=''; }, 420);
 }
+
+// ===== MOBILE TAP-TO-REVEAL =====
+function _isTouchDevice(){ return window.matchMedia('(hover:none)').matches; }
+function handleActCardTap(el,idx){
+  if(_isTouchDevice()&&!el.classList.contains('tapped')){
+    const desc=el.querySelector('.service-body p');
+    if(desc&&desc.textContent.trim()){
+      document.querySelectorAll('.service-card.tapped').forEach(c=>c.classList.remove('tapped'));
+      el.classList.add('tapped');
+      return;
+    }
+  }
+  openActPopup(idx);
+}
+function handleNewsCardTap(el,newsId){
+  if(_isTouchDevice()&&!el.classList.contains('tapped')){
+    const excerpt=el.querySelector('.news-excerpt');
+    if(excerpt&&excerpt.textContent.trim()){
+      document.querySelectorAll('.news-card.tapped').forEach(c=>c.classList.remove('tapped'));
+      el.classList.add('tapped');
+      return;
+    }
+  }
+  openNewsPopupById(newsId);
+}
+document.addEventListener('click',function(e){
+  if(!e.target.closest('.service-card')&&!e.target.closest('.news-card')){
+    document.querySelectorAll('.service-card.tapped,.news-card.tapped').forEach(c=>c.classList.remove('tapped'));
+  }
+});
 
 // ===== UČEBNÉ OSNOVY INLINE =====
 function toggleUcebneInline(){
