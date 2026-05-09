@@ -1363,11 +1363,13 @@ button{outline:none;border:none;}
   </a>
 </div>
 
-<!-- wave contact→footer -->
-<svg class="wave" viewBox="0 0 1440 80" preserveAspectRatio="none" style="display:block;margin-bottom:-2px;" xmlns="http://www.w3.org/2000/svg">
-  <path d="M0,80 Q720,0 1440,80 Z" fill="#0D3D6E"/>
-</svg>
-<div style="background:#0D3D6E;"></div>
+<!-- wave contact→footer — bouncy on desktop -->
+<div id="footer-wave-wrap" style="position:relative;line-height:0;display:block;margin-bottom:-2px;z-index:1;overflow:visible;">
+  <svg id="footer-wave-svg" viewBox="0 0 1440 80" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg" style="display:block;width:100%;overflow:visible;">
+    <path id="footer-wave-path" d="M0,80 Q720,0 1440,80 Z" fill="#0D3D6E"/>
+  </svg>
+  <div id="footer-wave-hover" style="position:absolute;top:-44px;left:0;right:0;height:164px;z-index:5;pointer-events:auto;"></div>
+</div>
 
 <!-- ===========================
      FOOTER
@@ -2471,6 +2473,53 @@ const gradient = new NeatGradient({
 window.addEventListener("scroll", () => {
   gradient.yOffset = window.scrollY;
 });
+</script>
+
+<script>
+// ── Bouncy footer wave (desktop only) ──
+(function(){
+  if(window.innerWidth <= 900) return;
+  var pathEl  = document.getElementById('footer-wave-path');
+  var hoverEl = document.getElementById('footer-wave-hover');
+  if(!pathEl || !hoverEl) return;
+
+  var progress=0, x=0.5, time=Math.PI/2, reqId=null;
+
+  function lerp(a,b,t){ return a*(1-t)+b*t; }
+
+  function setPath(prog){
+    pathEl.setAttribute('d',
+      'M0,80 Q'+(1440*x)+','+(prog*0.6)+' 1440,80 Z'
+    );
+  }
+  setPath(0); // default centered arch
+
+  hoverEl.addEventListener('mouseenter',function(){
+    if(reqId){ cancelAnimationFrame(reqId); reqId=null; }
+    time=Math.PI/2; progress=0;
+  });
+
+  hoverEl.addEventListener('mousemove',function(e){
+    var r=hoverEl.getBoundingClientRect();
+    x=(e.clientX-r.left)/r.width;
+    progress+=e.movementY;
+    setPath(progress);
+  });
+
+  hoverEl.addEventListener('mouseleave',function(){ animOut(); });
+
+  function animOut(){
+    var newProg=progress*Math.sin(time);
+    progress=lerp(progress,0,0.025);
+    time+=0.2;
+    setPath(newProg);
+    if(Math.abs(progress)>0.75){
+      reqId=requestAnimationFrame(animOut);
+    } else {
+      time=Math.PI/2; progress=0; setPath(0);
+    }
+  }
+})();
 </script>
 
 </body>
