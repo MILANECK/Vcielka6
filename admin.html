@@ -2309,10 +2309,6 @@ function _jlToolbar(){
     <button class="fmt-btn b" type="button" data-action="bold" onmousedown="event.preventDefault();fmtWrap(this)">B</button>
     <button class="fmt-btn i" type="button" data-action="italic" onmousedown="event.preventDefault();fmtWrap(this)">I</button>
     <div class="fmt-sep"></div>
-    <button class="fmt-btn" type="button" data-size="0.82em" onmousedown="event.preventDefault();fmtWrap(this)">S</button>
-    <button class="fmt-btn" type="button" data-size="1em" onmousedown="event.preventDefault();fmtWrap(this)">M</button>
-    <button class="fmt-btn" type="button" data-size="1.2em" onmousedown="event.preventDefault();fmtWrap(this)">L</button>
-    <div class="fmt-sep"></div>
     <button class="fmt-btn" type="button" data-action="justifyLeft" onmousedown="event.preventDefault();fmtWrap(this)" title="Zarovnať vľavo">${alL}</button>
     <button class="fmt-btn" type="button" data-action="justifyCenter" onmousedown="event.preventDefault();fmtWrap(this)" title="Zarovnať na stred">${alC}</button>
     <div class="fmt-sep"></div>
@@ -2387,29 +2383,48 @@ function getJLData(){
 
 function loadJLLocal(){
   const raw=localStorage.getItem('jl_data');
+  const setField=(id,v)=>{
+    const el=document.getElementById(id);
+    if(!el||v===undefined||v===null)return;
+    if(el.hasAttribute('contenteditable')){
+      el.innerHTML=(typeof v==='string'&&v.includes('<'))?v:(v||'').replace(/\n/g,'<br>');
+    }else{el.value=v;}
+  };
   if(raw){
     try{
       const d=JSON.parse(raw);
-      const set=(id,v)=>{
-        const el=document.getElementById(id);
-        if(!el||v===undefined)return;
-        if(el.hasAttribute('contenteditable')){
-          /* back-compat: old saves were plain text — convert newlines to <br> */
-          el.innerHTML=v.includes('<')?v:v.replace(/\n/g,'<br>');
-        }else{el.value=v;}
-      };
-      set('jl-ovocie',d.ovocie); set('jl-mliecny',d.mliecny);
-      set('jl-eu',d.eu_text); set('jl-alergeny',d.alergeny);
-      set('jl-week',d.week);
+      setField('jl-ovocie',d.ovocie); setField('jl-mliecny',d.mliecny);
+      setField('jl-eu',d.eu_text); setField('jl-alergeny',d.alergeny);
+      setField('jl-week',d.week);
       JL_DAYS.forEach(day=>{
         const k=day.key;
-        set('jl-'+k+'-desiata',d[k+'_desiata']);
-        set('jl-'+k+'-obed',d[k+'_obed']);
-        set('jl-'+k+'-olovrant',d[k+'_olovrant']);
+        setField('jl-'+k+'-desiata',d[k+'_desiata']);
+        setField('jl-'+k+'-obed',d[k+'_obed']);
+        setField('jl-'+k+'-olovrant',d[k+'_olovrant']);
       });
     }catch(e){}
-    updateJLPreview();
+  } else {
+    /* First open — prefill from reference menu (week 2026-05-04) */
+    setField('jl-week','2026-05-04');
+    setField('jl-ovocie','jablko');
+    setField('jl-mliecny','mliečko Lipánek');
+    setField('jl-pondelok-desiata','100g Ryžová kaša s čokoládou a orechami (8)<br>50g Pomaranč');
+    setField('jl-pondelok-obed','200ml Batátová s kalerábom<br>225g (90g/110g/25g) Kuracie čevapčiči s prírodnou omáčkou, šťuchané zemiaky s jarnou cibuľkou a maslom (7), paradajkový šalát s paprikou');
+    setField('jl-pondelok-olovrant','75g Celozrnné pečivo (1), nátierka z pečenej zeleniny s pažítkou (7)');
+    setField('jl-utorok-desiata','75g Kváskový toast (1) vo vajičku (3, 7)<br>50g Uhorka');
+    setField('jl-utorok-obed','200ml Mrkvový krém s kozím mliekom a krutónmi z pečenej mrkvy (7)<br>225g (200g/25g) Cestoviny s tuniakom a zeleninou (1, 4), listový šalát');
+    setField('jl-utorok-olovrant','Cereálna žemlička s jemnou bryndzovou nátierkou, farebná paprika (1, 7)');
+    setField('jl-streda-desiata','100g Ovsená kaša s marhuľami, orechami a badiánom (1, 7)<br>50g Banán');
+    setField('jl-streda-obed','200ml Mäsový vývar s haluškami a zeleninou (1, 3)<br>225g (90g/110g/25g) Ragú z daniela s brusnicami a šampiňónmi (10), viedenská knedľa (1, 3, 7), domáci hruškový kompót');
+    setField('jl-streda-olovrant','75g Čokoládovo-tvarohový koláč s ovocnou omáčkou (1, 3, 7)');
+    setField('jl-stvrtok-desiata','Špaldový chlieb s cícerovou nátierkou, cherry paradajky (1, 6, 7)<br>50g Jablko');
+    setField('jl-stvrtok-obed','200ml Zemiaková na kyslo s bylinkami (7)<br>225g (90g/110g/25g) Morčací stroganov (7, 10) s basmati ryžou, kapustový šalát');
+    setField('jl-stvrtok-olovrant','75g Rustikálne pečivo (1) s tzatziki s avokádom (7)');
+    setField('jl-piatok-desiata','75g Vianočka (1, 3) s jahodovou penou (7)<br>50g Hruška');
+    setField('jl-piatok-obed','200ml Hustá kapustnica so sušenými slivkami<br>210g (90g/120g) Zeleninové fašírky (1, 3, 10), zemiakový šalát');
+    setField('jl-piatok-olovrant','75g Kváskový chlieb (1), zelerová nátierka s orechami a jablkom (7, 8, 9)');
   }
+  updateJLPreview(); /* always save current state to localStorage */
   /* Detect actual background image dimensions, resize canvas, then init zoom */
   const _bgImg = new Image();
   _bgImg.onload = function(){
@@ -2528,14 +2543,14 @@ function updateJLPreview(){
     ${rows}
     <div style="display:flex;align-items:center;gap:8px;background:#E2EAD4;border-radius:9px;padding:7px 14px;margin-top:6px;">
       <span style="font-size:13px;">🌿</span>
-      <span style="flex:1;font-size:11px;color:#444;text-align:center;font-style:italic;font-family:'Inter',sans-serif;">${data.eu_text}</span>
+      <span style="flex:1;font-size:13px;color:#444;text-align:center;font-style:italic;font-family:'Inter',sans-serif;">${data.eu_text}</span>
       <img src="https://emojiguide.org/images/emoji/9/14k7e3jnewfv9.png" style="height:22px;width:auto;object-fit:contain;flex-shrink:0;" alt="SK flag"/>
     </div>
     <div style="border-radius:9px;padding:8px 12px;margin-top:5px;background:rgba(255,255,255,.92);font-family:'Inter',sans-serif;box-shadow:0 1px 6px rgba(0,0,0,.07);">
-      <div style="font-size:9.5px;font-weight:700;color:#444;margin-bottom:4px;">${alHeader}</div>
+      <div style="font-size:11.5px;font-weight:700;color:#444;margin-bottom:4px;">${alHeader}</div>
       <div style="display:flex;gap:10px;">
-        <div style="flex:1;font-size:9px;color:#555;line-height:1.5;">${alCol1}</div>
-        <div style="flex:1;font-size:9px;color:#555;line-height:1.5;">${alCol2}</div>
+        <div style="flex:1;font-size:10.5px;color:#555;line-height:1.5;">${alCol1}</div>
+        <div style="flex:1;font-size:10.5px;color:#555;line-height:1.5;">${alCol2}</div>
       </div>
     </div>`;
 }
@@ -2603,14 +2618,14 @@ body{display:flex;justify-content:center;align-items:flex-start;padding:20px;fon
   ${rows}
   <div style="display:flex;align-items:center;gap:8px;background:#E2EAD4;border-radius:9px;padding:7px 14px;margin-top:6px;">
     <span style="font-size:13px;">🌿</span>
-    <span style="flex:1;font-size:11px;color:#444;text-align:center;font-style:italic;font-family:'Inter',sans-serif;">${data.eu_text}</span>
+    <span style="flex:1;font-size:13px;color:#444;text-align:center;font-style:italic;font-family:'Inter',sans-serif;">${data.eu_text}</span>
     <img src="${flagUrl}" style="height:22px;width:auto;object-fit:contain;flex-shrink:0;" alt="SK flag"/>
   </div>
   <div style="border-radius:9px;padding:8px 12px;margin-top:5px;background:rgba(255,255,255,.92);font-family:'Inter',sans-serif;box-shadow:0 1px 6px rgba(0,0,0,.07);">
-    <div style="font-size:9.5px;font-weight:700;color:#444;margin-bottom:4px;">${alHeader}</div>
+    <div style="font-size:11.5px;font-weight:700;color:#444;margin-bottom:4px;">${alHeader}</div>
     <div style="display:flex;gap:10px;">
-      <div style="flex:1;font-size:9px;color:#555;line-height:1.5;">${alCol1}</div>
-      <div style="flex:1;font-size:9px;color:#555;line-height:1.5;">${alCol2}</div>
+      <div style="flex:1;font-size:10.5px;color:#555;line-height:1.5;">${alCol1}</div>
+      <div style="flex:1;font-size:10.5px;color:#555;line-height:1.5;">${alCol2}</div>
     </div>
   </div>
 </div></div></div>
