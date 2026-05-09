@@ -78,21 +78,23 @@ const SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsI
 
 async function loadPPV() {
   const container = document.getElementById('ppvContent');
+  const cached = localStorage.getItem('ppv_content');
+  if (cached) container.innerHTML = cached;
   try {
     const { createClient } = supabase;
     const db = createClient(SUPA_URL, SUPA_KEY);
     const { data } = await db.from('settings').select('value').eq('key','ppv_extra').single();
     if (data && data.value && data.value.trim()) {
       container.innerHTML = data.value;
-    } else {
+      localStorage.setItem('ppv_content', data.value);
+    } else if (!cached) {
       container.innerHTML = '<p>Obsah ešte nebol pridaný. Prosím, vložte text v administrátorskom rozhraní.</p>';
     }
   } catch(e) {
-    container.innerHTML = '<p>Obsah sa nepodarilo načítať. Skúste stránku obnoviť.</p>';
+    if (!cached) container.innerHTML = '<p>Obsah sa nepodarilo načítať. Skúste stránku obnoviť.</p>';
   }
 }
-
-document.addEventListener('DOMContentLoaded', loadPPV);
+loadPPV();
 </script>
 
 <!-- cookie notice -->

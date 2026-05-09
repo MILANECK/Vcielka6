@@ -5,7 +5,6 @@
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
 <title>Novinky – Včielka</title>
 <meta name="description" content="Aktuality a novinky zo Školky Včielka Bratislava Ružinov"/>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <link rel="icon" type="image/png" href="vcielka_logo2.png"/>
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@700;800&family=Quicksand:wght@500;600;700&family=Inter:wght@400;500&display=swap" rel="stylesheet"/>
 <style>
@@ -33,8 +32,9 @@ body{font-family:'Inter',sans-serif;background:#D9EFFF;color:#1a1a1a;overflow-wr
 
 /* NEWS LIST */
 .news-list{display:flex;flex-direction:column;gap:28px;}
-.news-article{background:#fff;border-radius:24px;overflow:hidden;display:grid;grid-template-columns:300px 1fr;box-shadow:0 4px 24px rgba(26,95,168,.08);transition:transform .2s;}
-.news-article:hover{transform:translateY(-3px);}
+.news-article{background:#fff;border-radius:24px;overflow:hidden;display:grid;grid-template-columns:300px 1fr;box-shadow:0 4px 24px rgba(26,95,168,.08);transition:opacity .45s ease,transform .45s ease,box-shadow .2s;}
+.news-article:hover{transform:translateY(-3px);box-shadow:0 8px 32px rgba(26,95,168,.14);}
+.news-card-hidden{opacity:0;transform:translateY(20px);}
 .news-article-img{height:100%;min-height:220px;background:#C8E6FA;display:flex;align-items:center;justify-content:center;font-size:40px;overflow:hidden;}
 .news-article-img img{width:100%;height:100%;object-fit:cover;}
 .news-article-body{padding:28px 32px;}
@@ -90,6 +90,7 @@ body{font-family:'Inter',sans-serif;background:#D9EFFF;color:#1a1a1a;overflow-wr
   <span class="footer-copy">© 2025 Materská škola Včielka · Bratislava Ružinov</span>
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
 const SUPA_URL = 'https://fmjtzuligqsugsauqkgz.supabase.co';
 const SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZtanR6dWxpZ3FzdWdzYXVxa2d6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU0MTQyMTUsImV4cCI6MjA5MDk5MDIxNX0.gRF-roExLgnVDG4bSNt7EzX6c1v-JtM5v6ZcX8dY934';
@@ -105,19 +106,23 @@ async function loadNews() {
       list.innerHTML = '<div class="loading">Zatiaľ žiadne novinky.</div>';
       return;
     }
-    list.innerHTML = data.map(n => `
-      <div class="news-article">
-        <div class="news-article-img" style="background:${tagColors[n.color]||'#D9EFFF'};">
-          ${n.photo_url ? `<img src="${n.photo_url}" alt="${n.title}"/>` : '📰'}
-        </div>
-        <div class="news-article-body">
-          <div class="news-article-date">${new Date(n.published_at||n.created_at).toLocaleDateString('sk-SK',{day:'numeric',month:'long',year:'numeric'})}</div>
-          <div class="news-article-title">${n.title}</div>
-          <div class="news-article-excerpt">${n.excerpt||''}</div>
-          <a href="novinka.html?id=${n.id}" class="news-article-link">Čítať celý článok →</a>
-        </div>
-      </div>
-    `).join('');
+    list.innerHTML = '';
+    data.forEach(function(n, i) {
+      var card = document.createElement('div');
+      card.className = 'news-article news-card-hidden';
+      card.innerHTML =
+        '<div class="news-article-img" style="background:' + (tagColors[n.color]||'#D9EFFF') + ';">' +
+          (n.photo_url ? '<img src="' + n.photo_url + '" alt="' + n.title + '" loading="lazy"/>' : '📰') +
+        '</div>' +
+        '<div class="news-article-body">' +
+          '<div class="news-article-date">' + new Date(n.published_at||n.created_at).toLocaleDateString('sk-SK',{day:'numeric',month:'long',year:'numeric'}) + '</div>' +
+          '<div class="news-article-title">' + n.title + '</div>' +
+          '<div class="news-article-excerpt">' + (n.excerpt||'') + '</div>' +
+          '<a href="novinka.html?id=' + n.id + '" class="news-article-link">Čítať celý článok →</a>' +
+        '</div>';
+      list.appendChild(card);
+      setTimeout(function(){ card.classList.remove('news-card-hidden'); }, i * 90);
+    });
   } catch(e) {
     document.getElementById('newsList').innerHTML = '<div class="loading">Chyba načítania.</div>';
   }
