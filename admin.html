@@ -2652,7 +2652,8 @@ async function publishJL(){
   await new Promise(r=>setTimeout(r,2200));
 
   try{
-    const canvas=await html2canvas(frame.contentDocument.documentElement,{
+    const _jlPage=frame.contentDocument.querySelector('.page')||frame.contentDocument.documentElement;
+    const canvas=await html2canvas(_jlPage,{
       scale:1.5,useCORS:true,allowTaint:true,
       width:794,height:1123,windowWidth:794,windowHeight:1123
     });
