@@ -42,7 +42,7 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:#dce8f4;min-height:10
 .login-btn-back:hover{background:#bdddf2;}
 .login-error{color:#e74c3c;font-size:13px;margin-top:14px;display:none}
 #bee-wrap{position:absolute;width:90px;height:90px;pointer-events:none;opacity:0;z-index:0;}
-#bee-peek{width:100%;height:100%;border-radius:50%;object-fit:contain;box-shadow:0 10px 36px rgba(0,0,0,.24),0 3px 12px rgba(0,0,0,.14);display:block;}
+#bee-peek{width:100%;height:100%;object-fit:contain;display:block;filter:drop-shadow(0 8px 26px rgba(0,0,0,.32)) drop-shadow(0 2px 8px rgba(0,0,0,.18));}
 @keyframes bee-shake{
   0%,100%{transform:translate(0,0) rotate(0deg);}
   14%{transform:translate(-5px,-3px) rotate(-5deg);}
@@ -206,7 +206,7 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:#dce8f4;min-height:10
     <svg viewBox="0 0 198.9 90.1" xmlns="http://www.w3.org/2000/svg"><path d="M142.2,47.3c0-18.8-15.3-34.1-34.1-34.1-8.2,0-15.7,2.9-21.6,7.6C77.8,8.2,63.5,0,47.2,0,21.1,0,0,21.1,0,47.2v13c0,16.5,13.4,29.9,29.9,29.9h139.1c16.5,0,29.9-13.4,29.9-29.9,0,0,0-11.9-56.7-12.9Z" fill="#fff"/></svg>
   </div>
 
-  <div id="bee-wrap"><img id="bee-peek" src="vcielka_logo2.png" alt=""/></div>
+  <div id="bee-wrap"><img id="bee-peek" src="VCIELKA_LOGO.png" alt=""/></div>
 
   <div class="flip-card">
     <div class="flip-card-inner" id="flip-inner">
@@ -602,9 +602,9 @@ document.querySelector('.vs-logo-circle').addEventListener('click', function(){
   var loginWrap=document.getElementById('login-wrap');
   if(!bwrap||!bee||!card||!loginWrap)return;
   var S=90,tid=null,count=0;
-  // rotation per edge so bee's tail points toward screen center:
-  // top=180°(inverted), right=-90°, bottom=0°(upright), left=90°
-  var rots=[180,-90,0,90];
+  // face outward from card center, tail stays inside:
+  // top=0°, right=90°CW, bottom=180°, left=-90°
+  var rots=[0,90,180,-90];
   function peek(){
     count++;
     var doShake=(count%2===0);
@@ -614,36 +614,36 @@ document.querySelector('.vs-logo-circle').addEventListener('click', function(){
     var edge=Math.floor(Math.random()*4);
     var along=0.22+Math.random()*0.56;
     var hx,hy,px,py;
-    if(edge===0){hx=cx+cw*along-S/2;hy=cy-S-8;px=hx;py=cy-S/2;}
-    else if(edge===1){hx=cx+cw+8;hy=cy+ch*along-S/2;px=cx+cw-S/2;py=hy;}
-    else if(edge===2){hx=cx+cw*along-S/2;hy=cy+ch+8;px=hx;py=cy+ch-S/2;}
-    else{hx=cx-S-8;hy=cy+ch*along-S/2;px=cx-S/2;py=hy;}
-    // phase 0: instant place at hidden position with correct rotation
+    // hidden = inside card (covered by card's white bg); peek = half outside
+    if(edge===0){hx=cx+cw*along-S/2;hy=cy+4;           px=hx;py=cy-S/2;}
+    else if(edge===1){hx=cx+cw-S-4;hy=cy+ch*along-S/2; px=cx+cw-S/2;py=hy;}
+    else if(edge===2){hx=cx+cw*along-S/2;hy=cy+ch-S-4; px=hx;py=cy+ch-S/2;}
+    else             {hx=cx+4;hy=cy+ch*along-S/2;       px=cx-S/2;py=hy;}
+    // phase 0: instant teleport to hidden position inside card
     bwrap.style.transition='none';
     bwrap.style.left=hx+'px';bwrap.style.top=hy+'px';
     bwrap.style.transform='rotate('+rots[edge]+'deg)';
     bwrap.style.opacity='1';
     bee.style.animation='';
     requestAnimationFrame(function(){requestAnimationFrame(function(){
-      // phase 1: slow glide out (1.8s)
+      // phase 1: slow glide out through card edge (1.8s)
       bwrap.style.transition='left 1.8s cubic-bezier(.25,.46,.45,.94),top 1.8s cubic-bezier(.25,.46,.45,.94)';
       bwrap.style.left=px+'px';bwrap.style.top=py+'px';
       setTimeout(function(){
-        // peek has arrived — shake on every 2nd appearance
+        // half visible — optionally shake
         if(doShake) bee.style.animation='bee-shake .5s cubic-bezier(.36,.07,.19,.97) 2';
         var stayMs=doShake?1150:600;
         setTimeout(function(){
           bee.style.animation='';
-          // phase 2: quick jump OUTWARD (away from card edge)
+          // phase 2: quick pop further out
           var jx=px+(edge===1?13:edge===3?-13:0);
           var jy=py+(edge===2?13:edge===0?-13:0);
           bwrap.style.transition='left .13s ease-out,top .13s ease-out';
           bwrap.style.left=jx+'px';bwrap.style.top=jy+'px';
-          // linger at jump position
           setTimeout(function(){
-            // phase 3: very fast hide
-            bwrap.style.transition='left .25s cubic-bezier(.4,0,1,1),top .25s cubic-bezier(.4,0,1,1),opacity .18s ease-in .06s';
-            bwrap.style.left=hx+'px';bwrap.style.top=hy+'px';bwrap.style.opacity='0';
+            // phase 3: slide back inside card (no opacity — card covers naturally)
+            bwrap.style.transition='left .28s cubic-bezier(.4,0,1,1),top .28s cubic-bezier(.4,0,1,1)';
+            bwrap.style.left=hx+'px';bwrap.style.top=hy+'px';
             tid=setTimeout(peek,1800+Math.random()*2400);
           },750);
         },stayMs);
