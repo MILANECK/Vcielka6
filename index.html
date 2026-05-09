@@ -260,9 +260,10 @@ button{outline:none;border:none;}
   font-size:26px;
   position:relative;
   overflow:hidden;
-  transition:flex .44s cubic-bezier(.4,0,.2,1);
+  transition:flex .55s cubic-bezier(.25,.46,.45,.94);
+  will-change:flex;
 }
-.service-img img{transition:transform .44s cubic-bezier(.4,0,.2,1);}
+.service-img img{transition:transform .55s cubic-bezier(.25,.46,.45,.94);will-change:transform;}
 .service-card.blue .service-img{background:var(--blue-sky);}
 .service-card.yellow .service-img{background:var(--yellow-bright);}
 .service-card.green .service-img{background:var(--green-bright);}
@@ -274,8 +275,8 @@ button{outline:none;border:none;}
 .service-card.red .service-img::after{background:linear-gradient(to bottom,transparent,var(--red-card));}
 .service-body{flex:0 0 auto;padding:15px 14px 14px;overflow:hidden;background:inherit;margin-top:-3px;}
 .service-body h3{font-size:15px;color:#1a1a1a;margin:0;font-weight:700;line-height:1.38;height:calc(15px * 1.38 * 2);overflow:hidden;}
-.service-body p{font-family:'Inter',sans-serif;font-size:13px;color:var(--text-muted);line-height:1.5;max-height:0;overflow:hidden;opacity:0;margin-top:0;transform:translateY(10px);transition:max-height .44s cubic-bezier(.4,0,.2,1),opacity .38s ease,margin-top .44s cubic-bezier(.4,0,.2,1),transform .44s cubic-bezier(.4,0,.2,1);}
-.service-card:hover .service-body p,.service-card.tapped .service-body p{max-height:100px;opacity:1;margin-top:2px;transform:translateY(0);}
+.service-body p{font-family:'Inter',sans-serif;font-size:13px;color:var(--text-muted);line-height:1.5;max-height:0;overflow:hidden;opacity:0;margin-top:0;will-change:opacity,max-height;transition:max-height .55s cubic-bezier(.25,.46,.45,.94),opacity .42s ease-out .06s,margin-top .55s cubic-bezier(.25,.46,.45,.94);}
+.service-card:hover .service-body p,.service-card.tapped .service-body p{max-height:68px;opacity:1;margin-top:3px;}
 .service-more{font-family:'Inter',sans-serif;font-size:10px;font-weight:600;letter-spacing:.6px;text-transform:uppercase;color:var(--text-muted);opacity:0;max-height:0;overflow:hidden;text-align:center;transition:opacity .3s ease .25s,max-height .3s ease .25s;margin-top:0;display:none;}
 .service-card.clickable{cursor:pointer;}
 .act-popup-overlay{display:flex;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:5000!important;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(4px);opacity:0;visibility:hidden;pointer-events:none;transition:opacity .32s ease,visibility .32s;}
@@ -1368,7 +1369,7 @@ button{outline:none;border:none;}
   <svg id="footer-wave-svg" viewBox="0 0 1440 80" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg" style="display:block;width:100%;overflow:visible;">
     <path id="footer-wave-path" d="M0,80 Q720,0 1440,80 Z" fill="#0D3D6E"/>
   </svg>
-  <div id="footer-wave-hover" style="position:absolute;top:-44px;left:0;right:0;height:164px;z-index:5;pointer-events:auto;"></div>
+  <div id="footer-wave-hover" style="position:absolute;top:-6px;left:0;right:0;height:100px;z-index:5;pointer-events:auto;"></div>
 </div>
 
 <!-- ===========================
