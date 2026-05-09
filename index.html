@@ -207,8 +207,8 @@ button{outline:none;border:none;}
   margin:0 auto;
 }
 .hero-logo-badge{height:72px;width:auto;display:block;margin:0 auto 20px;filter:drop-shadow(0 3px 12px rgba(0,0,0,.35));}
-.hero h1{font-size:clamp(36px,6vw,58px);color:#fff;line-height:1.08;margin-bottom:18px;text-shadow:0 2px 16px rgba(0,0,0,.22);}
-.hero h1 em{color:#F9C832;font-style:normal;}
+.hero h1{font-size:clamp(36px,6vw,58px);color:#fff;line-height:1.08;margin-bottom:18px;}
+.hero h1 em{font-style:normal;}
 .hero-desc{font-family:'Inter',sans-serif;font-size:18px;color:rgba(255,255,255,.92);line-height:1.75;margin-bottom:30px;text-shadow:0 1px 8px rgba(0,0,0,.2);}
 .hero-btns{display:flex;gap:12px;flex-wrap:wrap;justify-content:center;}
 .btn-primary{background:var(--yellow);color:#1a1a1a;padding:13px 28px;font-size:14px;box-shadow:none;transition:box-shadow .3s,transform .2s;}
@@ -1745,6 +1745,20 @@ try {
   console.error('Supabase init error:', initErr);
 }
 
+function colorizeHeroTitle(el){
+  var cols=['#9DD5FC','#FFE87A','#B2E8C8','#FFD5D0','#ffffff'];
+  var last=-1;
+  function pick(){var i;do{i=Math.floor(Math.random()*cols.length);}while(i===last);last=i;return cols[i];}
+  var html=el.innerHTML,out='',i=0;
+  while(i<html.length){
+    if(html[i]==='<'){var e=html.indexOf('>',i);out+=html.slice(i,e+1);i=e+1;}
+    else if(html[i]==='&'){var e2=html.indexOf(';',i);if(e2!==-1){out+='<span style="color:'+pick()+';text-shadow:0 3px 20px rgba(0,0,0,.42),0 1px 6px rgba(0,0,0,.25);">'+html.slice(i,e2+1)+'</span>';i=e2+1;}else{out+=html[i];i++;}}
+    else if(html[i]===' '||html[i]==='\n'){out+=html[i];i++;}
+    else{out+='<span style="color:'+pick()+';text-shadow:0 3px 20px rgba(0,0,0,.42),0 1px 6px rgba(0,0,0,.25);">'+html[i]+'</span>';i++;}
+  }
+  el.innerHTML=out;
+}
+
 async function loadCMS() {
   if (!cms) { console.error("Supabase not initialized"); return; }
   try {
@@ -1755,7 +1769,7 @@ async function loadCMS() {
     if (s) {
       // Hero
       const _heroTitle = document.getElementById('cms-hero-title');
-      if (_heroTitle) { const raw = s.hero_title || 'Kde deti rastú a objavujú svet'; _heroTitle.innerHTML = raw.replace('rastú','<em>rastú</em>'); _heroTitle.style.opacity='1'; }
+      if (_heroTitle) { const raw = s.hero_title || 'Kde deti rastú a objavujú svet'; _heroTitle.innerHTML = raw.replace('rastú','<em>rastú</em>'); colorizeHeroTitle(_heroTitle); _heroTitle.style.opacity='1'; }
       const _heroSub = document.getElementById('cms-hero-subtitle');
       if (_heroSub) { _heroSub.textContent = s.hero_subtitle || 'Súkromná materská škola s odborným tímom, bohatým programom Zvedavá Včielka a láskyplným prostredím pre deti od 2,5 do 6 rokov.'; _heroSub.style.opacity='1'; }
       if (s.hero_photo) { const bg = document.getElementById('cms-hero-bg'); if(bg) { bg.src = s.hero_photo; bg.style.display='block'; } localStorage.setItem('hero_photo_cache', s.hero_photo); }
@@ -1916,7 +1930,7 @@ async function loadCMS() {
   } catch(e) {
     console.error('CMS error:', e.message, e.stack);
     const _ht = document.getElementById('cms-hero-title');
-    if (_ht && !_ht.textContent.trim()) { _ht.innerHTML = 'Kde deti <em>rastú</em><br>a objavujú svet'; _ht.style.opacity='1'; }
+    if (_ht && !_ht.textContent.trim()) { _ht.innerHTML = 'Kde deti <em>rastú</em><br>a objavujú svet'; colorizeHeroTitle(_ht); _ht.style.opacity='1'; }
     const _hs = document.getElementById('cms-hero-subtitle');
     if (_hs && !_hs.textContent.trim()) { _hs.textContent = 'Súkromná materská škola s odborným tímom, bohatým programom Zvedavá Včielka a láskyplným prostredím pre deti od 2,5 do 6 rokov.'; _hs.style.opacity='1'; }
   }
