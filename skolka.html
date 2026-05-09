@@ -30,7 +30,7 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:#dce8f4;min-height:10
 .lc-6 svg{animation:lcDrift4 21s ease-in-out infinite 1s;}
 .lc-7 svg{animation:lcDrift2 8s ease-in-out infinite 6s;}
 .login-box{background:#fff;border-radius:28px;padding:48px 40px;width:100%;max-width:400px;box-shadow:0 8px 40px rgba(26,95,168,.13);text-align:center;position:relative;}
-.login-logo{width:96px;height:96px;border-radius:50%;background:#fdc003;display:flex;align-items:center;justify-content:center;padding:12px;margin:0 auto 24px;box-shadow:0 4px 20px rgba(253,192,3,.4)}
+.login-logo{width:96px;height:96px;border-radius:50%;background:#fdc003;display:flex;align-items:center;justify-content:center;padding:12px;margin:0 auto 24px;box-shadow:0 4px 20px rgba(253,192,3,.4);cursor:pointer;}
 .login-logo img{width:100%;height:auto}
 .login-box h1{font-family:'Quicksand',sans-serif;font-size:22px;font-weight:700;color:#1A5FA8;margin-bottom:6px}
 .login-box p{font-size:13px;color:#888;margin-bottom:28px}
@@ -63,7 +63,7 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:#dce8f4;min-height:10
 .flip-card-inner:not(.flipped) .flip-card-back{pointer-events:none;}
 /* Back card */
 .login-box-back{background:linear-gradient(155deg,#1563b5 0%,#1a90e0 100%);border-radius:28px;padding:48px 40px;width:100%;min-height:100%;text-align:center;box-shadow:0 8px 40px rgba(26,95,168,.35);position:relative;overflow:hidden;display:flex;flex-direction:column;align-items:center;justify-content:center;box-sizing:border-box;}
-.login-back-logo{width:96px;height:96px;border-radius:50%;background:#fdc003;border:2px solid rgba(255,255,255,.6);display:flex;align-items:center;justify-content:center;padding:12px;margin:0 auto 24px;box-shadow:0 4px 20px rgba(253,192,3,.45);}
+.login-back-logo{width:96px;height:96px;border-radius:50%;background:#fdc003;border:2px solid rgba(255,255,255,.6);display:flex;align-items:center;justify-content:center;padding:12px;margin:0 auto 24px;box-shadow:0 4px 20px rgba(253,192,3,.45);cursor:pointer;}
 .login-back-logo img{width:100%;height:auto;}
 .login-back-title{font-family:'Quicksand',sans-serif;font-size:20px;font-weight:700;color:#fff;margin-bottom:8px;}
 .login-back-sub{font-size:13px;color:rgba(255,255,255,.72);margin-bottom:36px;line-height:1.6;}
@@ -590,8 +590,7 @@ document.querySelector('.vs-logo-circle').addEventListener('click', function(){
   var card=document.querySelector('.flip-card');
   var inner=document.getElementById('flip-inner');
   if(!wrap||!card||!inner)return;
-  card.addEventListener('click',function(e){e.stopPropagation();});
-  wrap.addEventListener('click',function(){
+  function triggerFlip(){
     inner.classList.toggle('flipped');
     var bw=document.getElementById('bee-wrap');
     if(bw){
@@ -602,7 +601,13 @@ document.querySelector('.vs-logo-circle').addEventListener('click', function(){
       bw.style.left=hx+'px';bw.style.top=hy+'px';bw.style.opacity='0';
       setTimeout(function(){delete bw.dataset.flipLock;},520);
     }
-  });
+  }
+  card.addEventListener('click',function(e){e.stopPropagation();});
+  wrap.addEventListener('click',triggerFlip);
+  var frontLogo=document.querySelector('.flip-card-front .login-logo');
+  var backLogo=document.querySelector('.flip-card-back .login-back-logo');
+  if(frontLogo) frontLogo.addEventListener('click',function(e){e.stopPropagation();triggerFlip();});
+  if(backLogo) backLogo.addEventListener('click',function(e){e.stopPropagation();triggerFlip();});
 })();
 
 // ── BEE PEEK HIDE & SEEK ──
