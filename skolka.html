@@ -42,7 +42,6 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:#dce8f4;min-height:10
 .login-btn-back:hover{background:#bdddf2;}
 .login-error{color:#e74c3c;font-size:13px;margin-top:14px;display:none}
 #bee-wrap{position:absolute;width:62px;height:62px;pointer-events:none;opacity:0;z-index:0;}
-#login-wrap.flip-active #bee-wrap{opacity:0!important;transition:opacity .1s ease!important;}
 #bee-peek{width:100%;height:100%;object-fit:contain;display:block;filter:drop-shadow(0 8px 26px rgba(0,0,0,.32)) drop-shadow(0 2px 8px rgba(0,0,0,.18));}
 @keyframes bee-shake{
   0%,100%{transform:translate(0,0) rotate(0deg);}
@@ -207,7 +206,7 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:#dce8f4;min-height:10
     <svg viewBox="0 0 198.9 90.1" xmlns="http://www.w3.org/2000/svg"><path d="M142.2,47.3c0-18.8-15.3-34.1-34.1-34.1-8.2,0-15.7,2.9-21.6,7.6C77.8,8.2,63.5,0,47.2,0,21.1,0,0,21.1,0,47.2v13c0,16.5,13.4,29.9,29.9,29.9h139.1c16.5,0,29.9-13.4,29.9-29.9,0,0,0-11.9-56.7-12.9Z" fill="#fff"/></svg>
   </div>
 
-  <div id="bee-wrap"><img id="bee-peek" src="VCIELKA_LOGO.png" alt=""/></div>
+  <div id="bee-wrap"><img id="bee-peek" src="vcielka_logo2.png" alt=""/></div>
 
   <div class="flip-card">
     <div class="flip-card-inner" id="flip-inner">
@@ -594,8 +593,15 @@ document.querySelector('.vs-logo-circle').addEventListener('click', function(){
   card.addEventListener('click',function(e){e.stopPropagation();});
   wrap.addEventListener('click',function(){
     inner.classList.toggle('flipped');
-    wrap.classList.add('flip-active');
-    setTimeout(function(){wrap.classList.remove('flip-active');},450);
+    var bw=document.getElementById('bee-wrap');
+    if(bw){
+      bw.dataset.flipLock='1';
+      var hx=parseFloat(bw.dataset.hx)||parseFloat(bw.style.left)||0;
+      var hy=parseFloat(bw.dataset.hy)||parseFloat(bw.style.top)||0;
+      bw.style.transition='left .38s cubic-bezier(.4,0,.2,1),top .38s cubic-bezier(.4,0,.2,1),opacity .30s ease-in';
+      bw.style.left=hx+'px';bw.style.top=hy+'px';bw.style.opacity='0';
+      setTimeout(function(){delete bw.dataset.flipLock;},520);
+    }
   });
 })();
 
@@ -607,10 +613,10 @@ document.querySelector('.vs-logo-circle').addEventListener('click', function(){
   var loginWrap=document.getElementById('login-wrap');
   if(!bwrap||!bee||!card||!loginWrap)return;
   var S=62,tid=null,count=0;
-  // face outward from card center, tail stays inside:
-  // top=0°, right=90°CW, bottom=180°, left=-90°
-  var rots=[0,90,180,-90];
+  var rots=[0,90,180,-90]; // top right bottom left — face outward, tail toward center
+  function locked(){return !!bwrap.dataset.flipLock;}
   function peek(){
+    if(locked()){tid=setTimeout(peek,600);return;}
     count++;
     var doShake=(count%2===0);
     var wr=loginWrap.getBoundingClientRect();
@@ -619,34 +625,33 @@ document.querySelector('.vs-logo-circle').addEventListener('click', function(){
     var edge=Math.floor(Math.random()*4);
     var along=0.22+Math.random()*0.56;
     var hx,hy,px,py;
-    // hidden = inside card (covered by card's white bg); peek = half outside
     if(edge===0){hx=cx+cw*along-S/2;hy=cy+4;           px=hx;py=cy-S/2;}
     else if(edge===1){hx=cx+cw-S-4;hy=cy+ch*along-S/2; px=cx+cw-S/2;py=hy;}
     else if(edge===2){hx=cx+cw*along-S/2;hy=cy+ch-S-4; px=hx;py=cy+ch-S/2;}
     else             {hx=cx+4;hy=cy+ch*along-S/2;       px=cx-S/2;py=hy;}
-    // phase 0: instant teleport to hidden position inside card
+    bwrap.dataset.hx=hx; bwrap.dataset.hy=hy; // expose for flip handler
     bwrap.style.transition='none';
     bwrap.style.left=hx+'px';bwrap.style.top=hy+'px';
     bwrap.style.transform='rotate('+rots[edge]+'deg)';
     bwrap.style.opacity='1';
     bee.style.animation='';
     requestAnimationFrame(function(){requestAnimationFrame(function(){
-      // phase 1: slow glide out through card edge (1.8s)
+      if(locked())return;
       bwrap.style.transition='left 1.8s cubic-bezier(.25,.46,.45,.94),top 1.8s cubic-bezier(.25,.46,.45,.94)';
       bwrap.style.left=px+'px';bwrap.style.top=py+'px';
       setTimeout(function(){
-        // half visible — optionally shake
+        if(locked())return;
         if(doShake) bee.style.animation='bee-shake .5s cubic-bezier(.36,.07,.19,.97) 2';
         var stayMs=doShake?1150:600;
         setTimeout(function(){
+          if(locked())return;
           bee.style.animation='';
-          // phase 2: quick pop further out
           var jx=px+(edge===1?13:edge===3?-13:0);
           var jy=py+(edge===2?13:edge===0?-13:0);
           bwrap.style.transition='left .13s ease-out,top .13s ease-out';
           bwrap.style.left=jx+'px';bwrap.style.top=jy+'px';
           setTimeout(function(){
-            // phase 3: slide back inside card (no opacity — card covers naturally)
+            if(locked()){tid=setTimeout(peek,600);return;}
             bwrap.style.transition='left .28s cubic-bezier(.4,0,1,1),top .28s cubic-bezier(.4,0,1,1)';
             bwrap.style.left=hx+'px';bwrap.style.top=hy+'px';
             tid=setTimeout(peek,1800+Math.random()*2400);
