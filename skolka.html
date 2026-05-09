@@ -636,22 +636,22 @@ document.querySelector('.vs-logo-circle').addEventListener('click', function(){
     bwrap.style.opacity='1';
     bee.style.animation='';
     requestAnimationFrame(function(){requestAnimationFrame(function(){
-      if(locked())return;
+      if(locked()){tid=setTimeout(peek,650);return;}
       bwrap.style.transition='left 1.8s cubic-bezier(.25,.46,.45,.94),top 1.8s cubic-bezier(.25,.46,.45,.94)';
       bwrap.style.left=px+'px';bwrap.style.top=py+'px';
       setTimeout(function(){
-        if(locked())return;
+        if(locked()){tid=setTimeout(peek,650);return;}
         if(doShake) bee.style.animation='bee-shake .5s cubic-bezier(.36,.07,.19,.97) 2';
         var stayMs=doShake?1150:600;
         setTimeout(function(){
-          if(locked())return;
+          if(locked()){tid=setTimeout(peek,650);return;}
           bee.style.animation='';
           var jx=px+(edge===1?13:edge===3?-13:0);
           var jy=py+(edge===2?13:edge===0?-13:0);
           bwrap.style.transition='left .13s ease-out,top .13s ease-out';
           bwrap.style.left=jx+'px';bwrap.style.top=jy+'px';
           setTimeout(function(){
-            if(locked()){tid=setTimeout(peek,600);return;}
+            if(locked()){tid=setTimeout(peek,650);return;}
             bwrap.style.transition='left .28s cubic-bezier(.4,0,1,1),top .28s cubic-bezier(.4,0,1,1)';
             bwrap.style.left=hx+'px';bwrap.style.top=hy+'px';
             tid=setTimeout(peek,1800+Math.random()*2400);
