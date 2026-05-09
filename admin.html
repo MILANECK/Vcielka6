@@ -2428,14 +2428,12 @@ function loadJLLocal(){
   /* Detect actual background image dimensions, resize canvas, then init zoom */
   const _bgImg = new Image();
   _bgImg.onload = function(){
-    if(_bgImg.naturalWidth && _bgImg.naturalHeight){
-      JL_CONTENT_W = _bgImg.naturalWidth;
-      JL_CONTENT_H = _bgImg.naturalHeight;
-      const page   = document.getElementById('jl-preview-page');
-      const scaler = document.getElementById('jl-preview-scaler');
-      if(page)  { page.style.width = JL_CONTENT_W+'px'; page.style.height = JL_CONTENT_H+'px'; page.style.minHeight = ''; }
-      if(scaler){ scaler.style.width = JL_CONTENT_W+'px'; }
-    }
+    /* Keep fixed A4 dimensions (794×1123) — background uses cover so it fills correctly.
+       Do not read natural image size: all layout values (overlay, fonts) target 794px. */
+    const page   = document.getElementById('jl-preview-page');
+    const scaler = document.getElementById('jl-preview-scaler');
+    if(page)  { page.style.width = JL_CONTENT_W+'px'; page.style.height = JL_CONTENT_H+'px'; page.style.minHeight = ''; }
+    if(scaler){ scaler.style.width = JL_CONTENT_W+'px'; }
     requestAnimationFrame(()=>requestAnimationFrame(jlInitZoom));
   };
   _bgImg.onerror = function(){ requestAnimationFrame(()=>requestAnimationFrame(jlInitZoom)); };

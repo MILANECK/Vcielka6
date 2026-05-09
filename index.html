@@ -86,12 +86,14 @@ button{outline:none;border:none;}
   display:flex;
   align-items:center;
   position:sticky;
-  top:0;
+  top:12px;
   z-index:100;
   box-shadow:0 4px 24px rgba(26,95,168,.13);
   height:64px;
-  border-radius:0 0 24px 24px;
-  width:100%;
+  border-radius:24px;
+  max-width:1100px;
+  width:calc(100% - 48px);
+  margin:12px auto 0;
 }
 .nav-logo{display:flex;align-items:center;gap:0;transition:transform .2s;}
 .nav-logo:hover{transform:scale(1.08);}
@@ -198,16 +200,16 @@ button{outline:none;border:none;}
 .hero-content{
   position:relative;
   z-index:2;
-  max-width:520px;
+  max-width:680px;
   padding:60px 0 180px 0;
-  text-align:left;
-  margin-left:0;
+  text-align:center;
+  margin:0 auto;
 }
-.hero-badge{display:inline-block;background:var(--yellow);color:#1a1a1a;font-family:'Quicksand',sans-serif;font-size:11px;font-weight:700;padding:5px 16px;border-radius:50px;margin-bottom:18px;letter-spacing:.6px;text-transform:uppercase;}
+.hero-logo-badge{height:72px;width:auto;display:block;margin:0 auto 20px;filter:drop-shadow(0 3px 12px rgba(0,0,0,.35));}
 .hero h1{font-size:clamp(36px,6vw,58px);color:#fff;line-height:1.08;margin-bottom:18px;text-shadow:0 2px 16px rgba(0,0,0,.22);}
 .hero h1 em{color:#F9C832;font-style:normal;}
 .hero-desc{font-family:'Inter',sans-serif;font-size:18px;color:rgba(255,255,255,.92);line-height:1.75;margin-bottom:30px;text-shadow:0 1px 8px rgba(0,0,0,.2);}
-.hero-btns{display:flex;gap:12px;flex-wrap:wrap;justify-content:flex-start;}
+.hero-btns{display:flex;gap:12px;flex-wrap:wrap;justify-content:center;}
 .btn-primary{background:var(--yellow);color:#1a1a1a;padding:13px 28px;font-size:14px;box-shadow:none;transition:box-shadow .3s,transform .2s;}
 .btn-primary:hover{box-shadow:0 6px 28px rgba(249,200,50,.8);transform:translateY(-2px);}
 .btn-outline:hover{box-shadow:0 6px 28px rgba(255,255,255,.3);transform:translateY(-2px);}
@@ -1032,9 +1034,9 @@ button{outline:none;border:none;}
   <img class="hero-bee-deco" src="vcela2.png" alt=""/>
   <img class="hero-bee-deco2" src="vcela3.png" alt=""/>
   <!-- content -->
-  <div style="width:100%;max-width:1100px;margin:0 auto;padding:0 0 0 48px;" class="hero-wrapper">
+  <div style="width:100%;max-width:1100px;margin:0 auto;padding:0 32px;" class="hero-wrapper">
   <div class="hero-content fade-in">
-    <div class="hero-badge">🐝 Ružinov, Bratislava</div>
+    <img src="VCIELKA_LOGO.png" alt="Včielka" class="hero-logo-badge"/>
     <h1 id="cms-hero-title" style="opacity:0;transition:opacity .35s;"></h1>
     <p class="hero-desc" id="cms-hero-subtitle" style="opacity:0;transition:opacity .35s .08s;"></p>
     <div class="hero-btns">
