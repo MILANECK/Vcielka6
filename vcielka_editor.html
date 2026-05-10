@@ -1119,9 +1119,6 @@ init();
 
 <script>
 (function(){
-  var TOUR_KEY = 'editor_tour_seen_v1';
-  if(localStorage.getItem(TOUR_KEY)) return;
-
   var overlay = document.getElementById('editor-tour');
   var s1 = document.getElementById('ts1');
   var s2 = document.getElementById('ts2');
@@ -1169,7 +1166,6 @@ init();
     overlay.classList.remove('tour-visible');
     [s1,s2,s3,hint].forEach(function(el){ el.classList.remove('ts-show'); });
     setTimeout(function(){ overlay.style.display='none'; }, 460);
-    localStorage.setItem(TOUR_KEY,'1');
   }
 
   overlay.addEventListener('click', hideTour);
