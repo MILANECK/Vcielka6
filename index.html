@@ -21,6 +21,13 @@ body{font-family:'Inter',sans-serif;background:transparent;color:#1a1a1a;overflo
 ::-webkit-scrollbar-track{background:transparent;}
 ::-webkit-scrollbar-thumb{background:rgba(255,255,255,.58);border-radius:100px;box-shadow:0 2px 8px rgba(0,0,0,.18),0 0 0 .5px rgba(255,255,255,.12);}
 ::-webkit-scrollbar-thumb:hover{background:rgba(255,255,255,.82);}
+@media(min-width:768px){
+  ::-webkit-scrollbar{width:10px;}
+  ::-webkit-scrollbar-track{background:transparent;}
+  ::-webkit-scrollbar-thumb{background:rgba(255,255,255,.92);border-radius:100px;border:2px solid transparent;background-clip:padding-box;box-shadow:0 2px 10px rgba(0,0,0,.22),0 0 0 .5px rgba(0,0,0,.06);}
+  ::-webkit-scrollbar-thumb:hover{background:#fff;border:2px solid transparent;background-clip:padding-box;}
+  html{scrollbar-color:rgba(255,255,255,.88) transparent;}
+}
 img{max-width:100%;display:block;}
 a{text-decoration:none;color:inherit;}
 
@@ -1108,7 +1115,7 @@ button{outline:none;border:none;}
     <p class="hero-desc" id="cms-hero-subtitle" style="opacity:0;transition:opacity .35s .08s;"></p>
     <div class="hero-btns">
       <a href="#sluzby" class="btn btn-primary">Zistiť viac o škôlke</a>
-      <a href="#kontakt" class="btn btn-outline" onclick="event.preventDefault();document.getElementById('kontakt').scrollIntoView({behavior:'smooth'});setTimeout(function(){var btn=document.getElementById('napisteBtn');if(btn&&btn.getAttribute('aria-expanded')!=='true')btn.click();},600);">Napíšte nám</a>
+      <a href="#kontakt" class="btn btn-outline" onclick="event.preventDefault();var btn=document.getElementById('napisteBtn');if(btn&&btn.getAttribute('aria-expanded')!=='true')btn.click();setTimeout(function(){document.getElementById('napisteFormWrap').scrollIntoView({behavior:'smooth',block:'center'});},500);">Napíšte nám</a>
     </div>
   </div>
   </div>
@@ -1411,7 +1418,7 @@ button{outline:none;border:none;}
         <button class="napiste-trigger" id="napisteBtn"
           aria-expanded="false" aria-controls="napisteFormWrap"
           onclick="toggleNapiste()">
-          ✉️ Napíšte nám
+          Napíšte nám
           <svg class="nt-arrow" width="14" height="8" viewBox="0 0 14 8" fill="none" aria-hidden="true"><path d="M1 1l6 6 6-6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
         </button>
       </div>
