@@ -1084,6 +1084,11 @@ init();
   pointer-events:none;white-space:nowrap;
 }
 #tour-hint.ts-show{opacity:1;}
+@media(max-width:600px){
+  .ts-num{font-size:72px;}
+  .ts-label{font-size:16px;max-width:150px;}
+  .ts-arrow{width:48px!important;height:54px!important;}
+}
 </style>
 
 <div id="editor-tour">
@@ -1098,18 +1103,18 @@ init();
   </div>
   <!-- Step 2: ←arrow | number | label  (arrow originates from right edge = number side) -->
   <div class="ts" id="ts2">
-    <svg class="ts-arrow" width="72" height="56" viewBox="0 0 72 56" fill="none">
-      <path d="M67 14 C48 14, 24 32, 8 46" stroke="#fff" stroke-width="3.5" stroke-linecap="round" fill="none"/>
-      <path d="M8 46 L20 42 M8 46 L12 34" stroke="#fff" stroke-width="3.5" stroke-linecap="round"/>
+    <svg class="ts-arrow" width="72" height="80" viewBox="0 0 72 80" fill="none">
+      <path d="M67 22 C52 18, 26 48, 8 70" stroke="#fff" stroke-width="3.5" stroke-linecap="round" fill="none"/>
+      <path d="M8 70 L21 63 M8 70 L15 78" stroke="#fff" stroke-width="3.5" stroke-linecap="round"/>
     </svg>
     <div class="ts-num">2</div>
     <div class="ts-label">Pridať fotografie</div>
   </div>
   <!-- Step 3: ←arrow | number | label -->
   <div class="ts" id="ts3">
-    <svg class="ts-arrow" width="72" height="56" viewBox="0 0 72 56" fill="none">
-      <path d="M67 14 C48 14, 24 32, 8 46" stroke="#F9C832" stroke-width="3.5" stroke-linecap="round" fill="none"/>
-      <path d="M8 46 L20 42 M8 46 L12 34" stroke="#F9C832" stroke-width="3.5" stroke-linecap="round"/>
+    <svg class="ts-arrow" width="72" height="80" viewBox="0 0 72 80" fill="none">
+      <path d="M67 22 C52 18, 26 48, 8 70" stroke="#F9C832" stroke-width="3.5" stroke-linecap="round" fill="none"/>
+      <path d="M8 70 L21 63 M8 70 L15 78" stroke="#F9C832" stroke-width="3.5" stroke-linecap="round"/>
     </svg>
     <div class="ts-num">3</div>
     <div class="ts-label">Vlož do rámikov automaticky ✨</div>
@@ -1143,14 +1148,15 @@ init();
        left edge of step (= arrow start, near number) sits ~12px right of button */
     if(panBtn){
       var r2 = panBtn.getBoundingClientRect();
-      s2.style.top  = (r2.top + r2.height/2 - 55) + 'px';
+      /* offset -82 = 15px SVG-top-in-row + 70px tip-y - buttonCenter: tip lands on button centre */
+      s2.style.top  = Math.max(8, r2.top + r2.height/2 - 82) + 'px';
       s2.style.left = (r2.right + 12) + 'px';
       s2.style.right= 'auto';
     }
     /* Step 3 — same layout as step 2 */
     if(autoBtn){
       var r3 = autoBtn.getBoundingClientRect();
-      s3.style.top  = (r3.top + r3.height/2 - 55) + 'px';
+      s3.style.top  = Math.max(8, r3.top + r3.height/2 - 82) + 'px';
       s3.style.left = (r3.right + 12) + 'px';
       s3.style.right= 'auto';
     }

@@ -496,6 +496,9 @@ button{outline:none;border:none;}
 @media(max-width:900px){
   .nav-links{display:none;}
   .nav-burger{display:flex;}
+  /* fix nav to viewport so burger always travels with the bar */
+  body{padding-top:64px;}
+  .nav{position:fixed;top:0;left:0;right:0;width:100%;max-width:100%;margin:0;}
   .hero{flex-direction:column;padding:0 20px 32px;text-align:left;margin-top:-64px;}
   .hero-bg-img{top:0;height:100%;object-position:22% top;}
   .hero-overlay{background:linear-gradient(to bottom,rgba(8,32,72,.0) 0px,rgba(8,32,72,.0) 64px,rgba(8,32,72,.65) 130px,rgba(8,32,72,.45) 100%);}
@@ -582,7 +585,7 @@ button{outline:none;border:none;}
 
 /* Make sure all sections sit above blobs */
 .hero,.stats,.section,.gallery-section,.footer,.wave{position:relative;z-index:1;} .gallery-popup-overlay,.news-popup-overlay,.lightbox{z-index:9999!important;}
-@media(max-width:900px){.nav{position:sticky;top:0;z-index:100;}}
+@media(max-width:900px){.nav{z-index:100;}}
 
 
 /* ===== NEWS POPUP ===== */
