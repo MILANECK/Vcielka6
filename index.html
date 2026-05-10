@@ -1910,7 +1910,7 @@ async function loadCMS() {
         const _fl = document.getElementById('cms-footer-email-link'); if(_fl){ _fl.textContent = _em; _fl.href = 'mailto:'+_em; }
       }
       if (s.contact_hours) { const el = document.getElementById('cms-hours'); if(el) el.textContent = s.contact_hours; }
-      if (s.staticforms_url) { window._nf_endpoint = s.staticforms_url; }
+      if (s.staticforms_key) { window._nf_apikey = s.staticforms_key; }
       // O nás
       // Section icons (contact + program z-items)
       const _iconMap = {adresa:'📍',email:'✉️',telefon:'📞',hodiny:'🕐',social:'🐝',kreativ:'🎨',sport:'🏃',intellect:'🔬'};
@@ -2589,7 +2589,7 @@ function toggleNapiste() {
   var form = document.getElementById('napisteForm');
   if (!form) return;
 
-  // Endpoint is loaded from Supabase (Admin → Kontakt → Static Forms URL)
+  // API key loaded from Supabase (Admin → Kontakt → Static Forms API kľúč)
 
   function markErr(el){ el.classList.add('nf-error'); }
   function clearErr(el){ el.classList.remove('nf-error'); }
@@ -2627,8 +2627,8 @@ function toggleNapiste() {
     if (!ok) return;
 
     var btn = document.getElementById('nf-submitBtn');
-    var ep = window._nf_endpoint || '';
-    if (!ep) {
+    var apiKey = window._nf_apikey || '';
+    if (!apiKey) {
       alert('Kontaktný formulár nie je nakonfigurovaný. Kontaktujte nás priamo na email.');
       return;
     }
@@ -2636,6 +2636,7 @@ function toggleNapiste() {
     btn.textContent = 'Odosielam…';
 
     var payload = {
+      apiKey:   apiKey,
       subject:  'Správa zo stránky Škôlka Včielka',
       replyTo:  document.getElementById('nf-email').value,
       honeypot: form.querySelector('[name="honeypot"]').value,
@@ -2648,7 +2649,7 @@ function toggleNapiste() {
     };
 
     try {
-      var resp = await fetch(ep, {
+      var resp = await fetch('https://api.staticforms.dev/submit', {
         method: 'POST',
         headers: {'Content-Type': 'application/json', 'Accept': 'application/json'},
         body: JSON.stringify(payload)
