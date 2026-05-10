@@ -1154,12 +1154,17 @@ init();
   }
 
   function showTour(){
-    positionSteps();
-    overlay.classList.add('tour-visible');
-    setTimeout(function(){ s1.classList.add('ts-show'); }, 250);
-    setTimeout(function(){ s2.classList.add('ts-show'); }, 950);
-    setTimeout(function(){ s3.classList.add('ts-show'); }, 1650);
-    setTimeout(function(){ hint.classList.add('ts-show'); }, 2200);
+    overlay.style.display = '';           /* clear any bfcache-preserved display:none */
+    overlay.classList.remove('tour-visible');
+    [s1,s2,s3,hint].forEach(function(el){ el.classList.remove('ts-show'); });
+    setTimeout(function(){                /* small delay so layout is fully settled */
+      positionSteps();
+      overlay.classList.add('tour-visible');
+      setTimeout(function(){ s1.classList.add('ts-show'); }, 250);
+      setTimeout(function(){ s2.classList.add('ts-show'); }, 950);
+      setTimeout(function(){ s3.classList.add('ts-show'); }, 1650);
+      setTimeout(function(){ hint.classList.add('ts-show'); }, 2200);
+    }, 120);
   }
 
   function hideTour(){
@@ -1170,12 +1175,16 @@ init();
 
   overlay.addEventListener('click', hideTour);
 
-  /* wait for DOM to settle before measuring button positions */
+  /* show on normal load */
   if(document.readyState === 'complete'){
     showTour();
   } else {
     window.addEventListener('load', showTour);
   }
+  /* show again when browser restores page from bfcache */
+  window.addEventListener('pageshow', function(e){
+    if(e.persisted){ showTour(); }
+  });
 })();
 </script>
 <!-- ===== END ONBOARDING TOUR ===== -->
