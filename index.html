@@ -535,6 +535,11 @@ button{outline:none;border:none;}
   .news-card.tapped .news-excerpt{max-height:80px;opacity:1;margin-top:2px;}
   .news-card.tapped .news-more{max-height:30px;opacity:1;margin-top:5px;}
   .news-card.tapped .news-img img{transform:translateY(-6px) scale(1.03);}
+  /* gallery & contact — cancel sticky :hover, use JS .touch-active instead */
+  .gallery-item:hover{transform:none;}
+  .contact-card:hover{transform:none;box-shadow:0 2px 18px rgba(26,95,168,.07);}
+  .gallery-item.touch-active{transform:scale(1.03);}
+  .contact-card.touch-active{transform:translateY(-3px);box-shadow:0 8px 30px rgba(26,95,168,.13);}
 }
 @media(hover:none) and (max-width:768px){
   .service-card{height:220px;position:relative;}
@@ -1455,7 +1460,7 @@ button{outline:none;border:none;}
             <label class="nf-gdpr-wrap" id="nf-gdpr-label">
               <input type="checkbox" id="nf-gdpr" name="gdpr" required/>
               Súhlasím so spracovaním osobných údajov za účelom odpovede na moju otázku.
-              <a href="#" onclick="event.stopPropagation()">Zásady ochrany súkromia</a>
+              <a href="privacy.html" target="_blank" rel="noopener" onclick="event.stopPropagation()">Zásady ochrany súkromia</a>
             </label>
 
             <button type="submit" class="nf-submit" id="nf-submitBtn">Odoslať správu</button>
@@ -2352,6 +2357,19 @@ document.addEventListener('click',function(e){
     document.querySelectorAll('.service-card.tapped,.news-card.tapped').forEach(c=>c.classList.remove('tapped'));
   }
 });
+
+// ===== MOBILE TOUCH-ACTIVE — smooth gallery & contact hover =====
+(function(){
+  if(!window.matchMedia('(hover:none)').matches) return;
+  var cur = null;
+  document.addEventListener('touchstart', function(e){
+    var t = e.target.closest('.gallery-item') || e.target.closest('.contact-card');
+    if(cur === t) return;
+    if(cur){ cur.classList.remove('touch-active'); }
+    cur = t || null;
+    if(cur){ cur.classList.add('touch-active'); }
+  }, {passive:true});
+})();
 
 // ===== UČEBNÉ OSNOVY INLINE =====
 function toggleUcebneInline(){
