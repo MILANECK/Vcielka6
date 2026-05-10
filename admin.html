@@ -655,12 +655,12 @@ body{font-family:'Inter',sans-serif;background:#F0F7FF;color:#1a1a1a;min-height:
       </div>
       <div class="card">
         <div class="card-title">📞 Kontakt v pätičke (pravý stĺpec)</div>
-        <p style="font-size:12px;color:#888;margin-bottom:14px;">Kontaktné údaje sa synchronizujú automaticky zo sekcie Kontakt.</p>
-        <div class="field"><label>Adresa</label><input type="text" id="contact_address" readonly style="opacity:.6;"/></div>
-        <div class="field"><label>Telefón</label><input type="text" id="contact_phone" readonly style="opacity:.6;"/></div>
-        <div class="field"><label>E-mail</label><input type="text" id="contact_email" readonly style="opacity:.6;"/></div>
-        <div class="field"><label>Otváracie hodiny</label><input type="text" id="contact_hours" readonly style="opacity:.6;"/></div>
-        <p style="font-size:11px;color:#aaa;">Pre zmenu kontaktov prejdite do sekcie Kontakt.</p>
+        <p style="font-size:12px;color:#888;margin-bottom:14px;">Tieto údaje sa zobrazujú aj v sekcii Kontakt na webe.</p>
+        <div class="field"><label>Adresa</label><input type="text" id="contact_address" placeholder="Sečovská 144/3, Ružinov"/></div>
+        <div class="field"><label>Telefón</label><input type="text" id="contact_phone" placeholder="0918 607 935"/></div>
+        <div class="field"><label>E-mail</label><input type="text" id="contact_email" placeholder="info@skolka-vcielka.sk"/></div>
+        <div class="field"><label>Otváracie hodiny</label><input type="text" id="contact_hours" placeholder="Po–Pia: 7:00 – 17:00"/></div>
+        <button class="btn-save" data-tip="Uložiť kontaktné údaje" onclick="saveSettings(['contact_address','contact_phone','contact_email','contact_hours'])">💾 Uložiť</button>
       </div>
       <div class="card">
         <div class="card-title">©️ Copyright text</div>
@@ -1074,7 +1074,11 @@ async function loadPage(name) {
       footer_links_title: 'Rýchle odkazy',
       footer_links: 'O nás|#o-nas\nNaše služby|#sluzby\nZvedavá Včielka|#program\nDenný poriadok|#program\nGaléria|#galeria\nAktuality|#aktuality\nCenník|#cennik\nKontakt|#kontakt',
       footer_copy_left: '© 2025 Materská škola Včielka · Všetky práva vyhradené',
-      footer_copy_right: 'Vytvorené s 🐝 láskou v Bratislave'
+      footer_copy_right: 'Vytvorené s 🐝 láskou v Bratislave',
+      contact_address: 'Sečovská 144/3, Ružinov',
+      contact_phone: '0918 607 935',
+      contact_email: 'info@skolka-vcielka.sk',
+      contact_hours: 'Po–Pia: 7:00 – 17:00'
     };
     Object.entries(footerDefaults).forEach(([k, v]) => {
       const el = document.getElementById(k);
