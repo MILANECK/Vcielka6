@@ -331,7 +331,7 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:#c8d8e4;color:#1a2a3a
   <button class="fb fb-lg c-magenta" id="pan-btn" onclick="sbOpen()" title="Fotografie z Virtuálnej Školky">
     <svg class="icon"><use href="#icon-plus"/></svg>
   </button>
-  <button class="fb fb-sm c-gold" onclick="autoMap()" title="Auto-umiestniť">
+  <button class="fb fb-sm c-gold" id="automapBtn" onclick="autoMap()" title="Auto-umiestniť">
     <svg class="icon"><use href="#icon-magic"/></svg>
   </button>
   <button class="fb fb-sm c-white" id="txt-btn" onclick="toggleTxtMode()" title="Pridať text">
@@ -1045,5 +1045,143 @@ init();
   <button onclick="document.getElementById('cookie-banner').style.display='none';localStorage.setItem('cookie_ok','1');" style="background:#1A5FA8;color:#fff;border:none;border-radius:50px;padding:8px 22px;font-family:'Quicksand',sans-serif;font-weight:700;font-size:13px;cursor:pointer;white-space:nowrap;flex-shrink:0;">Rozumiem</button>
 </div>
 <script>if(!localStorage.getItem('cookie_ok')){var b=document.getElementById('cookie-banner');b.style.display='flex';}</script>
+
+<!-- ===== ONBOARDING TOUR OVERLAY ===== -->
+<style>
+#editor-tour{
+  position:fixed;inset:0;z-index:8500;
+  background:rgba(14,14,18,.82);
+  opacity:0;transition:opacity .45s ease;
+  pointer-events:none;
+}
+#editor-tour.tour-visible{opacity:1;pointer-events:auto;}
+.ts{
+  position:fixed;display:flex;align-items:center;gap:18px;
+  opacity:0;transition:opacity .55s ease;
+  font-family:'Plus Jakarta Sans',sans-serif;
+  pointer-events:none;
+}
+.ts.ts-show{opacity:1;}
+.ts-num{
+  font-size:110px;font-weight:800;line-height:1;
+  text-shadow:0 4px 32px rgba(0,0,0,.45);
+  flex-shrink:0;
+}
+.ts-label{
+  font-size:22px;font-weight:700;line-height:1.3;
+  max-width:220px;
+}
+.ts-arrow{flex-shrink:0;}
+/* step colours */
+#ts1 .ts-num,#ts1 .ts-label{color:#F9C832;}
+#ts2 .ts-num,#ts2 .ts-label{color:#fff;}
+#ts3 .ts-num,#ts3 .ts-label{color:#F9C832;}
+#tour-hint{
+  position:fixed;bottom:38px;left:50%;transform:translateX(-50%);
+  font-family:'Plus Jakarta Sans',sans-serif;
+  font-size:15px;font-weight:600;color:rgba(255,255,255,.55);
+  letter-spacing:.04em;opacity:0;transition:opacity .55s ease;
+  pointer-events:none;white-space:nowrap;
+}
+#tour-hint.ts-show{opacity:1;}
+</style>
+
+<div id="editor-tour">
+  <!-- Step 1: template button (top-right) -->
+  <div class="ts" id="ts1" style="flex-direction:row-reverse;">
+    <div class="ts-num">1</div>
+    <svg class="ts-arrow" width="90" height="70" viewBox="0 0 90 70" fill="none">
+      <path d="M80 10 C60 10, 20 30, 10 60" stroke="#F9C832" stroke-width="3.5" stroke-linecap="round" fill="none"/>
+      <path d="M10 60 L18 46 M10 60 L24 58" stroke="#F9C832" stroke-width="3.5" stroke-linecap="round"/>
+    </svg>
+    <div class="ts-label">Vyber šablónu</div>
+  </div>
+  <!-- Step 2: add photos button (left sidebar) -->
+  <div class="ts" id="ts2">
+    <svg class="ts-arrow" width="90" height="70" viewBox="0 0 90 70" fill="none">
+      <path d="M10 10 C30 10, 70 30, 80 60" stroke="#fff" stroke-width="3.5" stroke-linecap="round" fill="none"/>
+      <path d="M80 60 L72 46 M80 60 L66 58" stroke="#fff" stroke-width="3.5" stroke-linecap="round"/>
+    </svg>
+    <div class="ts-num">2</div>
+    <div class="ts-label">Pridať fotografie</div>
+  </div>
+  <!-- Step 3: automap button -->
+  <div class="ts" id="ts3">
+    <svg class="ts-arrow" width="90" height="70" viewBox="0 0 90 70" fill="none">
+      <path d="M10 10 C30 10, 70 30, 80 60" stroke="#F9C832" stroke-width="3.5" stroke-linecap="round" fill="none"/>
+      <path d="M80 60 L72 46 M80 60 L66 58" stroke="#F9C832" stroke-width="3.5" stroke-linecap="round"/>
+    </svg>
+    <div class="ts-num">3</div>
+    <div class="ts-label">Vlož do rámikov automaticky ✨</div>
+  </div>
+  <div id="tour-hint">Klikni kdekoľvek pre zatvorenie</div>
+</div>
+
+<script>
+(function(){
+  var TOUR_KEY = 'editor_tour_seen_v1';
+  if(localStorage.getItem(TOUR_KEY)) return;
+
+  var overlay = document.getElementById('editor-tour');
+  var s1 = document.getElementById('ts1');
+  var s2 = document.getElementById('ts2');
+  var s3 = document.getElementById('ts3');
+  var hint = document.getElementById('tour-hint');
+
+  function positionSteps(){
+    var tpl    = document.getElementById('tpl-change-btn');
+    var panBtn = document.getElementById('pan-btn');
+    var autoBtn= document.getElementById('automapBtn');
+
+    /* Step 1 — to the left of the template button */
+    if(tpl){
+      var r = tpl.getBoundingClientRect();
+      s1.style.top  = (r.top + r.height/2 - 55) + 'px';
+      s1.style.right= (window.innerWidth - r.left + 24) + 'px';
+      s1.style.left = 'auto';
+    }
+    /* Step 2 — to the right of the pan button */
+    if(panBtn){
+      var r2 = panBtn.getBoundingClientRect();
+      s2.style.top  = (r2.top + r2.height/2 - 35) + 'px';
+      s2.style.left = (r2.right + 22) + 'px';
+      s2.style.right= 'auto';
+    }
+    /* Step 3 — to the right of the automap button */
+    if(autoBtn){
+      var r3 = autoBtn.getBoundingClientRect();
+      s3.style.top  = (r3.top + r3.height/2 - 35) + 'px';
+      s3.style.left = (r3.right + 22) + 'px';
+      s3.style.right= 'auto';
+    }
+  }
+
+  function showTour(){
+    positionSteps();
+    overlay.classList.add('tour-visible');
+    setTimeout(function(){ s1.classList.add('ts-show'); }, 250);
+    setTimeout(function(){ s2.classList.add('ts-show'); }, 950);
+    setTimeout(function(){ s3.classList.add('ts-show'); }, 1650);
+    setTimeout(function(){ hint.classList.add('ts-show'); }, 2200);
+  }
+
+  function hideTour(){
+    overlay.classList.remove('tour-visible');
+    [s1,s2,s3,hint].forEach(function(el){ el.classList.remove('ts-show'); });
+    setTimeout(function(){ overlay.style.display='none'; }, 460);
+    localStorage.setItem(TOUR_KEY,'1');
+  }
+
+  overlay.addEventListener('click', hideTour);
+
+  /* wait for DOM to settle before measuring button positions */
+  if(document.readyState === 'complete'){
+    showTour();
+  } else {
+    window.addEventListener('load', showTour);
+  }
+})();
+</script>
+<!-- ===== END ONBOARDING TOUR ===== -->
 </body>
 </html>
