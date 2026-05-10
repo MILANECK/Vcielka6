@@ -242,6 +242,9 @@ body{font-family:'Inter',sans-serif;background:#F0F7FF;color:#1a1a1a;min-height:
     <div class="nav-item" onclick="showPage('pricing')" id="nav-pricing">
       <span class="icon">💰</span> Cenník
     </div>
+    <div class="nav-item" onclick="showPage('ucebne')" id="nav-ucebne">
+      <span class="icon">📚</span> Učebné osnovy
+    </div>
     <div class="nav-item" onclick="showPage('footer')" id="nav-footer">
       <span class="icon">📋</span> Pätička (footer)
     </div>
@@ -667,6 +670,78 @@ body{font-family:'Inter',sans-serif;background:#F0F7FF;color:#1a1a1a;min-height:
       </div>
     </div>
 
+    <!-- UČEBNÉ OSNOVY -->
+    <div class="section-page" id="page-ucebne">
+      <div class="page-title">📚 Učebné osnovy</div>
+      <div class="page-sub">Tématické celky a témy pre každý mesiac školského roka</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+
+        <div class="card">
+          <div class="card-title"><span style="background:#fff9c4;color:#7a6800;border-radius:8px;padding:3px 12px;font-size:13px;font-weight:700;font-family:'Quicksand',sans-serif;">September</span></div>
+          <div class="field"><label>Tématický celok</label><input type="text" id="ucebne_sep_unit"/></div>
+          <div class="field"><label>Témy (každá na nový riadok)</label><textarea id="ucebne_sep_topics" style="min-height:90px;"></textarea></div>
+        </div>
+
+        <div class="card">
+          <div class="card-title"><span style="background:#d4edda;color:#2d6a4f;border-radius:8px;padding:3px 12px;font-size:13px;font-weight:700;font-family:'Quicksand',sans-serif;">Október</span></div>
+          <div class="field"><label>Tématický celok</label><input type="text" id="ucebne_okt_unit"/></div>
+          <div class="field"><label>Témy (každá na nový riadok)</label><textarea id="ucebne_okt_topics" style="min-height:90px;"></textarea></div>
+        </div>
+
+        <div class="card">
+          <div class="card-title"><span style="background:#ffd5d5;color:#a03030;border-radius:8px;padding:3px 12px;font-size:13px;font-weight:700;font-family:'Quicksand',sans-serif;">November</span></div>
+          <div class="field"><label>Tématický celok</label><input type="text" id="ucebne_nov_unit"/></div>
+          <div class="field"><label>Témy (každá na nový riadok)</label><textarea id="ucebne_nov_topics" style="min-height:90px;"></textarea></div>
+        </div>
+
+        <div class="card">
+          <div class="card-title"><span style="background:#fce4ec;color:#b5294e;border-radius:8px;padding:3px 12px;font-size:13px;font-weight:700;font-family:'Quicksand',sans-serif;">December</span></div>
+          <div class="field"><label>Tématický celok</label><input type="text" id="ucebne_dec_unit"/></div>
+          <div class="field"><label>Témy (každá na nový riadok)</label><textarea id="ucebne_dec_topics" style="min-height:90px;"></textarea></div>
+        </div>
+
+        <div class="card">
+          <div class="card-title"><span style="background:#d0eaff;color:#1a5a8a;border-radius:8px;padding:3px 12px;font-size:13px;font-weight:700;font-family:'Quicksand',sans-serif;">Január</span></div>
+          <div class="field"><label>Tématický celok</label><input type="text" id="ucebne_jan_unit"/></div>
+          <div class="field"><label>Témy (každá na nový riadok)</label><textarea id="ucebne_jan_topics" style="min-height:90px;"></textarea></div>
+        </div>
+
+        <div class="card">
+          <div class="card-title"><span style="background:#e8d5f5;color:#6a3a9a;border-radius:8px;padding:3px 12px;font-size:13px;font-weight:700;font-family:'Quicksand',sans-serif;">Február</span></div>
+          <div class="field"><label>Tématický celok</label><input type="text" id="ucebne_feb_unit"/></div>
+          <div class="field"><label>Témy (každá na nový riadok)</label><textarea id="ucebne_feb_topics" style="min-height:90px;"></textarea></div>
+        </div>
+
+        <div class="card">
+          <div class="card-title"><span style="background:#fce4f3;color:#a0307a;border-radius:8px;padding:3px 12px;font-size:13px;font-weight:700;font-family:'Quicksand',sans-serif;">Marec</span></div>
+          <div class="field"><label>Tématický celok</label><input type="text" id="ucebne_mar_unit"/></div>
+          <div class="field"><label>Témy (každá na nový riadok)</label><textarea id="ucebne_mar_topics" style="min-height:90px;"></textarea></div>
+        </div>
+
+        <div class="card">
+          <div class="card-title"><span style="background:#c8f5e0;color:#1a6b4a;border-radius:8px;padding:3px 12px;font-size:13px;font-weight:700;font-family:'Quicksand',sans-serif;">Apríl</span></div>
+          <div class="field"><label>Tématický celok</label><input type="text" id="ucebne_apr_unit"/></div>
+          <div class="field"><label>Témy (každá na nový riadok)</label><textarea id="ucebne_apr_topics" style="min-height:90px;"></textarea></div>
+        </div>
+
+        <div class="card">
+          <div class="card-title"><span style="background:#ffe0cc;color:#a04a10;border-radius:8px;padding:3px 12px;font-size:13px;font-weight:700;font-family:'Quicksand',sans-serif;">Máj</span></div>
+          <div class="field"><label>Tématický celok</label><input type="text" id="ucebne_maj_unit"/></div>
+          <div class="field"><label>Témy (každá na nový riadok)</label><textarea id="ucebne_maj_topics" style="min-height:90px;"></textarea></div>
+        </div>
+
+        <div class="card">
+          <div class="card-title"><span style="background:#fffacc;color:#6e6000;border-radius:8px;padding:3px 12px;font-size:13px;font-weight:700;font-family:'Quicksand',sans-serif;">Jún</span></div>
+          <div class="field"><label>Tématický celok</label><input type="text" id="ucebne_jun_unit"/></div>
+          <div class="field"><label>Témy (každá na nový riadok)</label><textarea id="ucebne_jun_topics" style="min-height:90px;"></textarea></div>
+        </div>
+
+      </div>
+      <div style="margin-top:8px;">
+        <button class="btn-save" data-tip="Uložiť všetky učebné osnovy" onclick="saveSettings(['ucebne_sep_unit','ucebne_sep_topics','ucebne_okt_unit','ucebne_okt_topics','ucebne_nov_unit','ucebne_nov_topics','ucebne_dec_unit','ucebne_dec_topics','ucebne_jan_unit','ucebne_jan_topics','ucebne_feb_unit','ucebne_feb_topics','ucebne_mar_unit','ucebne_mar_topics','ucebne_apr_unit','ucebne_apr_topics','ucebne_maj_unit','ucebne_maj_topics','ucebne_jun_unit','ucebne_jun_topics'])">💾 Uložiť všetky osnovy</button>
+      </div>
+    </div>
+
     <!-- DOCUMENTS -->
     <div class="section-page" id="page-documents">
       <div class="page-title">📄 Na stiahnutie</div>
@@ -976,7 +1051,36 @@ async function loadPage(name) {
   if (name === 'testimonials') await loadTestimonials();
   if (name === 'documents') await loadDocuments();
   if (name === 'jedalny') { buildJLDayCards(); buildJLBottomFields(); loadJLLocal(); return; }
-  if (name === 'footer') await loadSettings(['footer_desc','footer_links_title','footer_links','footer_copy_left','footer_copy_right','contact_address','contact_phone','contact_email','contact_hours']);
+  if (name === 'ucebne') {
+    await loadSettings(['ucebne_sep_unit','ucebne_sep_topics','ucebne_okt_unit','ucebne_okt_topics','ucebne_nov_unit','ucebne_nov_topics','ucebne_dec_unit','ucebne_dec_topics','ucebne_jan_unit','ucebne_jan_topics','ucebne_feb_unit','ucebne_feb_topics','ucebne_mar_unit','ucebne_mar_topics','ucebne_apr_unit','ucebne_apr_topics','ucebne_maj_unit','ucebne_maj_topics','ucebne_jun_unit','ucebne_jun_topics']);
+    const ucebneDefaults = {
+      ucebne_sep_unit:'Vitaj v škôlke', ucebne_sep_topics:'Naša škôlka Včielka\nNaša trieda\nMoji kamaráti\nMoja rodina',
+      ucebne_okt_unit:'Farebná jeseň', ucebne_okt_topics:'Jeseň a počasie\nStromy okolo nás\nVitamínový košík ovocia\nVeľký kôš zeleniny',
+      ucebne_nov_unit:'Zdravie a bezpečnosť', ucebne_nov_topics:'Zdravá výživa\nĽudské telo\nProfesie\nBezpečnosť na ceste\nDopravné prostriedky',
+      ucebne_dec_unit:'Vianočná zima', ucebne_dec_topics:'Privítanie Mikuláša\nZima a jej čaro\nPri vianočnom stromčeku\nŽivá a neživá príroda\nPredmety a ich vlastnosti',
+      ucebne_jan_unit:'Zasnežená krajina', ucebne_jan_topics:'Živá a neživá príroda\nPredmety a ich vlastnosti\nZvieratká v zime\nVtáčiky v zime',
+      ucebne_feb_unit:'Radovánky rok čo rok', ucebne_feb_topics:'Veselý karneval\nDeň a noc, Dnes/včera/zajtra\nDni v týždni a mesiace v roku\nNaša Zem vo vesmíre',
+      ucebne_mar_unit:'Rozprávková jar', ucebne_mar_topics:'Krajina rozprávok\nPozdrav jari\nJarná záhradka\nNa gazdovskom dvore',
+      ucebne_apr_unit:'Cestou necestou', ucebne_apr_topics:'Príroda okolo nás\nPutovanie vody\nPri rybníku a vo vode\nChrobáčiky v tráve',
+      ucebne_maj_unit:'Ja a môj svet', ucebne_maj_topics:'Lúka plná kvetov\nMoja mamka mamička\nNaše Slovensko\nNaša Bratislava',
+      ucebne_jun_unit:'Veselé leto', ucebne_jun_topics:'Deti sveta\nLetom svetom\nPodmorský svet\nExotické zvieratá\nRozlúčka so škôlkou',
+    };
+    Object.entries(ucebneDefaults).forEach(([k, v]) => { const el = document.getElementById(k); if (el && !el.value) el.value = v; });
+  }
+  if (name === 'footer') {
+    await loadSettings(['footer_desc','footer_links_title','footer_links','footer_copy_left','footer_copy_right','contact_address','contact_phone','contact_email','contact_hours']);
+    const footerDefaults = {
+      footer_desc: 'Súkromná materská škola akreditovaná MŠVVaŠ SR. Program Zvedavá Včielka pre deti od 2,5 do 6 rokov v Ružinove, Bratislava.',
+      footer_links_title: 'Rýchle odkazy',
+      footer_links: 'O nás|#o-nas\nNaše služby|#sluzby\nZvedavá Včielka|#program\nDenný poriadok|#program\nGaléria|#galeria\nAktuality|#aktuality\nCenník|#cennik\nKontakt|#kontakt',
+      footer_copy_left: '© 2025 Materská škola Včielka · Všetky práva vyhradené',
+      footer_copy_right: 'Vytvorené s 🐝 láskou v Bratislave'
+    };
+    Object.entries(footerDefaults).forEach(([k, v]) => {
+      const el = document.getElementById(k);
+      if (el && !el.value) el.value = v;
+    });
+  }
 }
 
 // ===== SETTINGS =====

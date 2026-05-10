@@ -1912,6 +1912,27 @@ async function loadCMS() {
       }
     }
 
+    // ── Učebné osnovy ──
+    const _ucMonths = [
+      {k:'sep',l:'September',c:'ucm-sep'},{k:'okt',l:'Október',c:'ucm-okt'},
+      {k:'nov',l:'November',c:'ucm-nov'},{k:'dec',l:'December',c:'ucm-dec'},
+      {k:'jan',l:'Január',c:'ucm-jan'},null,
+      {k:'feb',l:'Február',c:'ucm-feb'},{k:'mar',l:'Marec',c:'ucm-mar'},
+      {k:'apr',l:'Apríl',c:'ucm-apr'},{k:'maj',l:'Máj',c:'ucm-maj'},
+      {k:'jun',l:'Jún',c:'ucm-jun'},
+    ];
+    if (_ucMonths.filter(Boolean).some(m => s['ucebne_'+m.k+'_unit'] || s['ucebne_'+m.k+'_topics'])) {
+      const _ucGrid = document.querySelector('#ucebneInlineText .ucebne-grid');
+      if (_ucGrid) {
+        _ucGrid.innerHTML = _ucMonths.map(m => {
+          if (!m) return '<div class="ucebne-row-sep"></div>';
+          const unit = s['ucebne_'+m.k+'_unit'] || '';
+          const topics = (s['ucebne_'+m.k+'_topics'] || '').split('\n').filter(Boolean);
+          return `<div class="ucebne-card ${m.c}"><div class="ucebne-bubble"><div class="umonth">${m.l}</div></div><div class="ucebne-unit">${unit}</div><ul class="ucebne-topics">${topics.map(t=>`<li>${t.trim()}</li>`).join('')}</ul></div>`;
+        }).join('');
+      }
+    }
+
     // ── Documents ──
     const { data: docs, error: docsErr } = await cms.from('documents').select('*').order('sort_order');
     console.log('Docs loaded:', docs, 'Error:', docsErr);
