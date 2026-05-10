@@ -102,8 +102,9 @@ button{outline:none;border:none;}
 .nav-logo-text{display:none;}
 .nav-logo-sub{display:none;}
 .nav-links{display:flex;align-items:center;gap:2px;justify-content:center;flex:1;flex-wrap:nowrap;}
-.nav-links a{font-family:'Quicksand',sans-serif;font-size:13.5px;font-weight:600;color:#1a1a1a;padding:6px 10px;border-radius:20px;transition:background .2s;white-space:nowrap;}
+.nav-links a{font-family:'Quicksand',sans-serif;font-size:13.5px;font-weight:600;color:#1a1a1a;padding:6px 10px;border-radius:20px;transition:background .2s,transform .4s cubic-bezier(.34,1.56,.64,1),color .25s,text-shadow .35s,font-weight .25s;white-space:nowrap;}
 .nav-links a:hover{background:rgba(0,0,0,.1);color:#1a1a1a;}
+@media(min-width:768px){.nav-spy-active{font-weight:700!important;transform:scale(1.13) translateZ(0);color:#1A5FA8!important;text-shadow:0 3px 18px rgba(26,95,168,.22),0 1px 6px rgba(26,95,168,.14);}.nav-cta.nav-spy-active{color:#1A5FA8!important;background:#B8DAFF!important;text-shadow:0 2px 14px rgba(26,95,168,.28);}}
 .nav-vs{background:rgba(255,255,255,.55);color:#1A5FA8;font-family:'Quicksand',sans-serif;font-size:12px;font-weight:700;padding:7px 14px;border-radius:50px;margin-left:6px;transition:background .2s;white-space:nowrap;flex-shrink:0;}
 .nav-vs:hover{background:rgba(255,255,255,.75);}
 .nav-cta{background:#C8E6FA;color:#1A5FA8;font-family:'Quicksand',sans-serif;font-size:12.5px;font-weight:700;padding:8px 20px;border-radius:50px;margin-left:6px;transition:opacity .2s;white-space:nowrap;flex-shrink:0;}
@@ -2540,6 +2541,36 @@ document.addEventListener('DOMContentLoaded', function(){
   window.addEventListener('resize', ()=>{
     if(window.innerWidth <= 900) show();
   });
+})();
+
+// ===== SCROLL SPY — desktop nav active section =====
+(function(){
+  var BREAK = 768;
+  var ids = ['o-nas','sluzby','program','galeria','aktuality','cennik','kontakt'];
+  var links = {};
+  ids.forEach(function(id){
+    links[id] = document.querySelector('.nav-links a[href="#' + id + '"]');
+  });
+  var cur = null;
+  function activate(id) {
+    if (cur === id) return;
+    if (cur && links[cur]) links[cur].classList.remove('nav-spy-active');
+    cur = id;
+    if (id && links[id]) links[id].classList.add('nav-spy-active');
+  }
+  function spy() {
+    if (window.innerWidth < BREAK) { activate(null); return; }
+    var trigger = 92 + window.innerHeight * 0.25;
+    var best = null;
+    for (var i = ids.length - 1; i >= 0; i--) {
+      var el = document.getElementById(ids[i]);
+      if (el && el.getBoundingClientRect().top <= trigger) { best = ids[i]; break; }
+    }
+    activate(best);
+  }
+  window.addEventListener('scroll', spy, { passive: true });
+  window.addEventListener('resize', spy, { passive: true });
+  spy();
 })();
 
 // ===== NAPÍŠTE NÁM — CONTACT FORM =====
