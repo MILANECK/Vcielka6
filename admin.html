@@ -612,6 +612,15 @@ body{font-family:'Inter',sans-serif;background:#F0F7FF;color:#1a1a1a;min-height:
           </div>
         </div>
       </div>
+      <div class="card">
+        <div class="card-title">✉️ Formulár – Napíšte nám</div>
+        <p style="font-size:12px;color:#888;margin-bottom:16px;">Vytvorte formulár na <a href="https://www.staticforms.dev" target="_blank" rel="noopener" style="color:#1A5FA8;">staticforms.dev</a>, skopírujte vygenerovanú URL adresu a vložte ju sem. Formulár na stránke bude odosielať správy na túto adresu.</p>
+        <div class="field">
+          <label>🔗 Static Forms URL (POST endpoint)</label>
+          <input type="url" id="staticforms_url" placeholder="https://staticforms.dev/f/xxxxxxxx"/>
+        </div>
+        <button class="btn-save" data-tip="Uložiť Static Forms URL" onclick="saveSettings(['staticforms_url'])">💾 Uložiť URL</button>
+      </div>
     </div>
 
     <!-- PRICING -->
@@ -1043,7 +1052,7 @@ async function loadPage(name) {
   if (name === 'admin_pw') { return; }
   if (name === 'hero') await loadSettings(['hero_title','hero_subtitle','hero_photo','stat1_num','stat1_label','stat2_num','stat2_label','stat3_num','stat3_label','stat4_num','stat4_label']);
   if (name === 'onas') await loadSettings(['onas_p1','onas_p2','onas_extra_p1','onas_extra_p2','onas_list','ppv_intro','ppv_extra','program_text','icon_social','icon_kreativ','icon_sport','icon_intellect']);
-  if (name === 'contact') await loadSettings(['contact_address','contact_phone','contact_email','contact_hours','icon_adresa','icon_telefon','icon_email','icon_hodiny']);
+  if (name === 'contact') await loadSettings(['contact_address','contact_phone','contact_email','contact_hours','icon_adresa','icon_telefon','icon_email','icon_hodiny','staticforms_url']);
   if (name === 'pricing') await loadSettings(['price_full_amount','price_full_detail','price_half_amount','price_half_detail']);
   if (name === 'activities') await loadActivities();
   if (name === 'news') await loadNews();

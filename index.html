@@ -291,6 +291,7 @@ button{outline:none;border:none;}
 .act-popup-body::-webkit-scrollbar-track{background:transparent;margin:28px 0;}
 .act-popup-body::-webkit-scrollbar-thumb{background:#ddd;border-radius:10px;}
 .act-popup-body::-webkit-scrollbar-thumb:hover{background:#bbb;}
+@media(min-width:768px){.act-popup-body{overflow-y:scroll;scrollbar-width:thin;scrollbar-color:#F9C832 #FFF8DC;}.act-popup-body::-webkit-scrollbar-track{background:#FFF8DC;}.act-popup-body::-webkit-scrollbar-thumb{background:#F9C832;}.act-popup-body::-webkit-scrollbar-thumb:hover{background:#d4a800;}}
 .act-popup-body a{color:var(--blue);text-decoration:underline;}
 .act-popup-body a:hover{opacity:.8;}
 
@@ -584,6 +585,7 @@ button{outline:none;border:none;}
 .news-popup-body::-webkit-scrollbar-track{background:transparent;margin:28px 0;}
 .news-popup-body::-webkit-scrollbar-thumb{background:#ddd;border-radius:10px;}
 .news-popup-body::-webkit-scrollbar-thumb:hover{background:#bbb;}
+@media(min-width:768px){.news-popup-body{overflow-y:scroll;scrollbar-width:thin;scrollbar-color:#F9C832 #FFF8DC;}.news-popup-body::-webkit-scrollbar-track{background:#FFF8DC;}.news-popup-body::-webkit-scrollbar-thumb{background:#F9C832;}.news-popup-body::-webkit-scrollbar-thumb:hover{background:#d4a800;}}
 .news-popup-date{font-family:'Inter',sans-serif;font-size:12px;color:#aaa;margin-bottom:8px;}
 .news-popup-title{font-family:'Quicksand',sans-serif;font-size:22px;font-weight:700;color:#1a1a1a;margin-bottom:16px;line-height:1.3;}
 .news-popup-excerpt{font-family:'Quicksand',sans-serif;font-size:15px;font-weight:600;color:#666;line-height:1.6;margin-bottom:16px;padding-bottom:16px;border-bottom:1.5px solid #EEF4FF;}
@@ -974,6 +976,46 @@ button{outline:none;border:none;}
 
 .gallery-popup-overlay.closing{animation:none!important;clip-path:circle(150% at calc(100% - 42px) 42px)!important;opacity:0!important;transition:opacity .35s ease!important;pointer-events:none;}
 .lightbox.closing{animation:none!important;clip-path:circle(150% at calc(100% - 40px) 37px)!important;opacity:0!important;transition:opacity .35s ease!important;pointer-events:none;}
+
+/* ===========================
+   NAPÍŠTE NÁM — CONTACT FORM
+=========================== */
+.napiste-trigger-row{text-align:center;padding:22px 0 6px;}
+.napiste-trigger{display:inline-flex;align-items:center;gap:9px;font-family:'Quicksand',sans-serif;font-size:16px;font-weight:700;color:#1A5FA8;background:none;border:2px solid rgba(26,95,168,.18);cursor:pointer;padding:11px 28px;border-radius:50px;transition:background .2s,border-color .2s,box-shadow .2s;}
+.napiste-trigger:hover{background:#EEF7FF;border-color:#4A9FD4;box-shadow:0 3px 16px rgba(26,95,168,.12);}
+.napiste-trigger:focus-visible{outline:3px solid #4A9FD4;outline-offset:2px;}
+.napiste-trigger .nt-arrow{display:inline-block;transition:transform .35s ease;}
+.napiste-trigger[aria-expanded="true"] .nt-arrow{transform:rotate(180deg);}
+.napiste-form-wrap{max-height:0;opacity:0;overflow:hidden;transition:max-height .5s ease-in-out,opacity .35s ease-in-out;margin:0 auto;max-width:860px;}
+.napiste-form-wrap.open{max-height:1200px;opacity:1;}
+.napiste-form-panel{background:#fff;border-radius:20px;box-shadow:0 4px 28px rgba(26,95,168,.10);padding:32px 36px 28px;margin:0 0 20px;}
+.nf-row{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+.nf-field{margin-bottom:16px;}
+.nf-field label{display:block;font-family:'Quicksand',sans-serif;font-size:12px;font-weight:700;color:#555;margin-bottom:5px;}
+.nf-field input[type="text"],.nf-field input[type="tel"],.nf-field input[type="email"],.nf-field input[type="number"],.nf-field textarea{width:100%;padding:11px 14px;border:1.5px solid #D5E8F8;border-radius:12px;font-size:14px;font-family:'Inter',sans-serif;outline:none;transition:border-color .2s,box-shadow .2s;background:#FAFCFF;color:#1a1a1a;}
+.nf-field input:focus,.nf-field textarea:focus{border-color:#4A9FD4;box-shadow:0 0 0 3px rgba(74,159,212,.12);}
+.nf-field textarea{min-height:90px;resize:vertical;}
+.nf-field input.nf-error,.nf-field textarea.nf-error{border-color:#ef4444;}
+.nf-fieldset{border:none;padding:0;margin:0 0 16px;}
+.nf-fieldset legend{font-family:'Quicksand',sans-serif;font-size:12px;font-weight:700;color:#555;margin-bottom:8px;display:block;}
+.nf-radio-group{display:flex;flex-wrap:wrap;gap:8px;}
+.nf-radio-label{display:flex;align-items:center;gap:7px;font-family:'Inter',sans-serif;font-size:13px;color:#333;cursor:pointer;padding:7px 14px;border:1.5px solid #D5E8F8;border-radius:50px;transition:background .15s,border-color .15s;user-select:none;}
+.nf-radio-label input{accent-color:#1A5FA8;cursor:pointer;width:14px;height:14px;flex-shrink:0;}
+.nf-radio-label:has(input:checked){background:#EEF7FF;border-color:#4A9FD4;font-weight:600;color:#1A5FA8;}
+.nf-radio-group.nf-error .nf-radio-label{border-color:#ef4444;}
+.nf-gdpr-wrap{display:flex;align-items:flex-start;gap:10px;font-family:'Inter',sans-serif;font-size:12.5px;color:#555;line-height:1.6;margin-bottom:20px;cursor:pointer;}
+.nf-gdpr-wrap input[type="checkbox"]{accent-color:#1A5FA8;flex-shrink:0;width:16px;height:16px;margin-top:3px;cursor:pointer;}
+.nf-gdpr-wrap a{color:#1A5FA8;}
+.nf-gdpr-wrap.nf-error{color:#ef4444;}
+.nf-submit{background:var(--yellow);color:#1a1a1a;font-family:'Quicksand',sans-serif;font-size:14px;font-weight:700;padding:13px 32px;border:none;border-radius:50px;cursor:pointer;transition:opacity .2s,transform .15s;}
+.nf-submit:hover{opacity:.88;}
+.nf-submit:active{transform:scale(.97);}
+.nf-submit:disabled{opacity:.5;cursor:default;}
+.nf-success{text-align:center;padding:32px 20px;display:none;}
+.nf-success-icon{font-size:48px;margin-bottom:12px;}
+.nf-success h3{font-family:'Quicksand',sans-serif;font-size:22px;font-weight:700;color:#1A5FA8;margin-bottom:8px;}
+.nf-success p{font-family:'Inter',sans-serif;font-size:14px;color:#666;line-height:1.6;}
+@media(max-width:640px){.napiste-form-panel{padding:22px 18px 20px;}.nf-row{grid-template-columns:1fr;}.napiste-form-wrap.open{max-height:1500px;}}
 </style>
 </head>
 <body>
@@ -1005,7 +1047,7 @@ button{outline:none;border:none;}
     <a href="#aktuality">Aktuality</a>
     <a href="#cennik">Cenník</a>
     <a href="skolka.html" class="nav-vs">🔐 Virtuálna škôlka</a>
-    <a href="#kontakt">Na stiahnutie</a>
+    <a href="#cms-downloads-wrap">Na stiahnutie</a>
     <a href="#kontakt" class="nav-cta">Kontakt</a>
   </nav>
   <div class="nav-burger" id="burger" aria-label="Menu">
@@ -1023,7 +1065,7 @@ button{outline:none;border:none;}
   <a href="#aktuality" class="menu-link" style="--i:4">Aktuality</a>
   <a href="#cennik"    class="menu-link" style="--i:5">Cenník</a>
   <a href="skolka.html" class="menu-link" style="--i:6">🔐 Virtuálna škôlka</a>
-  <a href="#kontakt"   class="menu-link" style="--i:7">Na stiahnutie</a>
+  <a href="#cms-downloads-wrap" class="menu-link" style="--i:7">Na stiahnutie</a>
   <a href="#kontakt"   class="nav-cta menu-link" style="--i:8">Kontakt</a>
 </div>
 
@@ -1047,7 +1089,7 @@ button{outline:none;border:none;}
     <p class="hero-desc" id="cms-hero-subtitle" style="opacity:0;transition:opacity .35s .08s;"></p>
     <div class="hero-btns">
       <a href="#sluzby" class="btn btn-primary">Zistiť viac o škôlke</a>
-      <a href="#kontakt" class="btn btn-outline">Kontaktujte nás</a>
+      <a href="#kontakt" class="btn btn-outline" onclick="event.preventDefault();document.getElementById('kontakt').scrollIntoView({behavior:'smooth'});setTimeout(function(){var btn=document.getElementById('napisteBtn');if(btn&&btn.getAttribute('aria-expanded')!=='true')btn.click();},600);">Napíšte nám</a>
     </div>
   </div>
   </div>
@@ -1344,6 +1386,82 @@ button{outline:none;border:none;}
           </div>
         </div>
       </div>
+
+      <!-- ── NAPÍŠTE NÁM — trigger ── -->
+      <div class="napiste-trigger-row">
+        <button class="napiste-trigger" id="napisteBtn"
+          aria-expanded="false" aria-controls="napisteFormWrap"
+          onclick="toggleNapiste()">
+          ✉️ Napíšte nám
+          <svg class="nt-arrow" width="14" height="8" viewBox="0 0 14 8" fill="none" aria-hidden="true"><path d="M1 1l6 6 6-6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+      </div>
+
+      <!-- ── NAPÍŠTE NÁM — expandable form panel ── -->
+      <div class="napiste-form-wrap" id="napisteFormWrap" role="region" aria-label="Kontaktný formulár">
+        <div class="napiste-form-panel">
+
+          <!-- Success state (shown after submission) -->
+          <div class="nf-success" id="napisteSuccess">
+            <div class="nf-success-icon">🎉</div>
+            <h3>Správa odoslaná!</h3>
+            <p>Ďakujeme za záujem. Ozveme sa vám čo najskôr.</p>
+          </div>
+
+          <!-- Contact form — endpoint URL configured in Admin → Kontakt -->
+          <form id="napisteForm" novalidate>
+            <input type="hidden" name="subject" value="Správa zo stránky Škôlka Včielka"/>
+            <!-- Honeypot: bots fill this, humans leave it empty -->
+            <input type="text" name="honeypot" style="display:none;" tabindex="-1" autocomplete="off"/>
+
+            <div class="nf-row">
+              <div class="nf-field">
+                <label for="nf-meno">Meno rodiča *</label>
+                <input type="text" id="nf-meno" name="name" required placeholder="Vaše meno"/>
+              </div>
+              <div class="nf-field">
+                <label for="nf-telefon">Telefón *</label>
+                <input type="tel" id="nf-telefon" name="phone" required placeholder="+421 9xx xxx xxx"/>
+              </div>
+            </div>
+
+            <div class="nf-row">
+              <div class="nf-field">
+                <label for="nf-email">E-mail *</label>
+                <input type="email" id="nf-email" name="email" required placeholder="vas@email.sk"/>
+              </div>
+              <div class="nf-field">
+                <label for="nf-vek">Vek dieťaťa / rok narodenia *</label>
+                <input type="number" id="nf-vek" name="age" required min="2010" max="2026" placeholder="napr. 2022"/>
+              </div>
+            </div>
+
+            <fieldset class="nf-fieldset">
+              <legend>O čo máte záujem? *</legend>
+              <div class="nf-radio-group" id="nf-zaujem-group">
+                <label class="nf-radio-label"><input type="radio" name="zaujemRaw" value="Prehliadka škôlky" required/> Prehliadka škôlky</label>
+                <label class="nf-radio-label"><input type="radio" name="zaujemRaw" value="Voľné miesto / zápis"/> Voľné miesto / zápis</label>
+                <label class="nf-radio-label"><input type="radio" name="zaujemRaw" value="Všeobecná otázka"/> Všeobecná otázka</label>
+                <label class="nf-radio-label"><input type="radio" name="zaujemRaw" value="Iné"/> Iné</label>
+              </div>
+            </fieldset>
+
+            <div class="nf-field">
+              <label for="nf-sprava">Správa</label>
+              <textarea id="nf-sprava" name="message" placeholder="Vaša správa..."></textarea>
+            </div>
+
+            <label class="nf-gdpr-wrap" id="nf-gdpr-label">
+              <input type="checkbox" id="nf-gdpr" name="gdpr" required/>
+              Súhlasím so spracovaním osobných údajov za účelom odpovede na moju otázku.
+              <a href="#" onclick="event.stopPropagation()">Zásady ochrany súkromia</a>
+            </label>
+
+            <button type="submit" class="nf-submit" id="nf-submitBtn">Odoslať správu</button>
+          </form>
+        </div>
+      </div>
+
       <div class="map-wrap fade-in">
         <iframe
           src="https://maps.google.com/maps?q=Se%C4%8Dovsk%C3%A1+144%2F3,+Bratislava,+Slovakia&output=embed&hl=sk&z=16"
@@ -1791,6 +1909,7 @@ async function loadCMS() {
         const _fl = document.getElementById('cms-footer-email-link'); if(_fl){ _fl.textContent = _em; _fl.href = 'mailto:'+_em; }
       }
       if (s.contact_hours) { const el = document.getElementById('cms-hours'); if(el) el.textContent = s.contact_hours; }
+      if (s.staticforms_url) { window._nf_endpoint = s.staticforms_url; }
       // O nás
       // Section icons (contact + program z-items)
       const _iconMap = {adresa:'📍',email:'✉️',telefon:'📞',hodiny:'🕐',social:'🐝',kreativ:'🎨',sport:'🏃',intellect:'🔬'};
@@ -2420,6 +2539,103 @@ document.addEventListener('DOMContentLoaded', function(){
 
   window.addEventListener('resize', ()=>{
     if(window.innerWidth <= 900) show();
+  });
+})();
+
+// ===== NAPÍŠTE NÁM — CONTACT FORM =====
+function toggleNapiste() {
+  var btn = document.getElementById('napisteBtn');
+  var wrap = document.getElementById('napisteFormWrap');
+  var expanded = btn.getAttribute('aria-expanded') === 'true';
+  btn.setAttribute('aria-expanded', String(!expanded));
+  wrap.classList.toggle('open', !expanded);
+  if (!expanded) {
+    setTimeout(function(){ wrap.scrollIntoView({behavior:'smooth', block:'nearest'}); }, 60);
+  }
+}
+
+(function(){
+  var form = document.getElementById('napisteForm');
+  if (!form) return;
+
+  // Endpoint is loaded from Supabase (Admin → Kontakt → Static Forms URL)
+
+  function markErr(el){ el.classList.add('nf-error'); }
+  function clearErr(el){ el.classList.remove('nf-error'); }
+
+  ['nf-meno','nf-telefon','nf-email','nf-vek'].forEach(function(id){
+    var el = document.getElementById(id);
+    if (el) el.addEventListener('input', function(){ clearErr(el); });
+  });
+  document.querySelectorAll('input[name="zaujemRaw"]').forEach(function(r){
+    r.addEventListener('change', function(){ document.getElementById('nf-zaujem-group').classList.remove('nf-error'); });
+  });
+  document.getElementById('nf-gdpr').addEventListener('change', function(){
+    document.getElementById('nf-gdpr-label').classList.remove('nf-error');
+  });
+
+  form.addEventListener('submit', async function(e){
+    e.preventDefault();
+    var ok = true;
+
+    ['nf-meno','nf-telefon','nf-email','nf-vek'].forEach(function(id){
+      var el = document.getElementById(id);
+      clearErr(el);
+      if (!el.value.trim() || !el.checkValidity()) { markErr(el); ok = false; }
+    });
+
+    var picked = document.querySelector('input[name="zaujemRaw"]:checked');
+    var zaujemGroup = document.getElementById('nf-zaujem-group');
+    if (!picked) { zaujemGroup.classList.add('nf-error'); ok = false; }
+    else { zaujemGroup.classList.remove('nf-error'); }
+
+    var gdprLabel = document.getElementById('nf-gdpr-label');
+    gdprLabel.classList.remove('nf-error');
+    if (!document.getElementById('nf-gdpr').checked) { gdprLabel.classList.add('nf-error'); ok = false; }
+
+    if (!ok) return;
+
+    var btn = document.getElementById('nf-submitBtn');
+    var ep = window._nf_endpoint || '';
+    if (!ep) {
+      alert('Kontaktný formulár nie je nakonfigurovaný. Kontaktujte nás priamo na email.');
+      return;
+    }
+    btn.disabled = true;
+    btn.textContent = 'Odosielam…';
+
+    var payload = {
+      subject:  'Správa zo stránky Škôlka Včielka',
+      replyTo:  document.getElementById('nf-email').value,
+      honeypot: form.querySelector('[name="honeypot"]').value,
+      name:     document.getElementById('nf-meno').value,
+      phone:    document.getElementById('nf-telefon').value,
+      email:    document.getElementById('nf-email').value,
+      interest: picked.value,
+      age:      document.getElementById('nf-vek').value,
+      message:  document.getElementById('nf-sprava').value
+    };
+
+    try {
+      var resp = await fetch(ep, {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json', 'Accept': 'application/json'},
+        body: JSON.stringify(payload)
+      });
+      var result = await resp.json();
+      if (result.success) {
+        form.style.display = 'none';
+        document.getElementById('napisteSuccess').style.display = 'block';
+      } else {
+        btn.disabled = false;
+        btn.textContent = 'Odoslať správu';
+        alert('Správu sa nepodarilo odoslať. Skúste to znova.');
+      }
+    } catch(err) {
+      btn.disabled = false;
+      btn.textContent = 'Odoslať správu';
+      alert('Chyba odosielania. Skúste to znova.');
+    }
   });
 })();
 </script>
