@@ -103,8 +103,8 @@ button{outline:none;border:none;}
 .nav-logo-sub{display:none;}
 .nav-links{display:flex;align-items:center;gap:2px;justify-content:center;flex:1;flex-wrap:nowrap;}
 .nav-links a{font-family:'Quicksand',sans-serif;font-size:13.5px;font-weight:600;color:#1a1a1a;padding:6px 10px;border-radius:20px;transition:background .2s,transform .4s cubic-bezier(.34,1.56,.64,1),color .25s,text-shadow .35s,font-weight .25s;white-space:nowrap;}
-.nav-links a:hover{background:rgba(0,0,0,.1);color:#1a1a1a;}
-@media(min-width:768px){.nav-spy-active{font-weight:700!important;transform:scale(1.13) translateZ(0);color:#1A5FA8!important;text-shadow:0 3px 18px rgba(26,95,168,.22),0 1px 6px rgba(26,95,168,.14);}.nav-cta.nav-spy-active{color:#1A5FA8!important;background:#B8DAFF!important;text-shadow:0 2px 14px rgba(26,95,168,.28);}}
+.nav-links a:hover{background:transparent;font-weight:700;transform:scale(1.13) translateZ(0);color:#1A5FA8;text-shadow:0 3px 18px rgba(26,95,168,.22),0 1px 6px rgba(26,95,168,.14);}
+@media(min-width:768px){.nav-spy-active{background:rgba(200,80,185,.14)!important;color:#8B2277!important;font-weight:600!important;transform:none!important;text-shadow:none!important;}.nav-cta.nav-spy-active{color:#8B2277!important;background:rgba(200,80,185,.22)!important;text-shadow:none!important;}}
 .nav-vs{background:rgba(255,255,255,.55);color:#1A5FA8;font-family:'Quicksand',sans-serif;font-size:12px;font-weight:700;padding:7px 14px;border-radius:50px;margin-left:6px;transition:background .2s;white-space:nowrap;flex-shrink:0;}
 .nav-vs:hover{background:rgba(255,255,255,.75);}
 .nav-cta{background:#C8E6FA;color:#1A5FA8;font-family:'Quicksand',sans-serif;font-size:12.5px;font-weight:700;padding:8px 20px;border-radius:50px;margin-left:6px;transition:opacity .2s;white-space:nowrap;flex-shrink:0;}
@@ -998,16 +998,29 @@ button{outline:none;border:none;}
 .nf-row{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
 .nf-field{margin-bottom:16px;}
 .nf-field label{display:block;font-family:'Quicksand',sans-serif;font-size:12px;font-weight:700;color:#555;margin-bottom:5px;}
-.nf-field input[type="text"],.nf-field input[type="tel"],.nf-field input[type="email"],.nf-field input[type="number"],.nf-field textarea{width:100%;padding:11px 14px;border:1.5px solid #D5E8F8;border-radius:12px;font-size:14px;font-family:'Inter',sans-serif;outline:none;transition:border-color .2s,box-shadow .2s;background:#FAFCFF;color:#1a1a1a;}
-.nf-field input:focus,.nf-field textarea:focus{border-color:#4A9FD4;box-shadow:0 0 0 3px rgba(74,159,212,.12);}
+.nf-field input[type="text"],.nf-field input[type="tel"],.nf-field input[type="email"],.nf-field input[type="number"],.nf-field textarea{width:100%;padding:11px 14px;border:none;border-radius:12px;font-size:14px;font-family:'Inter',sans-serif;outline:none;transition:box-shadow .22s;background:#FAFCFF;color:#1a1a1a;box-shadow:0 2px 10px rgba(26,95,168,.09);}
+.nf-field input:focus,.nf-field textarea:focus{box-shadow:0 0 0 3px rgba(74,159,212,.18),0 2px 10px rgba(26,95,168,.08);}
 .nf-field textarea{min-height:90px;resize:vertical;}
-.nf-field input.nf-error,.nf-field textarea.nf-error{border-color:#ef4444;}
+.nf-field input.nf-error,.nf-field textarea.nf-error{box-shadow:0 0 0 2px #ef4444,0 2px 8px rgba(239,68,68,.14);}
 .nf-fieldset{border:none;padding:0;margin:0 0 16px;}
 .nf-fieldset legend{font-family:'Quicksand',sans-serif;font-size:12px;font-weight:700;color:#555;margin-bottom:8px;display:block;}
 .nf-radio-group{display:flex;flex-wrap:wrap;gap:8px;}
-.nf-radio-label{display:flex;align-items:center;gap:7px;font-family:'Inter',sans-serif;font-size:13px;color:#333;cursor:pointer;padding:7px 14px;border:1.5px solid #D5E8F8;border-radius:50px;transition:background .15s,border-color .15s;user-select:none;}
-.nf-radio-label input{accent-color:#1A5FA8;cursor:pointer;width:14px;height:14px;flex-shrink:0;}
-.nf-radio-label:has(input:checked){background:#EEF7FF;border-color:#4A9FD4;font-weight:600;color:#1A5FA8;}
+.nf-radio-label{display:flex;align-items:center;gap:7px;font-family:'Inter',sans-serif;font-size:13px;color:#333;cursor:pointer;padding:7px 14px;border:1.5px solid transparent;border-radius:50px;transition:background .15s,border-color .15s,box-shadow .2s;user-select:none;box-shadow:0 2px 8px rgba(0,0,0,.07);}
+.nf-radio-label:hover{box-shadow:0 3px 13px rgba(0,0,0,.13);}
+.nf-radio-label input{cursor:pointer;width:14px;height:14px;flex-shrink:0;}
+.nf-radio-label:has(input:checked){font-weight:600;}
+.nf-radio-group .nf-radio-label:nth-child(1){background:#EEF7FF;border-color:#C4DEFF;}
+.nf-radio-group .nf-radio-label:nth-child(1) input{accent-color:#1A5FA8;}
+.nf-radio-group .nf-radio-label:nth-child(1):has(input:checked){background:#BDDEFF;border-color:#4A9FD4;color:#1A5FA8;box-shadow:0 3px 13px rgba(26,95,168,.22);}
+.nf-radio-group .nf-radio-label:nth-child(2){background:#FFF8DC;border-color:#EDD870;}
+.nf-radio-group .nf-radio-label:nth-child(2) input{accent-color:#9A7200;}
+.nf-radio-group .nf-radio-label:nth-child(2):has(input:checked){background:#FAE078;border-color:#C8A028;color:#7A5800;box-shadow:0 3px 13px rgba(180,140,0,.22);}
+.nf-radio-group .nf-radio-label:nth-child(3){background:#E8F8F0;border-color:#A8E4C4;}
+.nf-radio-group .nf-radio-label:nth-child(3) input{accent-color:#1A7A4A;}
+.nf-radio-group .nf-radio-label:nth-child(3):has(input:checked){background:#A4E4C0;border-color:#28A868;color:#1A6B4A;box-shadow:0 3px 13px rgba(26,168,100,.22);}
+.nf-radio-group .nf-radio-label:nth-child(4){background:#FFF0EE;border-color:#F4C4BC;}
+.nf-radio-group .nf-radio-label:nth-child(4) input{accent-color:#C04040;}
+.nf-radio-group .nf-radio-label:nth-child(4):has(input:checked){background:#F9C0B4;border-color:#E06060;color:#8B2222;box-shadow:0 3px 13px rgba(224,90,90,.22);}
 .nf-radio-group.nf-error .nf-radio-label{border-color:#ef4444;}
 .nf-gdpr-wrap{display:flex;align-items:flex-start;gap:10px;font-family:'Inter',sans-serif;font-size:12.5px;color:#555;line-height:1.6;margin-bottom:20px;cursor:pointer;}
 .nf-gdpr-wrap input[type="checkbox"]{accent-color:#1A5FA8;flex-shrink:0;width:16px;height:16px;margin-top:3px;cursor:pointer;}
@@ -1375,12 +1388,12 @@ button{outline:none;border:none;}
               <div class="contact-sub">kliknutím zavoláte</div>
             </div>
           </a>
-          <a class="contact-card green" id="cms-email-link" href="mailto:info@skolka-vcielka.sk">
+          <a class="contact-card green" id="cms-email-link" href="mailto:info@skolka-vcielka.sk" onclick="event.preventDefault();var btn=document.getElementById('napisteBtn');if(btn&&btn.getAttribute('aria-expanded')!=='true')btn.click();setTimeout(function(){document.getElementById('napisteFormWrap').scrollIntoView({behavior:'smooth',block:'nearest'});},350);">
             <div class="contact-icon" id="cms-icon-email">✉️</div>
             <div class="contact-body">
               <div class="contact-label">E-mail</div>
               <div class="cms-email contact-value"></div>
-              <div class="contact-sub">kliknutím napíšete</div>
+              <div class="contact-sub">kliknutím otvoríte formulár</div>
             </div>
           </a>
           <div class="contact-card red">
@@ -2653,17 +2666,30 @@ function toggleNapiste() {
     btn.disabled = true;
     btn.textContent = 'Odosielam…';
 
+    var _e  = function(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); };
+    var _m  = document.getElementById('nf-meno').value;
+    var _t  = document.getElementById('nf-telefon').value;
+    var _em = document.getElementById('nf-email').value;
+    var _v  = document.getElementById('nf-vek').value;
+    var _z  = picked.value;
+    var _sp = document.getElementById('nf-sprava').value;
+    var _td1 = 'style="padding:10px 16px;width:190px;white-space:nowrap;"';
+    var _td2 = 'style="padding:10px 16px;"';
+    var _msg =
+      '<table style="width:100%;max-width:540px;border-collapse:collapse;font-family:Arial,Helvetica,sans-serif;font-size:14px;">'
+      +'<tr style="background:#EEF7FF;"><td '+_td1+' style="padding:10px 16px;width:190px;font-weight:700;color:#1A5FA8;">Meno rodiča</td><td '+_td2+' style="padding:10px 16px;font-weight:700;color:#0D3D6E;">'+_e(_m)+'</td></tr>'
+      +'<tr><td '+_td1+' style="padding:10px 16px;width:190px;color:#666;">Telefón</td><td '+_td2+' style="padding:10px 16px;">'+_e(_t)+'</td></tr>'
+      +'<tr style="background:#f5f5f5;"><td '+_td1+' style="padding:10px 16px;width:190px;color:#666;">E-mail</td><td '+_td2+' style="padding:10px 16px;">'+_e(_em)+'</td></tr>'
+      +'<tr><td '+_td1+' style="padding:10px 16px;width:190px;color:#666;">Rok narodenia (vek)</td><td '+_td2+' style="padding:10px 16px;">'+_e(_v)+'</td></tr>'
+      +'<tr style="background:#FFF8DC;"><td '+_td1+' style="padding:10px 16px;width:190px;font-weight:700;color:#7A5800;">Záujem o</td><td '+_td2+' style="padding:10px 16px;font-weight:700;color:#7A5800;">'+_e(_z)+'</td></tr>'
+      +(_sp.trim()?'<tr style="background:#f5f5f5;"><td '+_td1+' style="padding:10px 16px;width:190px;color:#666;vertical-align:top;">Správa</td><td '+_td2+' style="padding:10px 16px;white-space:pre-wrap;">'+_e(_sp)+'</td></tr>':'')
+      +'</table>';
     var payload = {
       apiKey:   apiKey,
-      subject:  'Správa zo stránky Škôlka Včielka',
-      replyTo:  document.getElementById('nf-email').value,
+      subject:  'Správa zo Včielky – ' + _z,
+      replyTo:  _em,
       honeypot: form.querySelector('[name="honeypot"]').value,
-      name:     document.getElementById('nf-meno').value,
-      phone:    document.getElementById('nf-telefon').value,
-      email:    document.getElementById('nf-email').value,
-      interest: picked.value,
-      age:      document.getElementById('nf-vek').value,
-      message:  document.getElementById('nf-sprava').value
+      message:  _msg
     };
 
     try {
