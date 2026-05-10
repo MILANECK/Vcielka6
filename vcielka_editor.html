@@ -1087,29 +1087,29 @@ init();
 </style>
 
 <div id="editor-tour">
-  <!-- Step 1: template button (top-right) -->
-  <div class="ts" id="ts1" style="flex-direction:row-reverse;">
-    <div class="ts-num">1</div>
-    <svg class="ts-arrow" width="90" height="70" viewBox="0 0 90 70" fill="none">
-      <path d="M80 10 C60 10, 20 30, 10 60" stroke="#F9C832" stroke-width="3.5" stroke-linecap="round" fill="none"/>
-      <path d="M10 60 L18 46 M10 60 L24 58" stroke="#F9C832" stroke-width="3.5" stroke-linecap="round"/>
-    </svg>
+  <!-- Step 1: label | number | arrow→ pointing right to template button -->
+  <div class="ts" id="ts1">
     <div class="ts-label">Vyber šablónu</div>
+    <div class="ts-num">1</div>
+    <svg class="ts-arrow" width="72" height="56" viewBox="0 0 72 56" fill="none">
+      <path d="M5 28 C26 28, 52 14, 65 6" stroke="#F9C832" stroke-width="3.5" stroke-linecap="round" fill="none"/>
+      <path d="M65 6 L53 10 M65 6 L62 19" stroke="#F9C832" stroke-width="3.5" stroke-linecap="round"/>
+    </svg>
   </div>
-  <!-- Step 2: add photos button (left sidebar) -->
+  <!-- Step 2: ←arrow | number | label  (arrow originates from right edge = number side) -->
   <div class="ts" id="ts2">
-    <svg class="ts-arrow" width="90" height="70" viewBox="0 0 90 70" fill="none">
-      <path d="M10 10 C30 10, 70 30, 80 60" stroke="#fff" stroke-width="3.5" stroke-linecap="round" fill="none"/>
-      <path d="M80 60 L72 46 M80 60 L66 58" stroke="#fff" stroke-width="3.5" stroke-linecap="round"/>
+    <svg class="ts-arrow" width="72" height="56" viewBox="0 0 72 56" fill="none">
+      <path d="M67 14 C48 14, 24 32, 8 46" stroke="#fff" stroke-width="3.5" stroke-linecap="round" fill="none"/>
+      <path d="M8 46 L20 42 M8 46 L12 34" stroke="#fff" stroke-width="3.5" stroke-linecap="round"/>
     </svg>
     <div class="ts-num">2</div>
     <div class="ts-label">Pridať fotografie</div>
   </div>
-  <!-- Step 3: automap button -->
+  <!-- Step 3: ←arrow | number | label -->
   <div class="ts" id="ts3">
-    <svg class="ts-arrow" width="90" height="70" viewBox="0 0 90 70" fill="none">
-      <path d="M10 10 C30 10, 70 30, 80 60" stroke="#F9C832" stroke-width="3.5" stroke-linecap="round" fill="none"/>
-      <path d="M80 60 L72 46 M80 60 L66 58" stroke="#F9C832" stroke-width="3.5" stroke-linecap="round"/>
+    <svg class="ts-arrow" width="72" height="56" viewBox="0 0 72 56" fill="none">
+      <path d="M67 14 C48 14, 24 32, 8 46" stroke="#F9C832" stroke-width="3.5" stroke-linecap="round" fill="none"/>
+      <path d="M8 46 L20 42 M8 46 L12 34" stroke="#F9C832" stroke-width="3.5" stroke-linecap="round"/>
     </svg>
     <div class="ts-num">3</div>
     <div class="ts-label">Vlož do rámikov automaticky ✨</div>
@@ -1130,25 +1130,28 @@ init();
     var panBtn = document.getElementById('pan-btn');
     var autoBtn= document.getElementById('automapBtn');
 
-    /* Step 1 — to the left of the template button */
+    /* Step 1 — label|number|arrow→ to the LEFT of the template button
+       right edge of step (= arrow tip) sits ~10px left of button left edge */
     if(tpl){
       var r = tpl.getBoundingClientRect();
-      s1.style.top  = (r.top + r.height/2 - 55) + 'px';
-      s1.style.right= (window.innerWidth - r.left + 24) + 'px';
+      /* clamp top so the step never clips above the viewport */
+      s1.style.top  = Math.max(8, r.top + r.height/2 - 55) + 'px';
+      s1.style.right= (window.innerWidth - r.left + 10) + 'px';
       s1.style.left = 'auto';
     }
-    /* Step 2 — to the right of the pan button */
+    /* Step 2 — ←arrow|number|label to the RIGHT of the pan button
+       left edge of step (= arrow start, near number) sits ~12px right of button */
     if(panBtn){
       var r2 = panBtn.getBoundingClientRect();
-      s2.style.top  = (r2.top + r2.height/2 - 35) + 'px';
-      s2.style.left = (r2.right + 22) + 'px';
+      s2.style.top  = (r2.top + r2.height/2 - 55) + 'px';
+      s2.style.left = (r2.right + 12) + 'px';
       s2.style.right= 'auto';
     }
-    /* Step 3 — to the right of the automap button */
+    /* Step 3 — same layout as step 2 */
     if(autoBtn){
       var r3 = autoBtn.getBoundingClientRect();
-      s3.style.top  = (r3.top + r3.height/2 - 35) + 'px';
-      s3.style.left = (r3.right + 22) + 'px';
+      s3.style.top  = (r3.top + r3.height/2 - 55) + 'px';
+      s3.style.left = (r3.right + 12) + 'px';
       s3.style.right= 'auto';
     }
   }
