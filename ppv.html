@@ -7,7 +7,8 @@
 <link rel="icon" type="image/png" href="vcielka_logo2.png"/>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
-<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@800;900&family=Quicksand:wght@500;600;700&family=Inter:wght@400;500&display=swap" rel="stylesheet"/>
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Nunito:wght@800;900&family=Quicksand:wght@500;600;700&family=Inter:wght@400;500&display=swap" onload="this.rel='stylesheet'"/>
+<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nunito:wght@800;900&family=Quicksand:wght@500;600;700&family=Inter:wght@400;500&display=swap"/></noscript>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
 html{scroll-behavior:smooth;}
@@ -79,7 +80,11 @@ const SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsI
 async function loadPPV() {
   const container = document.getElementById('ppvContent');
   const cached = localStorage.getItem('ppv_content');
-  if (cached) container.innerHTML = cached;
+  const cacheAge = Date.now() - (parseInt(localStorage.getItem('ppv_content_ts')) || 0);
+  if (cached) {
+    container.innerHTML = cached;
+    if (cacheAge < 3600000) return; // skip fetch if cache is under 1 hour old
+  }
   try {
     const { createClient } = supabase;
     const db = createClient(SUPA_URL, SUPA_KEY);
@@ -87,6 +92,7 @@ async function loadPPV() {
     if (data && data.value && data.value.trim()) {
       container.innerHTML = data.value;
       localStorage.setItem('ppv_content', data.value);
+      localStorage.setItem('ppv_content_ts', Date.now());
     } else if (!cached) {
       container.innerHTML = '<p>Obsah ešte nebol pridaný. Prosím, vložte text v administrátorskom rozhraní.</p>';
     }

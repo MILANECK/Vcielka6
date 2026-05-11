@@ -4,9 +4,11 @@
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
 <title>Novinka – Včielka</title>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <link rel="icon" type="image/png" href="vcielka_logo2.png"/>
-<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@700;800&family=Quicksand:wght@500;600;700&family=Inter:wght@400;500&display=swap" rel="stylesheet"/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Nunito:wght@700;800&family=Quicksand:wght@500;600;700&family=Inter:wght@400;500&display=swap" onload="this.rel='stylesheet'"/>
+<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nunito:wght@700;800&family=Quicksand:wght@500;600;700&family=Inter:wght@400;500&display=swap"/></noscript>
 <style>
 *{box-sizing:border-box;margin:0;padding:0;}
 body{font-family:'Inter',sans-serif;background:#D9EFFF;color:#1a1a1a;overflow-wrap:break-word;word-break:normal;hyphens:none;}
@@ -95,6 +97,7 @@ body{font-family:'Inter',sans-serif;background:#D9EFFF;color:#1a1a1a;overflow-wr
   <span class="footer-copy">© 2025 Materská škola Včielka · Bratislava Ružinov</span>
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
 const SUPA_URL = 'https://fmjtzuligqsugsauqkgz.supabase.co';
 const SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZtanR6dWxpZ3FzdWdzYXVxa2d6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU0MTQyMTUsImV4cCI6MjA5MDk5MDIxNX0.gRF-roExLgnVDG4bSNt7EzX6c1v-JtM5v6ZcX8dY934';
@@ -149,7 +152,7 @@ async function loadArticle() {
 
     // Build photo grid
     let photosHtml = '';
-    const validPhotos = [data.photo_url, data.photo2_url, data.photo3_url].filter(Boolean);
+    const validPhotos = lbPhotos;
     if (validPhotos.length > 0) {
       const gridClass = validPhotos.length === 1 ? '' : validPhotos.length === 2 ? 'two' : 'three';
       photosHtml = `<div class="article-photos ${gridClass}">

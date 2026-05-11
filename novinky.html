@@ -6,7 +6,10 @@
 <title>Novinky – Včielka</title>
 <meta name="description" content="Aktuality a novinky zo Školky Včielka Bratislava Ružinov"/>
 <link rel="icon" type="image/png" href="vcielka_logo2.png"/>
-<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@700;800&family=Quicksand:wght@500;600;700&family=Inter:wght@400;500&display=swap" rel="stylesheet"/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Nunito:wght@700;800&family=Quicksand:wght@500;600;700&family=Inter:wght@400;500&display=swap" onload="this.rel='stylesheet'"/>
+<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nunito:wght@700;800&family=Quicksand:wght@500;600;700&family=Inter:wght@400;500&display=swap"/></noscript>
 <style>
 *{box-sizing:border-box;margin:0;padding:0;}
 body{font-family:'Inter',sans-serif;background:#D9EFFF;color:#1a1a1a;overflow-wrap:break-word;word-break:normal;hyphens:none;}
@@ -120,8 +123,9 @@ async function loadNews() {
           '<div class="news-article-excerpt">' + (n.excerpt||'') + '</div>' +
           '<a href="novinka.html?id=' + n.id + '" class="news-article-link">Čítať celý článok →</a>' +
         '</div>';
+      card.style.transitionDelay = (i * 90) + 'ms';
       list.appendChild(card);
-      setTimeout(function(){ card.classList.remove('news-card-hidden'); }, i * 90);
+      requestAnimationFrame(function(){ requestAnimationFrame(function(){ card.classList.remove('news-card-hidden'); }); });
     });
   } catch(e) {
     document.getElementById('newsList').innerHTML = '<div class="loading">Chyba načítania.</div>';

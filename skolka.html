@@ -4,11 +4,12 @@
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
 <title>Virtuálna Škôlka — Včielka</title>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
 <link rel="icon" id="sk-fav" type="image/png" href="vcielka_logo2.png"/>
 <script>(function(){var i=new Image();i.onload=function(){var c=document.createElement('canvas');c.width=i.width;c.height=i.height;var x=c.getContext('2d');x.drawImage(i,0,0);x.globalCompositeOperation='source-atop';x.fillStyle='rgba(0,120,255,0.82)';x.fillRect(0,0,c.width,c.height);var l=document.getElementById('sk-fav');if(l)l.href=c.toDataURL();};i.src='vcielka_logo2.png';})();</script>
-<link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@500;600;700&family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet"/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Quicksand:wght@500;600;700&family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" onload="this.rel='stylesheet'"/>
+<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Quicksand:wght@500;600;700&family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap"/></noscript>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:'Plus Jakarta Sans',sans-serif;background:#dce8f4;min-height:100vh;color:#1a2a3a;overflow-wrap:break-word;word-break:normal;hyphens:none;}
@@ -297,6 +298,8 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:#dce8f4;min-height:10
   </div>
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
 <script>
 const SUPABASE_URL = 'https://fmjtzuligqsugsauqkgz.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZtanR6dWxpZ3FzdWdzYXVxa2d6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU0MTQyMTUsImV4cCI6MjA5MDk5MDIxNX0.gRF-roExLgnVDG4bSNt7EzX6c1v-JtM5v6ZcX8dY934';
