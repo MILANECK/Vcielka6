@@ -15,7 +15,7 @@
 <style>
 /* ===== RESET & BASE ===== */
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
-html{scroll-behavior:smooth;scrollbar-width:thin;scrollbar-color:rgba(255,255,255,.55) transparent;overflow-y:scroll;overflow-x:hidden;}
+html{scroll-behavior:smooth;scrollbar-width:thin;scrollbar-color:rgba(255,255,255,.55) transparent;overflow-y:auto;overflow-x:hidden;}
 body{font-family:'Inter',sans-serif;background:transparent;color:#1a1a1a;overflow-x:hidden;font-size:16px;overflow-wrap:break-word;word-break:normal;hyphens:none;}
 ::-webkit-scrollbar{width:6px;background:transparent;}
 ::-webkit-scrollbar-track{background:transparent;}
@@ -26,7 +26,7 @@ body{font-family:'Inter',sans-serif;background:transparent;color:#1a1a1a;overflo
   ::-webkit-scrollbar-track{background:transparent;}
   ::-webkit-scrollbar-thumb{background:rgba(255,255,255,.92);border-radius:100px;border:2px solid transparent;background-clip:padding-box;box-shadow:0 2px 10px rgba(0,0,0,.22),0 0 0 .5px rgba(0,0,0,.06);}
   ::-webkit-scrollbar-thumb:hover{background:#fff;border:2px solid transparent;background-clip:padding-box;}
-  html{scrollbar-color:rgba(255,255,255,.88) transparent;}
+  html{scrollbar-color:rgba(255,255,255,.88) transparent;overflow-y:overlay;}
 }
 img{max-width:100%;display:block;}
 a{text-decoration:none;color:inherit;}
