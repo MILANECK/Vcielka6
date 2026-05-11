@@ -11,7 +11,10 @@
 <link rel="icon" type="image/png" href="vcielka_logo2.png"/>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
-<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@700;900&family=Quicksand:wght@500;600;700&family=Inter:wght@400;500&display=swap" rel="stylesheet"/>
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Nunito:wght@700;900&family=Quicksand:wght@500;600;700&family=Inter:wght@400;500&display=swap" onload="this.rel='stylesheet'"/>
+<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nunito:wght@700;900&family=Quicksand:wght@500;600;700&family=Inter:wght@400;500&display=swap"/></noscript>
+<link rel="preload" as="image" href="VCIELKA_LOGO.png"/>
+<link rel="preload" as="image" href="vcela2.png"/>
 <style>
 /* ===== RESET & BASE ===== */
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
@@ -1125,12 +1128,12 @@ button{outline:none;border:none;}
   <!-- dark overlay for readability -->
   <div class="hero-overlay"></div>
   <!-- floating bee decorations -->
-  <img class="hero-bee-deco" src="vcela2.png" alt=""/>
-  <img class="hero-bee-deco2" src="vcela3.png" alt=""/>
+  <img class="hero-bee-deco" src="vcela2.png" alt="" fetchpriority="high"/>
+  <img class="hero-bee-deco2" src="vcela3.png" alt="" fetchpriority="high"/>
   <!-- content -->
   <div style="width:100%;max-width:1100px;margin:0 auto;padding:0 32px;" class="hero-wrapper">
   <div class="hero-content fade-in">
-    <img src="VCIELKA_LOGO.png" alt="Včielka" class="hero-logo-badge"/>
+    <img src="VCIELKA_LOGO.png" alt="Včielka" class="hero-logo-badge" fetchpriority="high"/>
     <h1 id="cms-hero-title" style="opacity:0;transition:opacity .35s;"></h1>
     <p class="hero-desc" id="cms-hero-subtitle" style="opacity:0;transition:opacity .35s .08s;"></p>
     <div class="hero-btns">
@@ -1188,7 +1191,7 @@ button{outline:none;border:none;}
   </div>
   <div class="onas-body fade-in" style="position:relative;z-index:1;">
     <div class="onas-card">
-      <img id="onas-bee-badge" src="vcielka_medal.png" alt="" aria-hidden="true"/>
+      <img id="onas-bee-badge" src="vcielka_medal.png" alt="" aria-hidden="true" loading="lazy"/>
       <p id="cms-onas-p1"></p>
       <p id="cms-onas-p2"></p>
       <div class="onas-expand" id="onasExpand">
@@ -1894,7 +1897,7 @@ document.addEventListener('keydown',e=>{
 </script>
 
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
 // ===== HERO CACHE: show last-known hero immediately, before Supabase loads =====
 (function(){ const c=localStorage.getItem('hero_photo_cache'); if(c){ const bg=document.getElementById('cms-hero-bg'); if(bg){bg.src=c;bg.style.display='block';} } })();
