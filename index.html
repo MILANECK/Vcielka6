@@ -225,7 +225,7 @@ button{outline:none;border:none;}
 .btn-primary{background:var(--yellow);color:#1a1a1a;padding:13px 28px;font-size:14px;box-shadow:none;transition:box-shadow .3s,transform .2s;}
 .btn-primary:hover{box-shadow:0 6px 28px rgba(249,200,50,.8);transform:translateY(-2px);}
 .btn-outline:hover{box-shadow:0 6px 28px rgba(255,255,255,.3);transform:translateY(-2px);}
-.btn-outline{background:rgba(255,255,255,.18);color:#fff;padding:13px 28px;font-size:14px;border:1.5px solid rgba(255,255,255,.45);backdrop-filter:blur(6px);box-shadow:none;transition:box-shadow .3s,transform .2s;}
+.btn-outline{background:rgba(255,255,255,.18);color:#fff;padding:13px 28px;font-size:14px;border:1.5px solid rgba(255,255,255,.45);backdrop-filter:blur(6px);box-shadow:none;transition:box-shadow .3s,transform .2s;will-change:backdrop-filter;transform:translateZ(0);}
 .hero-bee-deco{position:absolute;right:6%;bottom:80px;width:90px;opacity:.22;animation:float 4s ease-in-out infinite alternate;z-index:2;display:none;}
 .hero-bee-deco2{position:absolute;left:1%;top:40px;width:65px;opacity:.18;animation:float 5s ease-in-out infinite alternate-reverse;z-index:2;display:none;}
 @keyframes float{0%{transform:translateY(0);}100%{transform:translateY(-12px);}}
@@ -1134,8 +1134,8 @@ button{outline:none;border:none;}
   <div style="width:100%;max-width:1100px;margin:0 auto;padding:0 32px;" class="hero-wrapper">
   <div class="hero-content fade-in">
     <img src="VCIELKA_LOGO.png" alt="Včielka" class="hero-logo-badge" fetchpriority="high"/>
-    <h1 id="cms-hero-title" style="opacity:0;transition:opacity .35s;"></h1>
-    <p class="hero-desc" id="cms-hero-subtitle" style="opacity:0;transition:opacity .35s .08s;"></p>
+    <h1 id="cms-hero-title" style="opacity:0;transition:opacity .35s;">Kde deti rastú a objavujú svet</h1>
+    <p class="hero-desc" id="cms-hero-subtitle" style="opacity:0;transition:opacity .35s .08s;">Súkromná materská škola s odborným tímom, bohatým programom Zvedavá Včielka a láskyplným prostredím pre deti od 2,5 do 6 rokov.</p>
     <div class="hero-btns">
       <a href="#sluzby" class="btn btn-primary">Zistiť viac o škôlke</a>
       <a href="#kontakt" class="btn btn-outline" onclick="event.preventDefault();var btn=document.getElementById('napisteBtn');if(btn&&btn.getAttribute('aria-expanded')!=='true')btn.click();setTimeout(function(){document.getElementById('napisteFormWrap').scrollIntoView({behavior:'smooth',block:'center'});},500);">Napíšte nám</a>
@@ -1900,7 +1900,16 @@ document.addEventListener('keydown',e=>{
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
 // ===== HERO CACHE: show last-known hero immediately, before Supabase loads =====
-(function(){ const c=localStorage.getItem('hero_photo_cache'); if(c){ const bg=document.getElementById('cms-hero-bg'); if(bg){bg.src=c;bg.style.display='block';} } })();
+(function(){
+  const c=localStorage.getItem('hero_photo_cache');
+  if(c){ const bg=document.getElementById('cms-hero-bg'); if(bg){bg.src=c;bg.style.display='block';} }
+  const t=localStorage.getItem('hero_title_cache');
+  const el=document.getElementById('cms-hero-title');
+  if(t&&el){ el.innerHTML=t.replace('rastú','<em>rastú</em>'); colorizeHeroTitle(el); el.style.opacity='1'; }
+  const sub=localStorage.getItem('hero_subtitle_cache');
+  const sel=document.getElementById('cms-hero-subtitle');
+  if(sub&&sel){ sel.textContent=sub; sel.style.opacity='1'; }
+})();
 // ===== CMS LOADER =====
 function thumbUrl(url){ if(!url)return url; var i=url.lastIndexOf('/'); return url.slice(0,i+1)+'thumbs/'+url.slice(i+1); }
 const SUPA_URL = 'https://fmjtzuligqsugsauqkgz.supabase.co';
@@ -1937,9 +1946,9 @@ async function loadCMS() {
     if (s) {
       // Hero
       const _heroTitle = document.getElementById('cms-hero-title');
-      if (_heroTitle) { const raw = s.hero_title || 'Kde deti rastú a objavujú svet'; _heroTitle.innerHTML = raw.replace('rastú','<em>rastú</em>'); colorizeHeroTitle(_heroTitle); _heroTitle.style.opacity='1'; }
+      if (_heroTitle) { const raw = s.hero_title || 'Kde deti rastú a objavujú svet'; _heroTitle.innerHTML = raw.replace('rastú','<em>rastú</em>'); colorizeHeroTitle(_heroTitle); _heroTitle.style.opacity='1'; localStorage.setItem('hero_title_cache', raw); }
       const _heroSub = document.getElementById('cms-hero-subtitle');
-      if (_heroSub) { _heroSub.textContent = s.hero_subtitle || 'Súkromná materská škola s odborným tímom, bohatým programom Zvedavá Včielka a láskyplným prostredím pre deti od 2,5 do 6 rokov.'; _heroSub.style.opacity='1'; }
+      if (_heroSub) { const rawSub = s.hero_subtitle || 'Súkromná materská škola s odborným tímom, bohatým programom Zvedavá Včielka a láskyplným prostredím pre deti od 2,5 do 6 rokov.'; _heroSub.textContent = rawSub; _heroSub.style.opacity='1'; localStorage.setItem('hero_subtitle_cache', rawSub); }
       if (s.hero_photo) { const bg = document.getElementById('cms-hero-bg'); if(bg) { bg.src = s.hero_photo; bg.style.display='block'; } localStorage.setItem('hero_photo_cache', s.hero_photo); }
       if (s.logo_url) { document.querySelectorAll('.cms-logo').forEach(el => el.src = s.logo_url); }
       // Stats
