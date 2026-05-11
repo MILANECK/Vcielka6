@@ -1071,7 +1071,6 @@ init();
   font-size:22px;font-weight:700;line-height:1.3;
   max-width:220px;
 }
-.ts-arrow{flex-shrink:0;}
 /* step colours */
 #ts1 .ts-num,#ts1 .ts-label{color:#F9C832;}
 #ts2 .ts-num,#ts2 .ts-label{color:#fff;}
@@ -1087,35 +1086,23 @@ init();
 @media(max-width:600px){
   .ts-num{font-size:72px;}
   .ts-label{font-size:16px;max-width:150px;}
-  .ts-arrow{width:48px!important;height:54px!important;}
 }
 </style>
 
 <div id="editor-tour">
-  <!-- Step 1: label | number | arrow→ pointing right to template button -->
+  <svg id="tour-lines" style="position:fixed;inset:0;width:100%;height:100%;pointer-events:none;" xmlns="http://www.w3.org/2000/svg"></svg>
+  <!-- Step 1: label | number -->
   <div class="ts" id="ts1">
     <div class="ts-label">Vyber šablónu</div>
     <div class="ts-num">1</div>
-    <svg class="ts-arrow" width="72" height="56" viewBox="0 0 72 56" fill="none">
-      <path d="M5 28 C26 28, 52 14, 65 6" stroke="#F9C832" stroke-width="3.5" stroke-linecap="round" fill="none"/>
-      <path d="M65 6 L53 10 M65 6 L62 19" stroke="#F9C832" stroke-width="3.5" stroke-linecap="round"/>
-    </svg>
   </div>
-  <!-- Step 2: ←arrow | number | label  (arrow originates from right edge = number side) -->
+  <!-- Step 2: number | label -->
   <div class="ts" id="ts2">
-    <svg class="ts-arrow" width="72" height="80" viewBox="0 0 72 80" fill="none">
-      <path d="M67 22 C52 18, 26 48, 8 70" stroke="#fff" stroke-width="3.5" stroke-linecap="round" fill="none"/>
-      <path d="M8 70 L21 63 M8 70 L15 78" stroke="#fff" stroke-width="3.5" stroke-linecap="round"/>
-    </svg>
     <div class="ts-num">2</div>
     <div class="ts-label">Pridať fotografie</div>
   </div>
-  <!-- Step 3: ←arrow | number | label -->
+  <!-- Step 3: number | label -->
   <div class="ts" id="ts3">
-    <svg class="ts-arrow" width="72" height="80" viewBox="0 0 72 80" fill="none">
-      <path d="M67 22 C52 18, 26 48, 8 70" stroke="#F9C832" stroke-width="3.5" stroke-linecap="round" fill="none"/>
-      <path d="M8 70 L21 63 M8 70 L15 78" stroke="#F9C832" stroke-width="3.5" stroke-linecap="round"/>
-    </svg>
     <div class="ts-num">3</div>
     <div class="ts-label">Vlož do rámikov automaticky ✨</div>
   </div>
@@ -1134,44 +1121,77 @@ init();
     var tpl    = document.getElementById('tpl-change-btn');
     var panBtn = document.getElementById('pan-btn');
     var autoBtn= document.getElementById('automapBtn');
-
-    /* Step 1 — label|number|arrow→ to the LEFT of the template button
-       right edge of step (= arrow tip) sits ~10px left of button left edge */
+    var numH   = s1.querySelector('.ts-num').getBoundingClientRect().height || 110;
     if(tpl){
       var r = tpl.getBoundingClientRect();
-      /* clamp top so the step never clips above the viewport */
-      s1.style.top  = Math.max(8, r.top + r.height/2 - 55) + 'px';
-      s1.style.right= (window.innerWidth - r.left + 10) + 'px';
+      s1.style.top  = Math.max(8, r.top + r.height/2 - numH/2) + 'px';
+      s1.style.right= (window.innerWidth - r.left + 16) + 'px';
       s1.style.left = 'auto';
     }
-    /* Step 2 — ←arrow|number|label to the RIGHT of the pan button
-       left edge of step (= arrow start, near number) sits ~12px right of button */
     if(panBtn){
       var r2 = panBtn.getBoundingClientRect();
-      /* offset -82 = 15px SVG-top-in-row + 70px tip-y - buttonCenter: tip lands on button centre */
-      s2.style.top  = Math.max(8, r2.top + r2.height/2 - 82) + 'px';
-      s2.style.left = (r2.right + 12) + 'px';
+      s2.style.top  = Math.max(8, r2.top + r2.height/2 - numH/2) + 'px';
+      s2.style.left = (r2.right + 16) + 'px';
       s2.style.right= 'auto';
     }
-    /* Step 3 — same layout as step 2 */
     if(autoBtn){
       var r3 = autoBtn.getBoundingClientRect();
-      s3.style.top  = Math.max(8, r3.top + r3.height/2 - 82) + 'px';
-      s3.style.left = (r3.right + 12) + 'px';
+      s3.style.top  = Math.max(8, r3.top + r3.height/2 - numH/2) + 'px';
+      s3.style.left = (r3.right + 16) + 'px';
       s3.style.right= 'auto';
     }
   }
 
+  function drawLines(){
+    var svg = document.getElementById('tour-lines');
+    svg.innerHTML =
+      '<defs>' +
+        '<marker id="am-g" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto"><polygon points="0 0,10 3.5,0 7" fill="#F9C832"/></marker>' +
+        '<marker id="am-w" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto"><polygon points="0 0,10 3.5,0 7" fill="#fff"/></marker>' +
+      '</defs>';
+    var cfgs = [
+      {sid:'ts1',bid:'tpl-change-btn',color:'#F9C832',mid:'am-g',lid:'tl1'},
+      {sid:'ts2',bid:'pan-btn',       color:'#fff',   mid:'am-w',lid:'tl2'},
+      {sid:'ts3',bid:'automapBtn',    color:'#F9C832',mid:'am-g',lid:'tl3'}
+    ];
+    cfgs.forEach(function(c){
+      var numEl = document.querySelector('#'+c.sid+' .ts-num');
+      var btn   = document.getElementById(c.bid);
+      if(!numEl||!btn) return;
+      var nr = numEl.getBoundingClientRect();
+      var br = btn.getBoundingClientRect();
+      var x1 = nr.left + nr.width/2,  y1 = nr.top + nr.height/2;
+      var x2 = br.left + br.width/2,  y2 = br.top + br.height/2;
+      var ln = document.createElementNS('http://www.w3.org/2000/svg','line');
+      ln.setAttribute('id',c.lid);
+      ln.setAttribute('x1',x1); ln.setAttribute('y1',y1);
+      ln.setAttribute('x2',x2); ln.setAttribute('y2',y2);
+      ln.setAttribute('stroke',c.color);
+      ln.setAttribute('stroke-width','2.5');
+      ln.setAttribute('stroke-linecap','round');
+      ln.setAttribute('marker-end','url(#'+c.mid+')');
+      ln.style.opacity='0';
+      ln.style.transition='opacity .55s ease';
+      svg.appendChild(ln);
+    });
+  }
+
+  function showLine(id){
+    var ln = document.getElementById(id);
+    if(ln) ln.style.opacity='1';
+  }
+
   function showTour(){
-    overlay.style.display = '';           /* clear any bfcache-preserved display:none */
+    overlay.style.display = '';
     overlay.classList.remove('tour-visible');
     [s1,s2,s3,hint].forEach(function(el){ el.classList.remove('ts-show'); });
-    setTimeout(function(){                /* small delay so layout is fully settled */
+    setTimeout(function(){
       positionSteps();
+      drawLines();
       overlay.classList.add('tour-visible');
-      setTimeout(function(){ s1.classList.add('ts-show'); }, 250);
-      setTimeout(function(){ s2.classList.add('ts-show'); }, 950);
-      setTimeout(function(){ s3.classList.add('ts-show'); }, 1650);
+      setTimeout(function(){ s1.classList.add('ts-show'); showLine('tl1'); }, 250);
+      setTimeout(function(){ s2.classList.add('ts-show'); showLine('tl2'); }, 950);
+      setTimeout(function(){ s3.classList.add('ts-show'); showLine('tl3'); }, 1650);
       setTimeout(function(){ hint.classList.add('ts-show'); }, 2200);
     }, 120);
   }
@@ -1179,6 +1199,8 @@ init();
   function hideTour(){
     overlay.classList.remove('tour-visible');
     [s1,s2,s3,hint].forEach(function(el){ el.classList.remove('ts-show'); });
+    var svg = document.getElementById('tour-lines');
+    if(svg) svg.innerHTML='';
     setTimeout(function(){ overlay.style.display='none'; }, 460);
   }
 
