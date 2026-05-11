@@ -1567,10 +1567,10 @@ button{outline:none;border:none;}
     </div>
     <div>
       <h4>Kontakt</h4>
-      <span class="footer-link">Sečovská 144/3, Ružinov</span>
-      <a href="tel:0918607935" class="footer-link">0918 607 935</a>
+      <span class="footer-link" id="cms-footer-address">Sečovská 144/3, Ružinov</span>
+      <a href="tel:0918607935" class="footer-link cms-phone" id="cms-footer-phone">0918 607 935</a>
       <a id="cms-footer-email-link" href="#" class="footer-link"></a>
-      <span class="footer-link">Po–Pia: 7:00 – 17:00</span>
+      <span class="footer-link" id="cms-footer-hours">Po–Pia: 7:00 – 17:00</span>
     </div>
   </div>
   <div class="footer-bottom">
@@ -1950,14 +1950,14 @@ async function loadCMS() {
         if(lblEl&&s['stat'+i+'_label'])lblEl.textContent=s['stat'+i+'_label'];
       });
       // Contact
-      if (s.contact_address) { const el = document.getElementById('cms-address'); if(el) el.textContent = s.contact_address; }
+      if (s.contact_address) { const el = document.getElementById('cms-address'); if(el) el.textContent = s.contact_address; const fel = document.getElementById('cms-footer-address'); if(fel) fel.textContent = s.contact_address; }
       if (s.contact_phone) { document.querySelectorAll('.cms-phone').forEach(el => { el.textContent = s.contact_phone; el.href = 'tel:'+s.contact_phone.replace(/\s/g,''); }); }
       { const _em = s.contact_email?.trim() || 'info@skolka-vcielka.sk';
         document.querySelectorAll('.cms-email').forEach(el => { el.textContent = _em; });
         const _el = document.getElementById('cms-email-link'); if(_el) _el.href = 'mailto:'+_em;
         const _fl = document.getElementById('cms-footer-email-link'); if(_fl){ _fl.textContent = _em; _fl.href = 'mailto:'+_em; }
       }
-      if (s.contact_hours) { const el = document.getElementById('cms-hours'); if(el) el.textContent = s.contact_hours; }
+      if (s.contact_hours) { const el = document.getElementById('cms-hours'); if(el) el.textContent = s.contact_hours; const fel = document.getElementById('cms-footer-hours'); if(fel) fel.textContent = s.contact_hours; }
       if (s.staticforms_key) { window._nf_apikey = s.staticforms_key; }
       // O nás
       // Section icons (contact + program z-items)
