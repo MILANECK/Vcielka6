@@ -97,10 +97,11 @@ body{font-family:'Inter',sans-serif;background:#D9EFFF;color:#1a1a1a;overflow-wr
   <span class="footer-copy">© 2025 Materská škola Včielka · Bratislava Ružinov</span>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
-const SUPA_URL = 'https://fmjtzuligqsugsauqkgz.supabase.co';
-const SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZtanR6dWxpZ3FzdWdzYXVxa2d6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU0MTQyMTUsImV4cCI6MjA5MDk5MDIxNX0.gRF-roExLgnVDG4bSNt7EzX6c1v-JtM5v6ZcX8dY934';
+const SUPA_URL='https://fmjtzuligqsugsauqkgz.supabase.co';
+const SUPA_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZtanR6dWxpZ3FzdWdzYXVxa2d6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU0MTQyMTUsImV4cCI6MjA5MDk5MDIxNX0.gRF-roExLgnVDG4bSNt7EzX6c1v-JtM5v6ZcX8dY934';
+const SUPA_H={'apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY};
+async function sbGet(table,params){const r=await fetch(SUPA_URL+'/rest/v1/'+table+(params||''),{headers:SUPA_H});if(!r.ok)throw new Error(r.status);return r.json();}
 const bgColors = {blue:'#C8E6FA',yellow:'#FFE87A',green:'#B2E8C8'};
 
 let lbPhotos = [];
@@ -135,11 +136,10 @@ async function loadArticle() {
   if (!id) { window.location.href = 'novinky.html'; return; }
 
   try {
-    const { createClient } = supabase;
-    const db = createClient(SUPA_URL, SUPA_KEY);
-    const { data, error } = await db.from('news').select('*').eq('id', id).single();
+    const rows = await sbGet('news','?select=*&id=eq.'+id);
+    const data = rows && rows[0];
 
-    if (error || !data) {
+    if (!data) {
       document.getElementById('articleWrap').innerHTML = '<div class="loading">Článok nebol nájdený. <a href="novinky.html">Späť na novinky →</a></div>';
       return;
     }

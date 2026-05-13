@@ -72,10 +72,11 @@ a{text-decoration:none;color:inherit;}
   <a href="index.html">← Vrátiť sa na hlavnú stránku Včielka</a>
 </footer>
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <script>
-const SUPA_URL = 'https://fmjtzuligqsugsauqkgz.supabase.co';
-const SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZtanR6dWxpZ3FzdWdzYXVxa2d6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU0MTQyMTUsImV4cCI6MjA5MDk5MDIxNX0.gRF-roExLgnVDG4bSNt7EzX6c1v-JtM5v6ZcX8dY934';
+const SUPA_URL='https://fmjtzuligqsugsauqkgz.supabase.co';
+const SUPA_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZtanR6dWxpZ3FzdWdzYXVxa2d6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU0MTQyMTUsImV4cCI6MjA5MDk5MDIxNX0.gRF-roExLgnVDG4bSNt7EzX6c1v-JtM5v6ZcX8dY934';
+const SUPA_H={'apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY};
+async function sbGet(table,params){const r=await fetch(SUPA_URL+'/rest/v1/'+table+(params||''),{headers:SUPA_H});if(!r.ok)throw new Error(r.status);return r.json();}
 
 async function loadPPV() {
   const container = document.getElementById('ppvContent');
@@ -86,9 +87,8 @@ async function loadPPV() {
     if (cacheAge < 3600000) return; // skip fetch if cache is under 1 hour old
   }
   try {
-    const { createClient } = supabase;
-    const db = createClient(SUPA_URL, SUPA_KEY);
-    const { data } = await db.from('settings').select('value').eq('key','ppv_extra').single();
+    const rows = await sbGet('settings','?select=value&key=eq.ppv_extra');
+    const data = rows && rows[0];
     if (data && data.value && data.value.trim()) {
       container.innerHTML = data.value;
       localStorage.setItem('ppv_content', data.value);

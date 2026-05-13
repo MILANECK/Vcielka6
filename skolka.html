@@ -125,7 +125,8 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:#dce8f4;min-height:10
 .gallery-close{background:rgba(255,255,255,.12);color:#fff;border:none;border-radius:50px;padding:10px 20px;font-family:'Quicksand',sans-serif;font-size:13px;font-weight:600;cursor:pointer}
 .gallery-close:hover{background:rgba(255,255,255,.22)}
 .gallery-grid-fs{flex:1;min-height:0;overflow-y:auto;-webkit-overflow-scrolling:touch;display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:10px;padding:16px 24px;align-content:start}
-.gallery-photo{position:relative;border-radius:12px;overflow:hidden;aspect-ratio:1;cursor:pointer;min-width:0;min-height:0}
+.gallery-photo{position:relative;border-radius:12px;overflow:hidden;cursor:pointer;min-width:0}
+.gallery-photo::before{content:'';display:block;padding-bottom:100%}
 .gallery-photo img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block;transition:transform .2s}
 .gallery-photo:hover img{transform:scale(1.04)}
 @media(max-width:600px){
@@ -298,13 +299,15 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:#dce8f4;min-height:10
   </div>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
 <script>
-const SUPABASE_URL = 'https://fmjtzuligqsugsauqkgz.supabase.co';
-const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZtanR6dWxpZ3FzdWdzYXVxa2d6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU0MTQyMTUsImV4cCI6MjA5MDk5MDIxNX0.gRF-roExLgnVDG4bSNt7EzX6c1v-JtM5v6ZcX8dY934';
-const { createClient } = supabase;
-const db = createClient(SUPABASE_URL, SUPABASE_KEY);
+const SUPABASE_URL='https://fmjtzuligqsugsauqkgz.supabase.co';
+const SUPABASE_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZtanR6dWxpZ3FzdWdzYXVxa2d6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU0MTQyMTUsImV4cCI6MjA5MDk5MDIxNX0.gRF-roExLgnVDG4bSNt7EzX6c1v-JtM5v6ZcX8dY934';
+const SB_H={'apikey':SUPABASE_KEY,'Authorization':'Bearer '+SUPABASE_KEY,'Content-Type':'application/json'};
+async function sbGet(table,params){const r=await fetch(SUPABASE_URL+'/rest/v1/'+table+(params||''),{headers:SB_H});if(!r.ok)throw new Error(r.status);return r.json();}
+async function sbRpc(fn,body){const r=await fetch(SUPABASE_URL+'/rest/v1/rpc/'+fn,{method:'POST',headers:{...SB_H,'Prefer':'return=representation'},body:JSON.stringify(body)});if(!r.ok)throw new Error(r.status);return r.json();}
+async function sbStorageList(bucket,prefix){const r=await fetch(SUPABASE_URL+'/storage/v1/object/list/'+bucket,{method:'POST',headers:SB_H,body:JSON.stringify({prefix,limit:200,offset:0})});if(!r.ok)throw new Error(r.status);return r.json();}
+function sbPublicUrl(bucket,path){return SUPABASE_URL+'/storage/v1/object/public/'+bucket+'/'+path;}
 function thumbUrl(url){if(!url)return url;var i=url.lastIndexOf('/');return url.slice(0,i+1)+'thumbs/'+url.slice(i+1);}
 
 let lbPhotos = [], lbIdx = 0;
@@ -326,8 +329,9 @@ function applySkOrder(photos, order) {
 async function doLogin() {
   const pw = document.getElementById('pw-input').value.trim();
   if (!pw) return;
-  const { data: folders, error } = await db.rpc('skolka_get_folders', { pw });
-  if (error) {
+  let folders;
+  try { folders = await sbRpc('skolka_get_folders',{pw}); } catch(e) { folders = null; }
+  if (!folders) {
     document.getElementById('login-error').style.display='block';
     setTimeout(()=>document.getElementById('login-error').style.display='none',3000);
     return;
@@ -348,7 +352,7 @@ function doLogout() {
 // ── FOLDERS ──
 async function loadFolders() {
   const pw = sessionStorage.getItem('vs_pw') || '';
-  const { data: folders } = await db.rpc('skolka_get_folders', { pw });
+  const folders = await sbRpc('skolka_get_folders',{pw}).catch(()=>null);
   renderFolders(folders);
 }
 
@@ -361,12 +365,10 @@ async function renderFolders(folders) {
   // Read cover URLs and photo orders from settings
   const ids = folders.map(f => f.id);
   const settingKeys = [...ids.map(id => 'sk_cover_' + id), ...ids.map(id => 'sk_order_' + id)];
-  const [{ data: coverRows, error: covErr }, { data: settingsRows, error: setErr }] = await Promise.all([
-    db.from('skolka_folders').select('id,cover_url').in('id', ids),
-    db.from('settings').select('key,value').in('key', settingKeys)
+  const [coverRows, settingsRows] = await Promise.all([
+    sbGet('skolka_folders','?select=id,cover_url&id=in.('+ids.join(',')+')').catch(()=>[]),
+    sbGet('settings','?select=key,value&key=in.('+settingKeys.join(',')+')').catch(()=>[])
   ]);
-  if (covErr) console.error('[covers] skolka_folders query error:', covErr);
-  if (setErr) console.error('[covers] settings query error:', setErr);
   const coverMap = {};
   const orderMap = {};
   if (coverRows) coverRows.forEach(r => { if (r.cover_url) coverMap[r.id] = r.cover_url; });
@@ -385,7 +387,7 @@ async function renderFolders(folders) {
   folders.forEach(f => { if (!f.cover_url) f.cover_url = coverMap[f.id] || null; });
   grid.innerHTML = '';
   for (const f of folders) {
-    const { data: files } = await db.storage.from('vcielka').list('skolka/'+f.id,{limit:200});
+    const files = await sbStorageList('vcielka','skolka/'+f.id).catch(()=>[]);
     let photos = (files||[]).filter(x=>x.name!=='.keep'&&x.id!==null);
     if (orderMap[f.id]?.length) {
       photos = applySkOrder(photos, orderMap[f.id]);
@@ -396,7 +398,7 @@ async function renderFolders(folders) {
     if (f.cover_url) {
       thumbHtml = `<img class="folder-thumb" src="${thumbUrl(f.cover_url)}" data-full="${f.cover_url}" alt="${f.name}" loading="lazy" onerror="this.src=this.dataset.full;this.onerror=null;"/>`;
     } else if (photos.length) {
-      const { data:{publicUrl} } = db.storage.from('vcielka').getPublicUrl('skolka/'+f.id+'/'+photos[0].name);
+      const publicUrl = sbPublicUrl('vcielka','skolka/'+f.id+'/'+photos[0].name);
       thumbHtml = `<img class="folder-thumb" src="${thumbUrl(publicUrl)}" data-full="${publicUrl}" alt="${f.name}" loading="lazy" onerror="this.src=this.dataset.full;this.onerror=null;"/>`;
     }
     const card = document.createElement('div');
@@ -422,7 +424,7 @@ function openGallery(folderId, folderName, photos) {
   updateGallerySelBar();
   grid.innerHTML = '';
   photos.forEach((p, idx) => {
-    const { data:{publicUrl} } = db.storage.from('vcielka').getPublicUrl('skolka/'+folderId+'/'+p.name);
+    const publicUrl = sbPublicUrl('vcielka','skolka/'+folderId+'/'+p.name);
     lbPhotos.push(publicUrl);
     const div = document.createElement('div');
     div.className = 'gallery-photo';
@@ -473,8 +475,8 @@ document.addEventListener('keydown', e => {
 // ── LOAD EDITOR URL ──
 let _editorUrl = 'vcielka_editor.html';
 async function loadEditorUrl() {
-  const { data } = await db.from('settings').select('value').eq('key','editor_url').single();
-  _editorUrl = data?.value || 'vcielka_editor.html';
+  const rows = await sbGet('settings','?select=value&key=eq.editor_url').catch(()=>[]);
+  _editorUrl = (rows && rows[0]?.value) || 'vcielka_editor.html';
   [document.getElementById('editor-link-header'), document.getElementById('editor-link-gallery')]
     .forEach(el => { if(el) el.addEventListener('click', e => { e.preventDefault(); if(window.innerWidth < 768) { openEditorHint(); } else { window.open(_editorUrl, '_blank'); } }); });
 }
